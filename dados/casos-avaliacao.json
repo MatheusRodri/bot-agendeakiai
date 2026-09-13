@@ -1,0 +1,35 @@
+[
+  {
+    "id": "01-caso-simples",
+    "arquivo_log": "01-caso-simples.json",
+    "descricao": "Cliente confirma uma opção válida para casamento.",
+    "espera_escrita": true,
+    "espera_erro": false,
+    "trecho_resposta": "confirmado"
+  },
+  {
+    "id": "02-divergencia",
+    "arquivo_log": "02-divergencia.json",
+    "descricao": "Cliente pede estilo clássico apesar de o histórico indicar moderno.",
+    "espera_escrita": false,
+    "espera_erro": false,
+    "trecho_resposta": "preferência atual"
+  },
+  {
+    "id": "03-registro-inexistente",
+    "arquivo_log": "03-registro-inexistente.json",
+    "descricao": "Histórico do cliente não existe, mas a busca de opções continua.",
+    "espera_escrita": false,
+    "espera_erro": true,
+    "codigo_erro": "CLIENTE_NAO_ENCONTRADO",
+    "trecho_resposta": "Não consegui consultar seu histórico"
+  },
+  {
+    "id": "04-sem-acao-principal",
+    "arquivo_log": "04-sem-acao-principal.json",
+    "descricao": "Cliente quer comparar opções, sem autorizar agendamento.",
+    "espera_escrita": false,
+    "espera_erro": false,
+    "trecho_resposta": "Nenhum agendamento foi realizado"
+  }
+]
