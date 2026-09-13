@@ -1,356 +1,166 @@
-# Case — Agente Inteligente do Agende Aki
+# Case — AgendeAkiAI
 
-## 1. O case: indústria e problema
+## 1. Tema e contexto
 
-### 1.1 Indústria
+O AgendeAkiAI é um projeto focado em recomendação e agendamento de serviços de beleza, com atenção especial à ocasião do cliente. A ideia central é criar um agente inteligente que ajude o usuário a escolher cortes, maquiagem, penteados e outros serviços conforme a natureza do evento, como casamento, formatura, entrevista, festa, viagem ou compromisso social.
 
-O projeto está inserido no setor de serviços de beleza e cuidados pessoais, especificamente no contexto de plataformas digitais de agendamento para salões de beleza.
+O sistema não atua apenas como agenda. Ele também interpreta contexto relevante para a decisão, como clima, data, horário, local do evento, orçamento, estilo desejado, região e histórico de preferências do cliente. A partir disso, sugere opções de serviço, profissional e salão que tenham maior probabilidade de corresponder ao cenário real.
 
-O Agende Aki é uma plataforma Web que conecta clientes a estabelecimentos de beleza, permitindo a busca por estabelecimentos, serviços e profissionais, além da realização de agendamentos de acordo com datas e horários disponíveis.
+## 2. Problema em uma frase
 
-Nesse contexto, propõe-se a criação de um agente LLM responsável pela interação com o cliente final durante o processo de descoberta e agendamento de serviços.
+Como recomendar e agendar serviços de beleza em linguagem natural, considerando a ocasião do cliente, as condições do evento, o clima, o orçamento e o histórico de preferências?
 
-Além de auxiliar o cliente no momento atual, o agente utilizará o histórico de utilização da plataforma para identificar padrões de preferência e oferecer recomendações cada vez mais contextualizadas.
+## 3. Quem sofre com o problema hoje
 
-### 1.2 Problema
+O problema afeta principalmente o cliente final, que precisa se preparar para um evento importante e costuma enfrentar dificuldades para escolher o serviço ideal. Em geral, ele precisa navegar entre vários salões, comparar opções de profissionais, verificar preços e ainda lidar com a incerteza de saber o que combina melhor com a ocasião.
 
-Durante a busca por um serviço de beleza, o cliente pode possuir diferentes necessidades e preferências relacionadas a:
+Além disso, o negócio também sofre com a fricção do processo: menos conversão, maior abandono e menor recorrência de agendamentos.
 
-- serviço desejado;
-- estabelecimento;
-- localização;
-- profissional;
-- faixa de preço;
-- data;
-- período do dia;
-- horário disponível.
+## 4. Contexto de uso
 
-Essas informações nem sempre são fornecidas de maneira completa no início da interação.
+O agente será usado no chat da plataforma AgendeAki, no momento em que o cliente procura um serviço para uma ocasião. O cliente inicia a conversa com texto livre; o agente consulta o catálogo e o histórico simulado, devolve até três opções e o cliente decide se quer confirmar uma delas.
 
-Um cliente pode informar, por exemplo:
+Antes dele, o cliente percorre filtros de serviço, bairro, preço e horário, abre perfis de salões e compara as opções manualmente. Depois dele, a recomendação ou o agendamento confirmado segue para a API do AgendeAki; nesta entrega a API é mockada. As regras mínimas são: não inventar disponibilidade, respeitar o orçamento informado e nunca criar agendamento sem confirmação explícita.
 
-> "Quero cortar o cabelo sábado à tarde."
+Os casos difíceis da primeira entrega são: preferência atual que contradiz o histórico; identificador de cliente inexistente; e uma consulta que pede recomendação, mas não autorização para agendar.
 
-Embora exista uma intenção clara, ainda podem existir informações relevantes que precisam ser identificadas para que uma recomendação adequada seja realizada.
+## 5. Usuários e perfis
 
-Além disso, no processo tradicional, as preferências demonstradas pelo cliente em utilizações anteriores podem não ser consideradas durante uma nova busca.
+| Perfil | O que deseja | O que sabe | O que pode fazer |
+|---|---|---|---|
+| Cliente final | encontrar um visual adequado para a ocasião e agendar facilmente | conhece sua necessidade, gosto e evento | descreve a demanda, responde perguntas e confirma ou recusa o agendamento |
+| Estabelecimento | receber clientes compatíveis e otimizar a agenda | conhece sua disponibilidade e equipe | informa horários, serviços e regras do salão |
+| Operação da plataforma | reduzir abandono e melhorar conversão | conhece métricas e comportamento do usuário | acompanha exceções e atende casos que o agente não consegue resolver |
 
-Dessa forma, o problema abordado pelo agente consiste em compreender as necessidades do cliente, identificar informações ausentes, consultar as opções disponíveis e utilizar o histórico de utilização para realizar recomendações mais adequadas ao seu perfil.
+### Usuário principal
 
-**Problema em uma frase:**
+O usuário principal é o cliente final, pois ele vive a dor de decidir entre muitas opções sem saber qual é a melhor combinação para a ocasião e para o seu perfil.
 
-> Como auxiliar o cliente a encontrar serviços, estabelecimentos, profissionais e horários adequados às suas necessidades atuais, utilizando também seu histórico de utilização para personalizar as recomendações?
+## 6. Como será a interação
 
-### 1.3 Proposta do agente
+A interação acontece por chat, pois o cliente já descreve ocasião e estilo naturalmente. O cliente inicia a conversa; em média são duas ou três trocas: pedido inicial, pergunta opcional sobre uma preferência e recomendação. A saída é texto curto com até três opções ou uma mensagem de erro orientando o próximo passo.
 
-O Agente Inteligente do Agende Aki será responsável pela interação com o cliente final durante o processo de descoberta e escolha de serviços.
+Exemplo de conversa:
 
-O cliente poderá informar suas necessidades utilizando linguagem natural, enquanto o agente interpretará a solicitação e identificará as informações necessárias para realizar a busca.
+Cliente: "Vou para um casamento no fim de semana e quero um visual elegante, com clima quente e orçamento até R$ 150."
 
-O agente poderá recomendar:
+Agente: "Entendi. A ocasião é um casamento, então vou considerar um visual elegante e confortável para calor. Posso verificar salões próximos com horários e profissionais compatíveis. Você prefere um estilo mais clássico ou mais moderno?"
 
-- serviços;
-- estabelecimentos;
-- profissionais;
-- datas;
-- horários disponíveis.
+Cliente: "Mais clássico."
 
-As recomendações considerarão dois tipos principais de informação:
+Agente: "Tenho 3 opções compatíveis: Salon Bela, sábado às 15h, corte e styling, R$ 120; Studio Vale, domingo às 12h, visual elegante e leve, R$ 140; Glam Hair, domingo às 13h, especialista em eventos, R$ 110. Posso sugerir a melhor alternativa para o seu caso."
 
-**Contexto atual:** informações fornecidas pelo cliente durante a interação atual.
+A conversa termina com uma recomendação sem escrita, com um agendamento confirmado pelo cliente ou com encaminhamento para a operação quando não houver opção válida ou a API estiver indisponível.
 
-**Contexto histórico:** informações provenientes das utilizações anteriores do cliente e dos padrões de preferência identificados.
+## 7. Complexidade do caso
 
-Por exemplo, caso um cliente tenha utilizado repetidamente determinado profissional e normalmente realize seus agendamentos aos sábados durante a tarde, essas informações poderão ser consideradas na ordenação das recomendações futuras.
+O problema exige interação real e não pode ser resolvido apenas com formulário. O agente precisa lidar com:
 
-O histórico não determinará obrigatoriamente a escolha do cliente. Ele será utilizado como contexto para priorizar alternativas potencialmente mais relevantes.
+- informações incompletas na primeira mensagem;
+- contexto implícito, como "casamento", "entrevista", "evento com clima quente" ou "festa à noite";
+- preferências que mudam ao longo da conversa;
+- comparação entre diferentes salões, profissionais e agendamentos;
+- casos em que o cliente quer algo similar a um serviço usado antes, mas sem ficar preso ao histórico;
+- situações em que nenhuma opção atende tudo ao mesmo tempo e o agente precisa propor alternativas.
 
-### 1.4 Por que utilizar um agente LLM?
+A preferência atual vence o histórico: se o histórico indicar estilo moderno e o cliente pedir clássico, o agente recomenda clássico. Ele já tem informação suficiente quando há pelo menos uma opção dentro do serviço, bairro e orçamento pedidos; sem isso, pede uma preferência ou encaminha o caso à operação.
 
-O problema possui características que dificultam sua solução exclusivamente por meio de um fluxo fixo de formulários e regras.
+## 8. Workflow do agente
 
-O usuário pode fornecer informações incompletas e expressar suas necessidades de diferentes maneiras utilizando linguagem natural.
+O workflow inicial tem sete etapas:
 
-Por exemplo:
+```text
+1. ENTRADA       cliente descreve a necessidade no chat                 [CÓDIGO]
+2. DECISÃO       modelo escolhe consultar, recomendar ou pedir detalhe  [MODELO]
+3. CONSULTA      código chama a API mock de histórico e opções           [CÓDIGO]
+4. RECUPERAÇÃO   código devolve erro da API como dado para o modelo       [CÓDIGO + MODELO]
+5. RECOMENDAÇÃO  modelo compara pedido atual e opções retornadas          [MODELO]
+6. CONFIRMAÇÃO   cliente autoriza; código cria agendamento                [HUMANO + CÓDIGO; ESCRITA, reversível]
+7. RETORNO       código registra o motivo de parada e mostra a resposta  [CÓDIGO]
+```
 
-> "Quero fazer a unha depois do trabalho essa semana e queria algo perto."
+## 9. O sistema
 
-Nesse caso, o agente precisa interpretar expressões como "depois do trabalho", identificar informações que ainda são necessárias e decidir quais consultas devem ser realizadas.
+O sistema é um assistente conversacional de recomendação e agendamento para serviços de beleza. Ele atua como ponte entre a intenção do cliente e os dados da plataforma, interpretando a ocasião, o contexto do evento, o histórico do cliente e a disponibilidade real de salões e profissionais.
 
-Além disso, quando nenhuma alternativa atende completamente às preferências informadas, o agente poderá decidir quais flexibilizações podem ser propostas.
+A função central do sistema é transformar uma demanda em linguagem natural em uma recomendação útil, priorizada e capaz de conduzir a um agendamento com baixa fricção.
 
-Por exemplo:
+## 10. Nível de autonomia
 
-> "Não encontrei horários com o profissional que você costuma escolher na sexta-feira à noite. Ele possui disponibilidade sábado às 10h. Também encontrei outro profissional disponível sexta-feira às 19h. Qual opção você prefere?"
+Este caso exige um agente, e não apenas um formulário. O cliente não informa tudo de forma estruturada e a recomendação depende de interpretar intenção, contexto e ocasião. Um fluxo rígido seria insuficiente para esse tipo de decisão.
 
-Portanto, o agente terá como responsabilidades:
+No entanto, a autonomia precisa ser controlada. O agente não deve decidir sozinho a reserva final. Ele deve recomendar, validar e apoiar a decisão final do cliente.
 
-- interpretar solicitações em linguagem natural;
-- identificar informações ausentes;
-- realizar perguntas ao cliente quando necessário;
-- consultar dados da plataforma;
-- utilizar o histórico do cliente como contexto;
-- identificar padrões de preferência;
-- comparar alternativas;
-- recomendar opções;
-- adaptar a busca quando não encontrar uma correspondência adequada.
+## 11. Ferramentas esperadas
 
-A confirmação final de qualquer agendamento continuará sendo responsabilidade do cliente.
+| Ferramenta | Função | Leitura / escrita | Reversível | Contra o que conversa |
+|---|---|---|---|---|
+| `consultar_historico` | recupera preferências e agendamentos anteriores | Leitura | Sim | API mock; depois, API do monorepo |
+| `buscar_opcoes` | lista serviço, salão, profissional, preço e horário | Leitura | Sim | API mock; depois, API do monorepo |
+| `confirmar_agendamento` | cria a reserva de uma opção consultada | Escrita, com confirmação | Sim, por cancelamento | API mock; depois, API do monorepo |
 
-### 1.5 Casos reais da indústria
+## 12. Justificativa de negócio
 
-Nesta etapa serão pesquisados casos reais de empresas que utilizam agentes ou inteligência artificial para atendimento, recomendação, personalização ou agendamento de serviços.
+### Por que um agente e não software comum
 
-Para cada caso serão analisados:
+Um formulário simples não resolve bem cenários em que a demanda do cliente depende de contexto, ocasião, clima, estilo e intenção expressa em linguagem natural. O agente é útil porque ele consegue interpretar a necessidade real da pessoa e transformar isso em recomendações mais relevantes.
 
-- empresa;
-- problema enfrentado;
-- solução adotada;
-- resultados ou métricas divulgadas;
-- provável padrão arquitetural utilizado;
-- limitações das informações divulgadas.
+### Ganho esperado
 
-#### Caso 1 — [A pesquisar]
+Nesta primeira entrega, o grupo acompanhará somente **tempo para encontrar uma opção adequada**. Conversão e abandono continuam como hipóteses para as próximas etapas, não como promessa desta v1.
 
-**Empresa:**  
-**Problema:**  
-**Solução:**  
-**Resultados divulgados:**  
-**Padrão arquitetural provável:**  
-**Análise crítica:**
+Para registrar a linha de base, cada integrante cronometra dez buscas manuais no catálogo mock, da leitura do pedido até a escolha de uma opção. Depois repete o mesmo conjunto com o agente. A planilha de medições será adicionada antes da demonstração; nenhum valor é declarado como medido antes disso.
 
-#### Caso 2 — [A pesquisar]
+Quando houver as medições, a conta será apresentada assim:
 
-**Empresa:**  
-**Problema:**  
-**Solução:**  
-**Resultados divulgados:**  
-**Padrão arquitetural provável:**  
-**Análise crítica:**
+```text
+média manual de X min para média com agente de Y min
+redução = (X - Y) / X × 100
+impacto diário = redução × N buscas por dia
+```
 
-#### Caso 3 — [Opcional / a pesquisar]
+O ganho do negócio é reduzir o tempo de descoberta por busca; o ganho do cliente é encontrar opções compatíveis sem abrir vários perfis e comparar horários manualmente. A tensão é que uma recomendação muito rápida pode esconder alternativas relevantes; por isso a v1 mostra até três opções e mantém a escolha com o cliente.
 
-**Empresa:**  
-**Problema:**  
-**Solução:**  
-**Resultados divulgados:**  
-**Padrão arquitetural provável:**  
-**Análise crítica:**
+O custo de desenvolvimento é o tempo do grupo. O custo de execução mock é US$ 0; com o Mistral real, a estimativa está em `docs/modelos.md`. O risco assumido é recomendar uma opção pouco adequada; nesse caso, o cliente não confirma e pode pedir nova busca ou ser encaminhado à operação.
 
----
+### Ganho para o usuário
 
-## 2. Os usuários e como será a interação
+Para o cliente, o ganho é menor esforço, menos navegabilidade e uma resposta mais personalizada para a ocasião. Para a plataforma, o ganho é melhor conversão, maior retenção e melhor experiência de compra.
 
-### 2.1 Usuário principal
+## 13. Verificador
 
-O principal usuário do agente será o cliente final do Agende Aki.
+O verificador construído para a v1 é `src/verificar.py`, que confere os quatro casos rotulados em `dados/casos-avaliacao.json` contra os logs gerados por `python -m src.demo`.
 
-O agente funcionará como uma interface inteligente entre o cliente e os recursos disponíveis na plataforma, auxiliando na descoberta e escolha de serviços, estabelecimentos, profissionais e horários.
+Ele verifica: escrita somente no caso confirmado; preferência atual acima do histórico; erro estruturado para cliente inexistente; e ausência de escrita quando o cliente apenas compara opções.
 
-### 2.2 Interação com o agente
+```bash
+python -m src.demo
+python -m src.verificar
+```
 
-A interação ocorrerá por meio de uma interface conversacional integrada à plataforma Web do Agende Aki.
+## 14. Critério de sucesso
 
-O cliente poderá iniciar uma solicitação utilizando linguagem natural.
+O critério mínimo da Parte 1 é aprovar os **4 de 4 casos rotulados**. Além disso, o caso sem confirmação não pode criar agendamento e o caso de registro inexistente não pode encerrar o processo sem tentar buscar opções.
 
-Exemplo:
+## 15. Dados, privacidade e próximos passos
 
-> **Cliente:** Quero cortar o cabelo sábado à tarde.
+Os dados são simulados e vivem em `dados/catalogo.json`. Eles preservam a dificuldade do domínio com uma divergência de estilo, um cliente inexistente e um pedido de comparação que não deve escrever. Não há dados pessoais reais no repositório nem no contexto enviado ao modelo.
 
-O agente deverá interpretar a solicitação e verificar as informações disponíveis sobre o cliente.
+- [ ] **RAG (Parte 2):** políticas de serviços, duração, restrições e regras de cancelamento dos salões.
+- [ ] **MCP (Parte 2):** a API mock de catálogo e agendamento será reescrita como servidor MCP.
+- [ ] **LangChain/LangGraph (Parte 2):** o laço manual com estado será comparado a um grafo de estado.
+- [ ] **Multiagente (Parte 3):** um agente recomendador e um agente de agenda só serão separados se os testes mostrarem necessidade real.
 
-Caso exista histórico suficiente, ele poderá utilizá-lo para melhorar a recomendação.
+## 16. Maior risco
 
-> **Agente:** Você costuma realizar seus cortes com o profissional João aos sábados à tarde. Ele possui horários disponíveis às 14h e às 16h. Deseja uma dessas opções ou prefere consultar outros profissionais?
+O maior risco é o catálogo mock não representar disponibilidade e políticas reais dos salões. O plano B é manter o mock apenas para a avaliação da disciplina e adaptar a camada HTTP aos endpoints e regras do `monorepo-agendeaki` antes de qualquer integração real.
 
-O cliente também poderá alterar suas preferências a qualquer momento.
+## 17. Conclusão
 
-> **Cliente:** Dessa vez quero conhecer outro profissional e gastar no máximo R$ 60.
+O AgendeAkiAI é um caso relevante para agentes de IA porque combina linguagem natural, recomendação contextualizada e agendamento em um domínio real. A diferenciação principal está em tratar a ocasião como parte essencial da decisão, e não apenas o serviço em si.
 
-Nesse caso, o agente deverá considerar as novas informações como prioritárias para aquela interação e realizar uma nova busca.
+Esse eixo torna o projeto mais interessante para a disciplina e mais forte para o TCC, porque ele conecta uso de IA com problema de negócio real, recomendação personalizada e experiência do usuário.
 
-### 2.3 Fluxo esperado
-
-O fluxo básico será:
-
-1. O cliente informa sua necessidade utilizando linguagem natural.
-2. O agente interpreta a solicitação.
-3. O agente consulta o contexto e o histórico disponível do cliente.
-4. O agente identifica informações relevantes que ainda estão ausentes.
-5. Quando necessário, o agente realiza perguntas ao cliente.
-6. O agente consulta serviços, estabelecimentos, profissionais e horários disponíveis.
-7. O agente compara as alternativas encontradas.
-8. O agente utiliza as preferências atuais e históricas para priorizar as opções.
-9. O agente apresenta uma ou mais recomendações.
-10. O cliente seleciona uma alternativa.
-11. O agente prepara o agendamento.
-12. O cliente confirma a realização do agendamento.
-13. A interação e a escolha realizada passam a contribuir para o histórico de utilização do cliente.
-
-### 2.4 Histórico e identificação de padrões
-
-O agente utilizará o histórico de utilização para identificar padrões relacionados às escolhas do cliente.
-
-Entre as informações que poderão ser analisadas estão:
-
-- serviços realizados com maior frequência;
-- estabelecimentos utilizados;
-- profissionais escolhidos;
-- dias da semana mais utilizados;
-- períodos e horários preferidos;
-- faixa de preço das escolhas realizadas;
-- frequência de utilização de determinados serviços;
-- recomendações anteriormente aceitas.
-
-Essas informações poderão ser utilizadas para personalizar futuras recomendações.
-
-Por exemplo:
-
-> Um cliente que normalmente realiza corte de cabelo aos sábados durante a tarde e frequentemente escolhe determinado profissional poderá receber inicialmente opções que correspondam a esse padrão.
-
-Os padrões identificados não serão tratados como regras obrigatórias. As informações fornecidas pelo cliente na interação atual terão prioridade sobre preferências identificadas anteriormente.
-
-### 2.5 Memória do agente
-
-A memória poderá ser dividida em dois contextos principais.
-
-**Memória de curto prazo**
-
-Representa as informações da conversa atual, como:
-
-- serviço solicitado;
-- localização desejada;
-- orçamento;
-- data;
-- horário;
-- preferências informadas durante a conversa.
-
-**Memória de longo prazo**
-
-Representa informações obtidas a partir do histórico de utilização, como:
-
-- serviços frequentemente utilizados;
-- profissionais recorrentes;
-- estabelecimentos preferidos;
-- horários mais escolhidos;
-- faixas de preço recorrentes;
-- padrões identificados ao longo das utilizações.
-
-A combinação desses dois contextos permitirá que o agente considere tanto a necessidade atual quanto o comportamento anterior do cliente.
-
-### 2.6 Autonomia e confirmação
-
-O agente terá autonomia para:
-
-- interpretar solicitações;
-- consultar o histórico;
-- identificar padrões;
-- realizar perguntas;
-- consultar serviços;
-- consultar estabelecimentos;
-- consultar profissionais;
-- consultar horários;
-- comparar alternativas;
-- recomendar opções.
-
-Entretanto, o agente não deverá realizar automaticamente uma ação que efetive um agendamento sem a autorização do cliente.
-
-Antes da conclusão, o agente deverá apresentar as informações selecionadas e solicitar confirmação.
-
-Exemplo:
-
-> "Encontrei um horário para corte com João, no Salão X, sábado às 14h, por R$ 55. Deseja confirmar esse agendamento?"
-
-Somente após a confirmação do cliente o processo poderá prosseguir.
-
----
-
-## 3. Ganhos esperados
-
-### 3.1 Objetivo
-
-O principal objetivo do agente é tornar o processo de descoberta e escolha de serviços mais simples e personalizado.
-
-No fluxo tradicional, o cliente precisa procurar e combinar manualmente informações relacionadas a estabelecimentos, serviços, profissionais e horários.
-
-Com o agente, o cliente poderá descrever sua necessidade utilizando linguagem natural e receber recomendações baseadas tanto na solicitação atual quanto em seu histórico de utilização.
-
-### 3.2 Ganhos esperados
-
-Espera-se que o agente proporcione:
-
-- redução do esforço necessário para encontrar um agendamento adequado;
-- redução do tempo gasto durante a busca;
-- diminuição da quantidade de etapas manuais;
-- recomendações personalizadas;
-- aproveitamento do histórico de utilização do cliente;
-- identificação de padrões de preferência;
-- maior facilidade para encontrar alternativas;
-- experiência de atendimento mais contextualizada ao longo do tempo.
-
-### 3.3 Métrica principal
-
-A principal métrica proposta será:
-
-**Tempo necessário para encontrar e selecionar uma opção de agendamento adequada às necessidades do cliente.**
-
-Serão comparados dois cenários:
-
-**Fluxo tradicional**
-
-O cliente utiliza os recursos convencionais da plataforma para procurar estabelecimento, serviço, profissional, data e horário.
-
-**Fluxo com agente**
-
-O cliente descreve sua necessidade em linguagem natural e recebe recomendações do agente considerando suas preferências atuais e, quando disponível, seu histórico de utilização.
-
-### 3.4 Métricas complementares
-
-Além do tempo necessário para encontrar uma opção, poderão ser avaliadas:
-
-- quantidade de interações necessárias até uma escolha;
-- taxa de conclusão dos cenários;
-- quantidade de recomendações aceitas;
-- capacidade do agente de identificar corretamente preferências do cliente;
-- capacidade de recomendar alternativas quando a primeira opção não estiver disponível.
-
-### 3.5 Linha de base
-
-A linha de base será obtida experimentalmente.
-
-Serão definidos cenários de utilização e registrado o tempo necessário para concluir cada cenário utilizando o fluxo tradicional do Agende Aki.
-
-Posteriormente, os mesmos cenários serão realizados utilizando o agente.
-
-Exemplos:
-
-- encontrar um serviço específico em determinada data;
-- encontrar um serviço dentro de determinada faixa de preço;
-- encontrar um serviço considerando localização e período do dia;
-- encontrar um profissional já utilizado anteriormente;
-- encontrar uma alternativa quando a preferência principal estiver indisponível.
-
-Os valores quantitativos serão definidos somente após a realização dos testes, evitando a utilização de estimativas sem evidências.
-
----
-
-## Resumo do case
-
-**Projeto:** Agende Aki  
-**Agente:** Agente Inteligente do Agende Aki  
-**Indústria:** Serviços de beleza e cuidados pessoais  
-**Usuário principal:** Cliente final  
-**Interface:** Conversacional integrada à plataforma Web  
-
-**Responsabilidade principal:** Interagir com o cliente e recomendar serviços, estabelecimentos, profissionais, datas e horários de acordo com suas necessidades e preferências.
-
-**Memória:** Manter contexto da interação atual e utilizar o histórico de utilização para identificar padrões de preferência.
-
-**Personalização:** Utilizar padrões históricos para priorizar recomendações futuras sem impedir que o cliente altere suas preferências.
-
-**Autonomia:** Consultar informações, analisar alternativas e realizar recomendações.
-
-**Ação que exige confirmação:** Efetivação do agendamento.
 
 **Principal ganho esperado:** Tornar a descoberta e escolha de serviços mais rápida, simples e personalizada.
 
