@@ -1,0 +1,91 @@
+{
+  "clientes": {
+    "cliente-001": {
+      "nome": "Marina",
+      "preferencias": {
+        "estilo": "moderno",
+        "bairro": "Centro",
+        "periodo": "tarde"
+      },
+      "agendamentos": [
+        {
+          "servico": "Penteado",
+          "profissional": "Ana",
+          "estilo": "moderno"
+        }
+      ]
+    },
+    "cliente-002": {
+      "nome": "Rafael",
+      "preferencias": {
+        "estilo": "discreto",
+        "bairro": "Moema",
+        "periodo": "manha"
+      },
+      "agendamentos": []
+    }
+  },
+  "opcoes": [
+    {
+      "opcaoId": "opc-001",
+      "idUnidade": 101,
+      "idServico": 201,
+      "idFuncionario": 301,
+      "salao": "Studio Aurora",
+      "bairro": "Centro",
+      "servico": "Penteado clássico",
+      "profissional": "Bianca",
+      "dataHoraInicio": "2027-11-20T15:00:00-03:00",
+      "preco": 120.0,
+      "ocasioes": ["casamento", "formatura"],
+      "estilos": ["clássico", "elegante"],
+      "clima": ["quente", "ameno"]
+    },
+    {
+      "opcaoId": "opc-002",
+      "idUnidade": 102,
+      "idServico": 202,
+      "idFuncionario": 302,
+      "salao": "Bela Forma",
+      "bairro": "Centro",
+      "servico": "Maquiagem natural",
+      "profissional": "Carla",
+      "dataHoraInicio": "2027-11-20T17:00:00-03:00",
+      "preco": 140.0,
+      "ocasioes": ["casamento", "formatura", "festa"],
+      "estilos": ["natural", "elegante", "moderno"],
+      "clima": ["quente"]
+    },
+    {
+      "opcaoId": "opc-003",
+      "idUnidade": 103,
+      "idServico": 203,
+      "idFuncionario": 303,
+      "salao": "Corte & Cia",
+      "bairro": "Moema",
+      "servico": "Corte executivo",
+      "profissional": "Diego",
+      "dataHoraInicio": "2027-11-22T09:00:00-03:00",
+      "preco": 75.0,
+      "ocasioes": ["entrevista", "trabalho"],
+      "estilos": ["profissional", "discreto"],
+      "clima": ["quente", "frio"]
+    },
+    {
+      "opcaoId": "opc-004",
+      "idUnidade": 104,
+      "idServico": 204,
+      "idFuncionario": 304,
+      "salao": "Espaço Íris",
+      "bairro": "Vila Mariana",
+      "servico": "Maquiagem para festa",
+      "profissional": "Elisa",
+      "dataHoraInicio": "2027-11-21T19:00:00-03:00",
+      "preco": 180.0,
+      "ocasioes": ["festa", "formatura"],
+      "estilos": ["marcante", "moderno"],
+      "clima": ["ameno"]
+    }
+  ]
+}
+
