@@ -114,6 +114,7 @@ A arquitetura evoluirá para uma solução mais robusta em etapas posteriores, i
 - `src/demo.py`: execução automática dos quatro casos da entrega;
 - `prompts/`: prompt versionado;
 - `dados/`: catálogo e clientes simulados;
+- `dados/conhecimento/`: documentos simulados para a futura base de conhecimento;
 - `logs/`: trajetórias geradas pela demonstração;
 - `docs/`: case, análise dos modelos e arquitetura.
 
