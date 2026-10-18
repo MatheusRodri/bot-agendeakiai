@@ -48,9 +48,9 @@ O cliente normalmente não informa todos os filtros na primeira mensagem. O agen
 
 ## Sistema e autonomia
 
-O sistema interpreta por regras simples uma necessidade expressa em linguagem natural, consulta histórico e catálogo por HTTP, pesquisa regras em Markdown e só grava uma reserva após aprovação explícita e retomada do grafo. Não inventa horários, preços ou regras.
+O sistema recebe o pedido em texto, identifica filtros, consulta histórico, catálogo e regras e pede aprovação antes de gravar uma reserva. Preços, horários e regras vêm das fontes consultadas; o código controla a escrita.
 
-O nível implementado é **workflow com router**: o catálogo e as rotas são conhecidos e as lacunas são resolvidas com perguntas fixas. A redação Gemini é opcional; no mock, as decisões continuam no código. Não há justificativa atual para um ciclo livre de ferramentas ou para autonomia do modelo sobre regras e escrita.
+A implementação é um **workflow com roteamento em código**. O Gemini é opcional e apenas redige a resposta final. Na Parte 2, vamos avaliar se o modelo pode interpretar melhor pedidos incompletos ou ambíguos, mantendo filtros, validação de regras e aprovação sob controle do código.
 
 | Ferramenta | O que faz | Leitura ou escrita? | Reversível? | Contra o que conversa |
 |---|---|---|---|---|
@@ -61,13 +61,11 @@ O nível implementado é **workflow com router**: o catálogo e as rotas são co
 
 ## Justificativa de negócio
 
-O workflow reduz a repetição de filtros para o cliente e identifica o dado mínimo que falta. Um filtro tradicional continua aplicando restrições; a API mock grava a reserva apenas depois da aprovação. O modo Gemini não decide regras de negócio nem recebe poder de escrita.
+Esta POC testa se descrever a ocasião e as preferências em texto livre ajuda o cliente a encontrar uma opção com menos ações do que preencher filtros. Um formulário pode ser suficiente; a comparação vai mostrar se a conversa traz vantagem.
 
-O ganho que será medido é **ações manuais para chegar a uma opção**. A linha de base ainda precisa ser coletada no frontend real do `monorepo-agendeaki`: dez pessoas (ou dez execuções guiadas) realizarão os mesmos cenários, registrando número de telas, filtros preenchidos e tempo. Não há medições reais no repositório ainda; portanto, não declaramos porcentagem de ganho como fato.
+O benefício esperado para o cliente é informar o que procura em linguagem natural. Para o negócio, a hipótese é reduzir o esforço de busca sem diminuir a taxa de conclusão. Ainda não temos medições reais, então não afirmamos que esses ganhos já ocorreram.
 
-O alvo da POC, a validar nessa coleta, é reduzir a mediana de ações de busca por cenário, sem reduzir a taxa de conclusão. A conta que será usada é: `(mediana de ações no fluxo tradicional − mediana de ações com agente) / mediana de ações no fluxo tradicional × 100`, multiplicada pela quantidade mensal de buscas concluídas. É uma hipótese, não um resultado já comprovado.
-
-Para o negócio, a possível redução é de esforço por busca e abandono; para o cliente, é não precisar repetir filtros e receber uma alternativa explicada. Há uma tensão: automatizar demais pode recomendar algo inadequado; por isso o cliente escolhe e confirma, e o caso ambíguo é escalado.
+A linha de base será coletada no frontend do `monorepo-agendeaki`, comparando os mesmos dez cenários no fluxo atual e no agente. Vamos registrar tempo, telas ou filtros usados, trocas e conclusão. O ganho será calculado pela diferença percentual entre as medianas de ações; os resultados e o volume mensal serão usados para estimar o impacto. O cliente continuará escolhendo e aprovando a reserva; casos sem suporte serão encaminhados à operação.
 
 O modo mock custa US$ 0. Para o Gemini 3.8 Flash, a estimativa de tokens e custo está em [modelos.md](modelos.md). O custo de construção é o tempo da equipe. A perda mais importante é uma recomendação inadequada ou reserva indevida; a POC mitiga a segunda com confirmação explícita, mas não promete eliminar a primeira.
 
