@@ -101,7 +101,7 @@ def main() -> int:
                     if arquivo.startswith("06-"):
                         evento = next(item for item in estado["eventos"] if item.get("ferramenta") == "confirmar_agendamento")
                         opcao = next(item for item in estado["eventos"] if item.get("tipo") == "aprovacao_humana")["opcao_id"]
-                        segunda = ferramentas.confirmar_agendamento(next(o for o in estado.get("opcoes", []) if o["opcaoId"] == opcao), evento["chave_idempotencia"], cliente_id)
+                        segunda = ferramentas.confirmar_agendamento(next(o for o in estado.get("opcoes", []) if o["opcaoId"] == opcao), evento["argumentos"]["chave_idempotencia"], cliente_id)
                         identificadores = {evento["resultado"].get("agendamento", {}).get("idAgendamento"), segunda.get("agendamento", {}).get("idAgendamento")}
                         identificadores.discard(None)
                         repeticao = {"primeira_escrita": evento["resultado"], "segunda_chamada": segunda, "agendamentos_unicos": len(identificadores)}
