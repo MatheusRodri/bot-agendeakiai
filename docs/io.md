@@ -14,7 +14,7 @@ O cliente envia texto livre em português. O identificador do cliente e o da con
 | `fontes` | `list[str]` | Ferramenta, corpus ou entrada que sustenta a resposta |
 | `suficiente` | `bool` | Se a base consultada permite responder. Recusa e pergunta de esclarecimento usam `false` |
 
-Os exemplos abaixo foram serializados diretamente dos logs. Todos foram executados em **2026-10-04 (UTC)**. Os logs guardam `executado_em`, `commit_base` e impressão SHA-256 de todos os arquivos Python em `src/` e do prompt ativo. `arvore_de_trabalho_alterada: true` significa que as alterações implementadas ainda não pertenciam ao commit indicado em `commit_base`; por isso esse valor é a revisão base, não um commit que contenha esta execução. O commit da implementação só pode ser registrado depois de um commit feito pelo grupo.
+Os exemplos abaixo foram serializados diretamente dos logs e executados em **2026-10-18 (UTC)**. Os logs guardam `executado_em`, `commit_base` e impressão SHA-256 de todos os arquivos Python em `src/` e do prompt ativo. Eles apontam para o commit `01f0b54978bff9a5040973fbb5deb4e910e7f2ca`; `arvore_de_trabalho_alterada: false` confirma que o código e o prompt correspondiam à revisão durante a execução.
 
 ## Exemplo 1 — caminho feliz
 
@@ -34,7 +34,7 @@ Saída completa validada:
 }
 ```
 
-O log mostra uma aprovação humana antes da escrita e a confirmação de uma opção que veio do catálogo mock. Metadados da execução: `2026-10-04T23:34:59Z`, revisão base `abd83eaee75c70a3ec21c1cec259084fd29860b4`.
+O log mostra uma aprovação humana antes da escrita e a confirmação de uma opção que veio do catálogo mock. Metadados da execução: `2026-10-18T19:17:36Z`, revisão `01f0b54978bff9a5040973fbb5deb4e910e7f2ca`.
 
 ## Exemplo 2 — recusa sem suporte no corpus
 

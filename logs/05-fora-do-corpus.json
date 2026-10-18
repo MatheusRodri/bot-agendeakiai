@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Qual produto devo usar para tratar minha alergia na pele?",
     "cliente_id": "cliente-002",
-    "conversa_id": "demo-05-fora-do-corpus-1791156899998"
+    "conversa_id": "demo-05-fora-do-corpus-1792351056679"
   },
-  "executado_em": "2026-10-04T23:35:00.031137+00:00",
-  "commit_base": "abd83eaee75c70a3ec21c1cec259084fd29860b4",
-  "arvore_de_trabalho_alterada": true,
-  "impressao_do_codigo": "3b7c7b9310f994f28dc96379bbe912afa46f7f7bfa06dbd2fedf3e9021d61409",
+  "executado_em": "2026-10-18T19:17:36.712982+00:00",
+  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "arvore_de_trabalho_alterada": false,
+  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
   "saida_validada": {
     "resultado": "Não encontrei uma regra suficiente no corpus para responder com segurança. Procure a operação do AgendeAki.",
     "fontes": [],
@@ -27,6 +27,9 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "consultar_historico",
+      "argumentos": {
+        "cliente_id": "cliente-002"
+      },
       "resultado": {
         "ok": true,
         "cliente": {
@@ -58,6 +61,9 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "buscar_regra",
+      "argumentos": {
+        "consulta": "Qual produto devo usar para tratar minha alergia na pele?"
+      },
       "resultado": {
         "trechos": [],
         "suficiente": false

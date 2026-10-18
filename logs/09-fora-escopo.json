@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Como preparo uma planilha de orçamento doméstico?",
     "cliente_id": "cliente-002",
-    "conversa_id": "demo-09-fora-escopo-1791156900236"
+    "conversa_id": "demo-09-fora-escopo-1792351056840"
   },
-  "executado_em": "2026-10-04T23:35:00.289100+00:00",
-  "commit_base": "abd83eaee75c70a3ec21c1cec259084fd29860b4",
-  "arvore_de_trabalho_alterada": true,
-  "impressao_do_codigo": "3b7c7b9310f994f28dc96379bbe912afa46f7f7bfa06dbd2fedf3e9021d61409",
+  "executado_em": "2026-10-18T19:17:36.877797+00:00",
+  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "arvore_de_trabalho_alterada": false,
+  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
   "saida_validada": {
     "resultado": "Posso ajudar a encontrar e agendar serviços de beleza. Não realizei nenhum agendamento.",
     "fontes": [],
@@ -27,6 +27,9 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "consultar_historico",
+      "argumentos": {
+        "cliente_id": "cliente-002"
+      },
       "resultado": {
         "ok": true,
         "cliente": {

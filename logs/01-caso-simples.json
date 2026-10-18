@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero um penteado clássico para casamento no Centro até R$ 150. Confirmo o agendamento da melhor opção encontrada.",
     "cliente_id": "cliente-001",
-    "conversa_id": "demo-01-caso-simples-1791156899830"
+    "conversa_id": "demo-01-caso-simples-1792351056507"
   },
-  "executado_em": "2026-10-04T23:34:59.893437+00:00",
-  "commit_base": "abd83eaee75c70a3ec21c1cec259084fd29860b4",
-  "arvore_de_trabalho_alterada": true,
-  "impressao_do_codigo": "3b7c7b9310f994f28dc96379bbe912afa46f7f7bfa06dbd2fedf3e9021d61409",
+  "executado_em": "2026-10-18T19:17:36.564932+00:00",
+  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "arvore_de_trabalho_alterada": false,
+  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
   "saida_validada": {
     "resultado": "Agendamento agd-001 confirmado: Penteado clássico com Bianca no Studio Aurora, por R$ 120.00.",
     "fontes": [
@@ -29,6 +29,9 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "consultar_historico",
+      "argumentos": {
+        "cliente_id": "cliente-001"
+      },
       "resultado": {
         "ok": true,
         "cliente": {
@@ -59,7 +62,7 @@
         "preferencias": {
           "estilo": {
             "valor": "moderno",
-            "atualizado_em": "2026-10-04T23:30:49.248600+00:00"
+            "atualizado_em": "2026-10-18T19:16:30.810424+00:00"
           }
         }
       }
@@ -71,6 +74,12 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "buscar_opcoes",
+      "argumentos": {
+        "servico": "penteado",
+        "bairro": "Centro",
+        "orcamento_max": 150.0,
+        "cliente_id": "cliente-001"
+      },
       "resultado": {
         "ok": true,
         "opcoes": [
@@ -134,19 +143,23 @@
       "decisao": "aprovar",
       "motivo": "",
       "opcao_id": "opc-001",
-      "expira_em": "2026-10-04T23:49:59.847741+00:00"
+      "expira_em": "2026-10-18T19:32:36.520683+00:00"
     },
     {
       "tipo": "ferramenta",
       "ferramenta": "confirmar_agendamento",
-      "chave_idempotencia": "e93de28dfb3671a1ecceee6f4a32a342cc9c2758cc0ee7f4a89ffb1d1480a54a",
+      "argumentos": {
+        "cliente_id": "cliente-001",
+        "opcao_id": "opc-001",
+        "chave_idempotencia": "e93de28dfb3671a1ecceee6f4a32a342cc9c2758cc0ee7f4a89ffb1d1480a54a"
+      },
       "resultado": {
         "ok": true,
         "agendamento": {
           "idAgendamento": "agd-001",
           "clienteId": "cliente-001",
           "status": "CONFIRMADO",
-          "criadoEm": "2026-10-04T23:34:59.878786+00:00",
+          "criadoEm": "2026-10-18T19:17:36.549667+00:00",
           "opcao": {
             "opcaoId": "opc-001",
             "idUnidade": 101,
@@ -186,7 +199,7 @@
       "idAgendamento": "agd-001",
       "clienteId": "cliente-001",
       "status": "CONFIRMADO",
-      "criadoEm": "2026-10-04T23:34:59.878786+00:00",
+      "criadoEm": "2026-10-18T19:17:36.549667+00:00",
       "opcao": {
         "opcaoId": "opc-001",
         "idUnidade": 101,
@@ -242,6 +255,6 @@
         "preco": 135.0
       }
     ],
-    "expira_em": "2026-10-04T23:49:59.847741+00:00"
+    "expira_em": "2026-10-18T19:32:36.520683+00:00"
   }
 }

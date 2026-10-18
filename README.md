@@ -25,7 +25,7 @@ python conferir_grafo.py
 python -m src.verificar_checkpoint
 ```
 
-A demonstração inicia a API mock em `127.0.0.1:8765` e grava nove cenários em `logs/`. Ela também gera um cenário adicional de aprovação expirada. Os exemplos guardam o hash do código executado e a revisão base; como logs de um diretório de trabalho ainda não comprometido não podem apontar para um commit que contenha as alterações, atualize esse vínculo depois do primeiro commit da implementação.
+A demonstração inicia a API mock em `127.0.0.1:8765` e grava dez cenários em `logs/`. Cada log registra o commit-base e o hash do código; os logs atuais foram gerados a partir do commit `01f0b54978bff9a5040973fbb5deb4e910e7f2ca`, com a árvore de código limpa.
 
 ## Como usar
 
@@ -35,19 +35,27 @@ Suba a API mock em um terminal:
 python -m src.mock_api
 ```
 
-Em outro terminal, inicie uma busca. O primeiro comando não agenda; ele responde com serviço, salão, profissional, horário, preço e `conversa_id`:
+Em outro terminal, envie o pedido com confirmação. O grafo pausa antes de gravar a reserva e apresenta a opção para aprovação humana:
 
 ```bash
 python -m src.main --cliente-id cliente-001 --conversa-id conversa-123 \
   --message "Quero penteado clássico para casamento no Centro até R$ 150. Confirmo."
 ```
 
-Para um pedido de agendamento, o grafo pausa e mostra os dados exatos da reserva. Retome a mesma conversa após a decisão humana:
+O comando pausa e apresenta a opção. Depois de aprová-la, retome a mesma conversa:
 
 ```bash
-python -m src.main --cliente-id cliente-001 --conversa-id conversa-123 \
-  --message "Quero penteado clássico para casamento no Centro até R$ 150. Confirmo."
 python -m src.main --cliente-id cliente-001 --conversa-id conversa-123 --retomar aprovar
+```
+
+Saída final após a aprovação:
+
+```json
+{
+  "resultado": "Agendamento agd-001 confirmado: Penteado clássico com Bianca no Studio Aurora, por R$ 120.00.",
+  "fontes": ["API mock: catálogo de opções"],
+  "suficiente": true
+}
 ```
 
 Use `--retomar rejeitar` para recusar ou `--editar-opcao-id opc-005` para trocar para uma opção que já apareceu na consulta. A aprovação dura 15 minutos. O `thread_id` é o identificador da conversa e o checkpoint fica em `dados/checkpoints.sqlite`.
@@ -75,6 +83,8 @@ Se alguma coordenada ou credencial não estiver no `.env`, o terminal solicitar�
 ## Modo Gemini opcional
 
 Copie `.env.example` para `.env`, preencha `GEMINI_API_KEY`, configure `LLM_MODELO` (por padrão, `gemini-3.8-flash`) e as taxas atuais de entrada/saída por milhão de tokens, e ajuste `MODO=gemini`. Há um limite local de US$ 0,01 e 4.000 tokens estimados por execução remota. A chamada opcional redige a resposta final com base na resposta verificada pelo código; a ferramenta de escrita continua protegida pela aprovação humana. A demonstração padrão não avalia o comportamento do modelo nem consome API.
+
+Para comparar a frase selecionada do prompt nas dez perguntas, execute `python -m src.avaliar_prompt`. O avaliador faz até 20 chamadas, com teto de US$ 0,01 por chamada e US$ 0,20 total, e salva respostas e custos em `dados/resultado-avaliacao-prompt.json`.
 
 ## Remover dados locais
 

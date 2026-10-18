@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Apesar de eu normalmente escolher algo moderno, hoje quero penteado clássico no Centro até R$ 150.",
     "cliente_id": "cliente-001",
-    "conversa_id": "demo-02-divergencia-1791156899893"
+    "conversa_id": "demo-02-divergencia-1792351056565"
   },
-  "executado_em": "2026-10-04T23:34:59.926304+00:00",
-  "commit_base": "abd83eaee75c70a3ec21c1cec259084fd29860b4",
-  "arvore_de_trabalho_alterada": true,
-  "impressao_do_codigo": "3b7c7b9310f994f28dc96379bbe912afa46f7f7bfa06dbd2fedf3e9021d61409",
+  "executado_em": "2026-10-18T19:17:36.597883+00:00",
+  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "arvore_de_trabalho_alterada": false,
+  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
   "saida_validada": {
     "resultado": "Sua preferência atual foi priorizada sobre o histórico. Opções: opc-001: Penteado clássico com Bianca, Centro, 2027-11-20T15:00:00-03:00, R$ 120.00; opc-005: Penteado elegante com Lívia, Centro, 2027-11-20T16:00:00-03:00, R$ 135.00. Nenhum agendamento foi realizado.",
     "fontes": [
@@ -29,6 +29,9 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "consultar_historico",
+      "argumentos": {
+        "cliente_id": "cliente-001"
+      },
       "resultado": {
         "ok": true,
         "cliente": {
@@ -59,7 +62,7 @@
         "preferencias": {
           "estilo": {
             "valor": "moderno",
-            "atualizado_em": "2026-10-04T23:30:49.248600+00:00"
+            "atualizado_em": "2026-10-18T19:16:30.810424+00:00"
           }
         }
       }
@@ -71,6 +74,12 @@
     {
       "tipo": "ferramenta",
       "ferramenta": "buscar_opcoes",
+      "argumentos": {
+        "servico": "penteado",
+        "bairro": "Centro",
+        "orcamento_max": 150.0,
+        "cliente_id": "cliente-001"
+      },
       "resultado": {
         "ok": true,
         "opcoes": [

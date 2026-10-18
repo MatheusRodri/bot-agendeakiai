@@ -1,0 +1,12 @@
+{
+  "executado_em": "2026-10-18T19:16:12.840396+00:00",
+  "modelo": "gemini-3.8-flash",
+  "frase_comparada": "Não exponha raciocínio interno.",
+  "hash_prompt_com_frase": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2",
+  "hash_prompt_sem_frase": "a1f28bbd439e5293fb36229c057abc1c13002f10ee729fdf36371e954307d88f",
+  "teto_total_usd": 0.2,
+  "gasto_usd": 0.0,
+  "casos": [],
+  "status": "bloqueado_prevalidacao",
+  "erro_tipo": "ValueError"
+}

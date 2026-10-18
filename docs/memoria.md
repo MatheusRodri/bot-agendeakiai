@@ -19,6 +19,10 @@ Preferência semântica só é escrita se o cliente usar linguagem explícita (p
 
 O pedido atual prevalece sobre histórico e memória. A rotina de recomendação detecta quando existe um estilo explícito atual e não aplica o estilo guardado. A expressão `maquiagem natural` é tratada como nome de serviço, não como declaração de preferência.
 
+## Conversa e limite de contexto
+
+O campo `mensagens` recebe apenas a mensagem da execução atual; mensagens anteriores não são anexadas ao contexto enviado ao Gemini. O checkpoint SQLite preserva o estado necessário para retomar uma aprovação interrompida, não um histórico conversacional crescente. Assim, esta POC não enche a janela de contexto e não aplica truncamento ou resumo; nada é descartado da lista de mensagens porque ela contém somente a entrada atual. Se o produto passar a acumular turnos, será necessário definir retenção e descarte antes de ampliar o contexto. Ao fim da execução, sobrevive na memória de longo prazo no máximo um episódio de até 180 caracteres, além de uma preferência explicitamente declarada.
+
 ## Remoção
 
 Execute `python -m src.esquecer --cliente-id cliente-001 --confirmar`. O código remove episódios e preferências do JSON, localiza checkpoints pelo `cliente_id` guardado no estado, apaga threads correspondentes e remove logs cujo campo de entrada referencia o cliente. A confirmação explícita evita executar a exclusão por engano.
