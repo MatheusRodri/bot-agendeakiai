@@ -19,12 +19,20 @@ MAX_CUSTO_USD = 0.01
 MAX_TOKENS_TOTAIS = 4000
 
 
-def responder_com_gemini(texto: str, resposta_base: str, fontes: list[str], suficiente: bool) -> tuple[dict[str, Any], dict[str, int | float]]:
+def responder_com_gemini(
+    texto: str,
+    resposta_base: str,
+    fontes: list[str],
+    suficiente: bool,
+    *,
+    prompt_override: str | None = None,
+    custo_maximo_usd: float = MAX_CUSTO_USD,
+) -> tuple[dict[str, Any], dict[str, int | float]]:
     load_dotenv(ROOT / ".env")
     chave = os.getenv("GEMINI_API_KEY", "")
     if not chave:
         raise ValueError("Defina GEMINI_API_KEY no .env para usar o modo Gemini.")
-    prompt = (ROOT / "src" / "prompts" / "agente-v1.txt").read_text(encoding="utf-8")
+    prompt = prompt_override if prompt_override is not None else (ROOT / "src" / "prompts" / "agente-v1.txt").read_text(encoding="utf-8")
     pedido = json.dumps({"pedido": texto, "resposta_verificada": resposta_base, "fontes": fontes, "suficiente": suficiente}, ensure_ascii=False)
     # Cada token consome pelo menos um byte; os bytes dão um teto conservador antes da chamada.
     entrada_estimada = len(prompt.encode("utf-8")) + len(pedido.encode("utf-8")) + 100
@@ -35,8 +43,9 @@ def responder_com_gemini(texto: str, resposta_base: str, fontes: list[str], sufi
     taxa_entrada = float(entrada_usd)
     taxa_saida = float(saida_usd)
     custo_estimado = (entrada_estimada * taxa_entrada + 400 * taxa_saida) / 1_000_000
-    if entrada_estimada + 400 > MAX_TOKENS_TOTAIS or custo_estimado > MAX_CUSTO_USD:
-        raise ValueError("A chamada Gemini excederia o limite local de tokens ou de US$ 0,01.")
+    limite_chamada = min(MAX_CUSTO_USD, custo_maximo_usd)
+    if entrada_estimada + 400 > MAX_TOKENS_TOTAIS or custo_estimado > limite_chamada:
+        raise ValueError(f"A chamada Gemini excederia o limite local de tokens ou de US$ {limite_chamada:.2f}.")
     cliente = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=10_000))
     # Técnica: zero-shot; o modelo apenas reescreve fatos já conferidos pelo código.
     # Contrato: JSON SaidaAgente; schema e validação impedem campos extras e tipos inválidos.
