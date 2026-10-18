@@ -88,7 +88,7 @@ def main() -> int:
                 if interrupcoes:
                     pausa = interrupcoes[0].value
                     if arquivo.startswith("10-"):
-                        grafo = _GRAFO_CACHE[ferramentas.base_url]
+                        grafo = _GRAFO_CACHE[(type(ferramentas), ferramentas.base_url)]
                         configuracao = {"configurable": {"thread_id": conversa_id}}
                         pendente = estado["aprovacao_pendente"]
                         pendente["expira_em"] = "2000-01-01T00:00:00+00:00"

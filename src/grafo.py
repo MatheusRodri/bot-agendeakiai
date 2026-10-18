@@ -94,6 +94,8 @@ def _destino_aprovacao(estado: EstadoAgente) -> str:
 
 
 def criar_nos(ferramentas: ApiTools):
+    fonte_catalogo = getattr(ferramentas, "fonte_catalogo", "API mock: catálogo de opções")
+
     def validar(estado: EstadoAgente) -> dict[str, Any]:
         entrada = EntradaAgente(texto=estado["texto"], cliente_id=estado["cliente_id"], conversa_id=estado["conversa_id"], aprovar=estado.get("aprovar", False))
         arquivo_prompt = ROOT / "src" / "prompts" / "agente-v1.txt"
@@ -102,7 +104,7 @@ def criar_nos(ferramentas: ApiTools):
 
     def consultar_contexto(estado: EstadoAgente) -> dict[str, Any]:
         historico = ferramentas.consultar_historico(estado["cliente_id"])
-        memoria = recuperar(estado["cliente_id"], estado["texto"])
+        memoria = recuperar(estado["cliente_id"], estado["texto"]) if getattr(ferramentas, "usar_memoria_local", True) else {"preferencias": {}, "episodios": []}
         eventos = [{"tipo": "ferramenta", "ferramenta": "consultar_historico", "argumentos": {"cliente_id": estado["cliente_id"]}, "resultado": historico}, {"tipo": "memoria", "resultado": memoria}]
         return {"historico": historico, "memoria": memoria, "eventos": eventos, "passos": estado.get("passos", 0) + 1}
 
@@ -137,16 +139,16 @@ def criar_nos(ferramentas: ApiTools):
             return {"resultado": "Não consegui consultar a disponibilidade agora. Nenhum agendamento foi feito.", "fontes": ["buscar_opcoes"], "suficiente": False, "opcoes": [], "eventos": eventos, "passos": estado.get("passos", 0) + 1}
         if not filtros["bairro"] and len(opcoes) > 1:
             bairros = sorted({opcao["bairro"] for opcao in opcoes})
-            return {"resultado": f"Encontrei opções em {', '.join(bairros)}. Qual bairro prefere?", "fontes": ["API mock: catálogo de opções"], "suficiente": False, "opcoes": opcoes, "eventos": eventos + [{"tipo": "entrada_ambigua", "campo": "bairro", "opcoes": bairros}], "passos": estado.get("passos", 0) + 1}
+            return {"resultado": f"Encontrei opções em {', '.join(bairros)}. Qual bairro prefere?", "fontes": [fonte_catalogo], "suficiente": False, "opcoes": opcoes, "eventos": eventos + [{"tipo": "entrada_ambigua", "campo": "bairro", "opcoes": bairros}], "passos": estado.get("passos", 0) + 1}
         if not opcoes:
-            return {"resultado": "Não encontrei opções para esses filtros. Podemos ajustar bairro ou orçamento; nenhum agendamento foi realizado.", "fontes": ["API mock: catálogo de opções"], "suficiente": True, "opcoes": [], "eventos": eventos, "passos": estado.get("passos", 0) + 1}
+            return {"resultado": "Não encontrei opções para esses filtros. Podemos ajustar bairro ou orçamento; nenhum agendamento foi realizado.", "fontes": [fonte_catalogo], "suficiente": True, "opcoes": [], "eventos": eventos, "passos": estado.get("passos", 0) + 1}
         opcoes_texto = "; ".join(f'{o["opcaoId"]}: {o["servico"]} com {o["profissional"]}, {o["bairro"]}, {o["dataHoraInicio"]}, R$ {o["preco"]:.2f}' for o in opcoes[:3])
         estilo_historico = estado.get("historico", {}).get("cliente", {}).get("preferencias", {}).get("estilo", estilo_salvo)
         estilo_atual = next((item for item in estilos_digitados if item in _normalizar(texto) and not (item == "natural" and "maquiagem natural" in _normalizar(texto))), "")
         prefixo = "Sua preferência atual foi priorizada sobre o histórico. " if estilo_atual and estilo_historico and estilo_atual != _normalizar(estilo_historico) else ""
         resultado = f"{prefixo}Opções: {opcoes_texto}. Nenhum agendamento foi realizado."
         pedir = _pede_agendamento(texto)
-        return {"resultado": resultado, "fontes": ["API mock: catálogo de opções"], "suficiente": True, "opcoes": opcoes, "exige_aprovacao": pedir, "eventos": eventos, "passos": estado.get("passos", 0) + 1}
+        return {"resultado": resultado, "fontes": [fonte_catalogo], "suficiente": True, "opcoes": opcoes, "exige_aprovacao": pedir, "eventos": eventos, "passos": estado.get("passos", 0) + 1}
 
     def decidir_proxima_acao(estado: EstadoAgente) -> dict[str, Any]:
         if estado.get("passos", 0) >= MAX_PASSOS:
@@ -155,7 +157,7 @@ def criar_nos(ferramentas: ApiTools):
         elif "resultado" not in estado:
             acao = "consultar_fontes"
             retorno = {}
-        elif estado.get("exige_aprovacao"):
+        elif estado.get("exige_aprovacao") and getattr(ferramentas, "allow_booking", True):
             acao = "preparar_aprovacao"
             retorno = {}
         else:
@@ -214,7 +216,8 @@ def criar_nos(ferramentas: ApiTools):
                 eventos.append({"tipo": "modelo", "nome": os.getenv("LLM_MODELO") or "gemini-3.8-flash", **uso})
             except Exception as erro:
                 eventos.append({"tipo": "modelo", "erro": str(erro), "resposta_base_preservada": True})
-        registrar(estado["cliente_id"], estado["texto"])
+        if getattr(ferramentas, "usar_memoria_local", True):
+            registrar(estado["cliente_id"], estado["texto"])
         evento_aprovacao = next((evento for evento in estado.get("eventos", []) if evento.get("tipo") == "aprovacao_humana"), {})
         motivo = "agendamento_confirmado" if estado.get("agendamento") else evento_aprovacao.get("motivo") or ("aprovacao_rejeitada" if evento_aprovacao else "resposta_final")
         if estado.get("passos", 0) >= MAX_PASSOS:
@@ -246,14 +249,16 @@ def montar_grafo(ferramentas: ApiTools):
     fluxo.add_conditional_edges("aprovar_agendamento", _destino_aprovacao, {"registrar_agendamento": "registrar_agendamento", "finalizar": "finalizar"})
     fluxo.add_edge("registrar_agendamento", "finalizar")
     fluxo.add_edge("finalizar", END)
-    return fluxo.compile(checkpointer=CHECKPOINTER)
+    checkpointer = CHECKPOINTER if getattr(ferramentas, "persistir_checkpoint", True) else None
+    return fluxo.compile(checkpointer=checkpointer)
 
 
 def executar(entrada: EntradaAgente, ferramentas: ApiTools, aprovar: bool | dict[str, Any] | None = None) -> dict[str, Any]:
     global _GRAFO_CACHE
-    if ferramentas.base_url not in _GRAFO_CACHE:
-        _GRAFO_CACHE[ferramentas.base_url] = montar_grafo(ferramentas)
-    grafo = _GRAFO_CACHE[ferramentas.base_url]
+    chave_cache = (type(ferramentas), ferramentas.base_url)
+    if chave_cache not in _GRAFO_CACHE:
+        _GRAFO_CACHE[chave_cache] = montar_grafo(ferramentas)
+    grafo = _GRAFO_CACHE[chave_cache]
     thread_id = entrada.conversa_id
     config = {"configurable": {"thread_id": thread_id}, "recursion_limit": MAX_PASSOS + 4}
     if aprovar is not None:
@@ -266,7 +271,7 @@ def saida_validada(estado: dict[str, Any]) -> dict[str, Any]:
     return SaidaAgente(resultado=estado.get("resultado", ""), fontes=estado.get("fontes", []), suficiente=estado.get("suficiente", False)).model_dump()
 
 
-_GRAFO_CACHE: dict[str, Any] = {}
+_GRAFO_CACHE: dict[tuple[type, str], Any] = {}
 URL_API_PADRAO = os.getenv("API_BASE_URL") or "http://127.0.0.1:8765"
 GRAFO = montar_grafo(ApiTools(URL_API_PADRAO, "token-mock"))
-_GRAFO_CACHE[URL_API_PADRAO] = GRAFO
+_GRAFO_CACHE[(ApiTools, URL_API_PADRAO)] = GRAFO
