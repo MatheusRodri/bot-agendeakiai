@@ -41,7 +41,7 @@ O cliente normalmente não informa todos os filtros na primeira mensagem. O agen
 1. **ENTRADA** — recebe texto livre, identificador do cliente e da conversa. **[decide: CÓDIGO]**
 2. **CONTEXTO** — consulta histórico e memória; se o cliente não existir, registra o erro e segue sem personalização. **[decide: CÓDIGO]**
 3. **RECUPERAÇÃO** — encaminha a pergunta às regras Markdown ou consulta catálogo e agenda estruturados. **[decide: CÓDIGO]**
-4. **ESCLARECIMENTO/RESPOSTA** — pergunta o serviço que falta, desambigua bairro, recusa regra ausente ou mostra opções. **[decide: CÓDIGO; redação Mistral opcional]**
+4. **ESCLARECIMENTO/RESPOSTA** — pergunta o serviço que falta, desambigua bairro, recusa regra ausente ou mostra opções. **[decide: CÓDIGO; redação Gemini opcional]**
 5. **APROVAÇÃO** — antes de escrever, apresenta serviço, profissional, horário, preço e alternativas; espera decisão do cliente final. **[interrupt; 15 min]**
 6. **AGENDAMENTO** — grava a reserva após aprovação, usando chave idempotente. **[ESCRITA — somente após aprovação] [decide: CÓDIGO]**
 7. **TÉRMINO** — registra o motivo, resposta e episódio curto. **[decide: CÓDIGO]**
@@ -50,7 +50,7 @@ O cliente normalmente não informa todos os filtros na primeira mensagem. O agen
 
 O sistema interpreta por regras simples uma necessidade expressa em linguagem natural, consulta histórico e catálogo por HTTP, pesquisa regras em Markdown e só grava uma reserva após aprovação explícita e retomada do grafo. Não inventa horários, preços ou regras.
 
-O nível implementado é **workflow com router**: o catálogo e as rotas são conhecidos e as lacunas são resolvidas com perguntas fixas. A redação Mistral é opcional; no mock, as decisões continuam no código. Não há justificativa atual para um ciclo livre de ferramentas ou para autonomia do modelo sobre regras e escrita.
+O nível implementado é **workflow com router**: o catálogo e as rotas são conhecidos e as lacunas são resolvidas com perguntas fixas. A redação Gemini é opcional; no mock, as decisões continuam no código. Não há justificativa atual para um ciclo livre de ferramentas ou para autonomia do modelo sobre regras e escrita.
 
 | Ferramenta | O que faz | Leitura ou escrita? | Reversível? | Contra o que conversa |
 |---|---|---|---|---|
@@ -61,7 +61,7 @@ O nível implementado é **workflow com router**: o catálogo e as rotas são co
 
 ## Justificativa de negócio
 
-O workflow reduz a repetição de filtros para o cliente e identifica o dado mínimo que falta. Um filtro tradicional continua aplicando restrições; a API mock grava a reserva apenas depois da aprovação. O modo Mistral não decide regras de negócio nem recebe poder de escrita.
+O workflow reduz a repetição de filtros para o cliente e identifica o dado mínimo que falta. Um filtro tradicional continua aplicando restrições; a API mock grava a reserva apenas depois da aprovação. O modo Gemini não decide regras de negócio nem recebe poder de escrita.
 
 O ganho que será medido é **ações manuais para chegar a uma opção**. A linha de base ainda precisa ser coletada no frontend real do `monorepo-agendeaki`: dez pessoas (ou dez execuções guiadas) realizarão os mesmos cenários, registrando número de telas, filtros preenchidos e tempo. Não há medições reais no repositório ainda; portanto, não declaramos porcentagem de ganho como fato.
 
@@ -69,7 +69,7 @@ O alvo da POC, a validar nessa coleta, é reduzir a mediana de ações de busca 
 
 Para o negócio, a possível redução é de esforço por busca e abandono; para o cliente, é não precisar repetir filtros e receber uma alternativa explicada. Há uma tensão: automatizar demais pode recomendar algo inadequado; por isso o cliente escolhe e confirma, e o caso ambíguo é escalado.
 
-O modo mock custa US$ 0. Para o Mistral Small, a estimativa de tokens e custo está em [modelos.md](modelos.md). O custo de construção é o tempo da equipe. A perda mais importante é uma recomendação inadequada ou reserva indevida; a POC mitiga a segunda com confirmação explícita, mas não promete eliminar a primeira.
+O modo mock custa US$ 0. Para o Gemini 3.8 Flash, a estimativa de tokens e custo está em [modelos.md](modelos.md). O custo de construção é o tempo da equipe. A perda mais importante é uma recomendação inadequada ou reserva indevida; a POC mitiga a segunda com confirmação explícita, mas não promete eliminar a primeira.
 
 ## Verificador e sucesso
 

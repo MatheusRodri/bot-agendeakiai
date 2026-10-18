@@ -25,7 +25,7 @@
 | Sem escrita antes da aprovação | O grafo pausa antes de `registrar_agendamento`: `src/grafo.py:L166-L195,L243-L247`; verificador rejeita escrita nos cenários sem aprovação: `src/verificar.py:L45-L49`; evidências: `logs/01-caso-simples.json`, `logs/10-aprovacao-expirada.json`. | Aplicado no código e exercitado nos logs. |
 | Aprovar apenas opção apresentada/consultada | `src/grafo.py:L166-L189`; `logs/06-aprovacao-editada.json`. | Aplicado no código. |
 | Credencial | O cliente usa `token-mock`; a API mock compara o mesmo token estático: `src/grafo.py:L270-L272`, `src/demo.py:L76-L79`, `src/mock_api.py:L160-L164`. | **LACUNA:** não há credencial individual ou privilégio limitado por operação/cliente; o token é somente do mock. |
-| Limite de custo e tokens do modo Mistral | Teto local de US$ 0,01 e 4.000 tokens estimados; chamada com máximo de 400 tokens: `src/modelo.py:L17-L18,L29-L48`. | Aplicado no código local; não é limite de plataforma/provedor. |
+| Limite de custo e tokens do modo Gemini | Teto local de US$ 0,01 e 4.000 tokens estimados; chamada com máximo de 400 tokens: `src/modelo.py:L17-L18,L29-L48`. | Aplicado no código local; não é limite de plataforma/provedor. |
 | Limite de passos e tempo | Oito passos, recursão limitada e verificação de tempo no término: `src/grafo.py:L28-L32,L207-L224,L252-L262`. | Código limita passos/recursão; o teto de 30 s é verificado no nó terminal e não interrompe um nó em execução (`docs/arquitetura.md:L52`). |
 | Falha de controle ou API | Falha de consulta termina sem confirmar: `src/tools.py:L57-L68`; verificação de ausência de escrita: `src/verificar.py:L45-L53`. | Aplicado para falhas observadas na API mock; recuperação diante de falhas de produção é **LACUNA**. |
 | Suspender o agente | Não foi encontrado procedimento ou controle operacional para suspender o serviço. | **LACUNA:** definir responsável e mecanismo de suspensão. |
@@ -39,7 +39,7 @@
 
 ## 5. Modelo e provedor
 
-**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Mistral Small `mistral-small-2603`, por cliente OpenAI compatível apontado por padrão a `https://api.mistral.ai/v1`. Região de processamento, retenção pelo provedor e uso dos dados para treinamento não estão registrados no repositório. A avaliação do modo remoto não foi executada.
+**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A política de uso de dados depende do nível de serviço; consulte a documentação vigente. A avaliação do modo remoto não foi executada.
 
 **Evidência.** `docs/modelos.md:L3-L8,L20-L24`; `src/modelo.py:L39-L48`; `docs/prompts.md:L7-L9,L22-L27`.
 
@@ -54,21 +54,21 @@
 | Memória local | `cliente_id`, trecho de até 180 caracteres da mensagem, preferência declarada e horário; personalização entre execuções. | `dados/memoria.json`, ignorado pelo Git; sem expiração automática; remoção explícita por cliente. | Para dados reais: **LACUNA**. |
 | Checkpoint SQLite | Estado da conversa e aprovação pendente, para retomar após interrupção. | `dados/checkpoints.sqlite`; fica até remoção explícita; sem criptografia de aplicação. | Para dados reais: **LACUNA**. |
 | Logs JSON | Entrada, identificadores, saída, eventos de ferramentas/contexto, aprovação, hash do código e horário; evidência das demonstrações. | Arquivos em `logs/`; não há prazo automático documentado. Remoção disponível pelo comando de esquecimento. | Dados demonstrativos fictícios. Para logs reais: **LACUNA**. |
-| Mistral opcional | O pedido remoto inclui texto do cliente, resposta já verificada, fontes e suficiência, além do prompt. | Retenção, região e eliminação pelo provedor: **LACUNA**. Usar somente dados fictícios até isso ser documentado. | Para envio de dados reais: **LACUNA**. |
+| Gemini opcional | O pedido remoto inclui texto do cliente, resposta já verificada, fontes e suficiência, além do prompt. | Retenção, região e eliminação pelo provedor: **LACUNA**. Usar somente dados fictícios até isso ser documentado. | Para envio de dados reais: **LACUNA**. |
 
 **Evidência.** `src/contratos.py:L6-L16`; `dados/catalogo.json:L1-L19`; `src/grafo.py:L97-L107,L207-L218`; `src/memoria.py:L12-L24,L45-L61`; `docs/memoria.md:L5-L12,L22-L30`; `src/demo.py:L60-L72`; `src/modelo.py:L21-L48`; `docs/case.md:L80-L85`. Referência legal: [LGPD, art. 7º — Planalto](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/L13709.htm).
 
-**Minimização e retenção.** A POC não tem expiração automática para memória, checkpoint e logs. O trecho de entrada guardado na memória é limitado a 180 caracteres, mas não há política documentada para decidir se cada trecho é necessário. A remoção local é explícita; a retenção de qualquer dado enviado ao Mistral não está comprovada.
+**Minimização e retenção.** A POC não tem expiração automática para memória, checkpoint e logs. O trecho de entrada guardado na memória é limitado a 180 caracteres, mas não há política documentada para decidir se cada trecho é necessário. A remoção local é explícita; a retenção de qualquer dado enviado ao Gemini não está comprovada.
 
 ## 7. Avaliação
 
-**Afirmação.** O verificador local confere dez logs, o contrato de saída, a ausência de escrita em cenários sem aprovação, a idempotência e a expiração. A recuperação lexical atingiu 10/10 perguntas no alvo em 2026-10-04. Não há resultados por fatia para qualidade com clientes reais, versão formal da suíte ou medida de concordância entre juiz e avaliadores humanos. A avaliação Mistral está pendente.
+**Afirmação.** O verificador local confere dez logs, o contrato de saída, a ausência de escrita em cenários sem aprovação, a idempotência e a expiração. A recuperação lexical atingiu 10/10 perguntas no alvo em 2026-10-04. Não há resultados por fatia para qualidade com clientes reais, versão formal da suíte ou medida de concordância entre juiz e avaliadores humanos. A avaliação Gemini está pendente.
 
 **Evidência.** `src/verificar.py:L12-L17,L28-L71`; `docs/case.md:L74-L78`; `docs/rag.md:L15-L32`; `dados/resultado-avaliacao-rag.json`; `docs/prompts.md:L22-L27`; `docs/medicao-baseline.md:L1-L4`.
 
 ## 8. Limites conhecidos
 
-**Afirmação.** Busca de regras e filtros são lexicais e pequenos; não medem adequação estética. O agente recusa assuntos sem suporte, incluindo alergias, atraso e falta. A API e os dados são mocks; a disponibilidade pode mudar entre consulta e confirmação em uma integração real. A resposta Mistral, se habilitada, tem validação de formato, mas não garantia semântica.
+**Afirmação.** Busca de regras e filtros são lexicais e pequenos; não medem adequação estética. O agente recusa assuntos sem suporte, incluindo alergias, atraso e falta. A API e os dados são mocks; a disponibilidade pode mudar entre consulta e confirmação em uma integração real. A resposta Gemini, se habilitada, tem validação de formato, mas não garantia semântica.
 
 **Evidência.** `docs/case.md:L97-L105`; `docs/rag.md:L34-L38`; `docs/modelos.md:L20-L24`; `logs/05-fora-do-corpus.json`.
 
@@ -111,7 +111,7 @@
 | Região, retenção e uso para treino do provedor não comprovados. | Documentar configuração e termos aplicáveis; manter dados fictícios até essa verificação. | Alta |
 | Prazo de retenção dos dados locais é indefinido, embora haja remoção manual. | Definir prazos por armazenamento e automatizar expiração quando necessário. | Alta |
 | Acesso e proteção de checkpoint, memória e logs não documentados; SQLite sem criptografia de aplicação. | Definir controle de acesso e proteção dos arquivos antes de dados reais. | Alta |
-| Avaliação Mistral, concordância humano/juiz, versão de suíte e resultados por fatia ausentes. | Executar avaliação rotulada, comparar com revisão humana e registrar versão e resultados. | Média |
+| Avaliação Gemini, concordância humano/juiz, versão de suíte e resultados por fatia ausentes. | Executar avaliação rotulada, comparar com revisão humana e registrar versão e resultados. | Média |
 | Aceitação formal dos riscos sem registro de decisão/responsável. | Registrar decisão, mitigação e condição de revisão. | Média |
 
 ## Conclusão para auditoria

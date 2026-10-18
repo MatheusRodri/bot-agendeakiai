@@ -206,12 +206,12 @@ def criar_nos(ferramentas: ApiTools):
 
     def finalizar(estado: EstadoAgente) -> dict[str, Any]:
         eventos = []
-        if os.getenv("MODO", "mock").lower() == "mistral":
+        if os.getenv("MODO", "mock").lower() == "gemini":
             try:
-                from .modelo import responder_com_mistral
-                saida, uso = responder_com_mistral(estado["texto"], estado["resultado"], estado.get("fontes", []), estado.get("suficiente", False))
+                from .modelo import responder_com_gemini
+                saida, uso = responder_com_gemini(estado["texto"], estado["resultado"], estado.get("fontes", []), estado.get("suficiente", False))
                 estado["resultado"] = saida["resultado"]
-                eventos.append({"tipo": "modelo", "nome": os.getenv("LLM_MODELO") or "mistral-small-2603", **uso})
+                eventos.append({"tipo": "modelo", "nome": os.getenv("LLM_MODELO") or "gemini-3.8-flash", **uso})
             except Exception as erro:
                 eventos.append({"tipo": "modelo", "erro": str(erro), "resposta_base_preservada": True})
         registrar(estado["cliente_id"], estado["texto"])

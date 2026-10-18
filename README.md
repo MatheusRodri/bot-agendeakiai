@@ -54,9 +54,9 @@ Use `--retomar rejeitar` para recusar ou `--editar-opcao-id opc-005` para trocar
 
 O contrato completo, com entradas, saídas e exemplos copiados dos logs, está em [docs/io.md](docs/io.md).
 
-## Modo Mistral opcional
+## Modo Gemini opcional
 
-Copie `.env.example` para `.env`, preencha `OPENAI_API_KEY`, configure o nome do modelo e as taxas atuais de entrada/saída por milhão de tokens, e ajuste `MODO=mistral`. Há um limite local de US$ 0,01 e 4.000 tokens estimados por execução remota. A chamada opcional redige a resposta final com base na resposta verificada pelo código; a ferramenta de escrita continua protegida pela aprovação humana. A demonstração padrão não avalia o comportamento do modelo nem consome API.
+Copie `.env.example` para `.env`, preencha `GEMINI_API_KEY`, configure `LLM_MODELO` (por padrão, `gemini-3.8-flash`) e as taxas atuais de entrada/saída por milhão de tokens, e ajuste `MODO=gemini`. Há um limite local de US$ 0,01 e 4.000 tokens estimados por execução remota. A chamada opcional redige a resposta final com base na resposta verificada pelo código; a ferramenta de escrita continua protegida pela aprovação humana. A demonstração padrão não avalia o comportamento do modelo nem consome API.
 
 ## Remover dados locais
 
@@ -74,7 +74,7 @@ Use somente com os identificadores simulados desta prova de conceito.
 - `src/mock_api.py` e `src/tools.py`: API mock e ferramentas de histórico, catálogo e escrita;
 - `src/recuperacao.py`: busca textual nas regras Markdown vigentes;
 - `src/memoria.py` e `src/esquecer.py`: memória JSON e remoção local;
-- `src/prompts/`: prompt carregado pelo modo Mistral opcional;
+- `src/prompts/`: prompt carregado pelo modo Gemini opcional;
 - `dados/`: catálogo, corpus, perguntas de avaliação e memória local ignorada pelo Git;
 - `logs/`: execuções reproduzíveis da demonstração;
 - `docs/`: case, arquitetura, decisões de projeto e evidências.

@@ -29,7 +29,7 @@ As dez perguntas e respostas esperadas estão em `dados/perguntas-rag.json`.
 | 9 | Quantas horas antes devo cancelar a reserva? | regra vigente | 48 horas |
 | 10 | Qual produto é seguro para minha alergia? | fora do corpus | recusar sem recomendação de produto |
 
-As respostas esperadas definem o gabarito. A execução `python -m src.avaliar_rag`, em `2026-10-04`, marcou **10/10 no alvo lexical** e salvou os trechos efetivamente recuperados em `dados/resultado-avaliacao-rag.json`. A pergunta 10 também aparece como execução integral em `logs/05-fora-do-corpus.json`. Esse resultado mede correspondência do recuperador lexical ao gabarito, não a qualidade de um modelo gerador. A avaliação opcional de redação Mistral requer execução separada e não foi inventada.
+As respostas esperadas definem o gabarito. A execução `python -m src.avaliar_rag`, em `2026-10-04`, marcou **10/10 no alvo lexical** e salvou os trechos efetivamente recuperados em `dados/resultado-avaliacao-rag.json`. A pergunta 10 também aparece como execução integral em `logs/05-fora-do-corpus.json`. Esse resultado mede correspondência do recuperador lexical ao gabarito, não a qualidade de um modelo gerador. A avaliação opcional de redação Gemini requer execução separada e não foi inventada.
 
 ## Cegueiras e justificativa
 

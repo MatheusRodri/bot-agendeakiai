@@ -48,7 +48,7 @@ A defesa dos padrões e a tabela campo/tipo/escritores/leitores/origem estão em
 | Motivo de término | `finalizar` atribui motivo; ver `src/grafo.py` |
 | Detector de laço de negócio | Não há loop livre; `MAX_PASSOS` e `recursion_limit` limitam o grafo |
 | Teto de tempo | `TEMPO_MAXIMO_SEGUNDOS`, verificado no nó terminal; timeout HTTP de 3 s |
-| Teto de custo/tokens | Não se aplica ao mock. A redação Mistral opcional registra tokens e não dispara ferramentas |
+| Teto de custo/tokens | Não se aplica ao mock. A redação Gemini opcional registra tokens e não dispara ferramentas |
 | Erro recuperável/fatal | `ApiTools` converte falhas HTTP em objeto; erro de validação Pydantic interrompe a execução |
 | Persistência de pausa | `SqliteSaver` escreve em `dados/checkpoints.sqlite`; a retomada usa o mesmo `thread_id` |
 
