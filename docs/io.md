@@ -2,7 +2,7 @@
 
 ## Entrada
 
-O cliente envia texto livre em português. O identificador do cliente e o da conversa acompanham a mensagem pela integração e não são digitados pelo cliente. `conversa_id` é usado como `thread_id` para persistir e retomar o grafo. `EntradaAgente` valida texto não vazio, `cliente_id` e `conversa_id`; a CLI recebe a mensagem por `--message`.
+O cliente envia texto livre em português. O identificador do cliente e o da conversa acompanham a mensagem pela integração e não são digitados pelo cliente. `conversa_id` é usado como `thread_id` para persistir e retomar o grafo. `EntradaAgente` remove espaços nas pontas e rejeita texto, `cliente_id` ou `conversa_id` vazios; a CLI recebe a mensagem por `--message`.
 
 ## Saída
 

@@ -98,12 +98,12 @@ def criar_nos(ferramentas: ApiTools):
         entrada = EntradaAgente(texto=estado["texto"], cliente_id=estado["cliente_id"], conversa_id=estado["conversa_id"], aprovar=estado.get("aprovar", False))
         arquivo_prompt = ROOT / "src" / "prompts" / "agente-v1.txt"
         prompt = arquivo_prompt.read_bytes()
-        return {"texto": entrada.texto.strip(), "prompt_id": "agendeakiai-agente-v2", "prompt_hash": hashlib.sha256(prompt).hexdigest(), "passos": 1, "iniciado_em": datetime.now().timestamp(), "mensagens": [{"papel": "cliente", "conteudo": entrada.texto}], "eventos": [{"tipo": "entrada_validada", "texto": entrada.texto}, {"tipo": "prompt_carregado", "id": "agendeakiai-agente-v2", "sha256": hashlib.sha256(prompt).hexdigest()}]}
+        return {"texto": entrada.texto, "prompt_id": "agendeakiai-agente-v2", "prompt_hash": hashlib.sha256(prompt).hexdigest(), "passos": 1, "iniciado_em": datetime.now().timestamp(), "mensagens": [{"papel": "cliente", "conteudo": entrada.texto}], "eventos": [{"tipo": "entrada_validada", "texto": entrada.texto}, {"tipo": "prompt_carregado", "id": "agendeakiai-agente-v2", "sha256": hashlib.sha256(prompt).hexdigest()}]}
 
     def consultar_contexto(estado: EstadoAgente) -> dict[str, Any]:
         historico = ferramentas.consultar_historico(estado["cliente_id"])
         memoria = recuperar(estado["cliente_id"], estado["texto"])
-        eventos = [{"tipo": "ferramenta", "ferramenta": "consultar_historico", "resultado": historico}, {"tipo": "memoria", "resultado": memoria}]
+        eventos = [{"tipo": "ferramenta", "ferramenta": "consultar_historico", "argumentos": {"cliente_id": estado["cliente_id"]}, "resultado": historico}, {"tipo": "memoria", "resultado": memoria}]
         return {"historico": historico, "memoria": memoria, "eventos": eventos, "passos": estado.get("passos", 0) + 1}
 
     def consultar_fontes(estado: EstadoAgente) -> dict[str, Any]:
@@ -115,8 +115,8 @@ def criar_nos(ferramentas: ApiTools):
             if pontos >= 2 and "alergia" not in frase:
                 fonte = trechos[0]
                 resultado = f'{fonte["titulo"]}: {fonte["trecho"].splitlines()[-1]}'
-                return {"resultado": resultado, "fontes": [f'{fonte["fonte"]}#{fonte["titulo"]}'], "suficiente": True, "opcoes": [], "eventos": [{"tipo": "ferramenta", "ferramenta": "buscar_regra", "resultado": fonte}], "passos": estado.get("passos", 0) + 1}
-            return {"resultado": "Não encontrei uma regra suficiente no corpus para responder com segurança. Procure a operação do AgendeAki.", "fontes": [], "suficiente": False, "opcoes": [], "eventos": [{"tipo": "ferramenta", "ferramenta": "buscar_regra", "resultado": {"trechos": trechos, "suficiente": False}}], "passos": estado.get("passos", 0) + 1}
+                return {"resultado": resultado, "fontes": [f'{fonte["fonte"]}#{fonte["titulo"]}'], "suficiente": True, "opcoes": [], "eventos": [{"tipo": "ferramenta", "ferramenta": "buscar_regra", "argumentos": {"consulta": texto}, "resultado": fonte}], "passos": estado.get("passos", 0) + 1}
+            return {"resultado": "Não encontrei uma regra suficiente no corpus para responder com segurança. Procure a operação do AgendeAki.", "fontes": [], "suficiente": False, "opcoes": [], "eventos": [{"tipo": "ferramenta", "ferramenta": "buscar_regra", "argumentos": {"consulta": texto}, "resultado": {"trechos": trechos, "suficiente": False}}], "passos": estado.get("passos", 0) + 1}
 
         if not _eh_pedido_beauty(texto):
             return {"resultado": "Posso ajudar a encontrar e agendar serviços de beleza. Não realizei nenhum agendamento.", "fontes": [], "suficiente": False, "opcoes": [], "eventos": [{"tipo": "recusa", "motivo": "fora_do_escopo"}], "passos": estado.get("passos", 0) + 1}
@@ -132,7 +132,7 @@ def criar_nos(ferramentas: ApiTools):
         tem_estilo_atual = any(estilo in _normalizar(texto) and not (estilo == "natural" and "maquiagem natural" in _normalizar(texto)) for estilo in estilos_digitados)
         if estilo_salvo and not tem_estilo_atual:
             opcoes.sort(key=lambda opcao: estilo_salvo not in _normalizar(" ".join(opcao.get("estilos", []))))
-        eventos = [{"tipo": "ferramenta", "ferramenta": "buscar_opcoes", "resultado": busca}]
+        eventos = [{"tipo": "ferramenta", "ferramenta": "buscar_opcoes", "argumentos": {**filtros, "cliente_id": estado["cliente_id"]}, "resultado": busca}]
         if not busca.get("ok"):
             return {"resultado": "Não consegui consultar a disponibilidade agora. Nenhum agendamento foi feito.", "fontes": ["buscar_opcoes"], "suficiente": False, "opcoes": [], "eventos": eventos, "passos": estado.get("passos", 0) + 1}
         if not filtros["bairro"] and len(opcoes) > 1:
@@ -202,7 +202,7 @@ def criar_nos(ferramentas: ApiTools):
         ok = resultado.get("ok", False)
         corpo = resultado.get("agendamento", {})
         resposta = resultado.get("mensagem", "Não foi possível registrar o agendamento.") if ok else "A opção não pôde ser confirmada. Busque novamente; nenhum agendamento foi registrado."
-        return {"agendamento": corpo if ok else {}, "resultado": resposta, "suficiente": ok, "eventos": [{"tipo": "ferramenta", "ferramenta": "confirmar_agendamento", "chave_idempotencia": chave, "resultado": resultado}], "passos": estado.get("passos", 0) + 1}
+        return {"agendamento": corpo if ok else {}, "resultado": resposta, "suficiente": ok, "eventos": [{"tipo": "ferramenta", "ferramenta": "confirmar_agendamento", "argumentos": {"cliente_id": estado["cliente_id"], "opcao_id": opcao["opcaoId"], "chave_idempotencia": chave}, "resultado": resultado}], "passos": estado.get("passos", 0) + 1}
 
     def finalizar(estado: EstadoAgente) -> dict[str, Any]:
         eventos = []

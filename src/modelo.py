@@ -38,6 +38,9 @@ def responder_com_gemini(texto: str, resposta_base: str, fontes: list[str], sufi
     if entrada_estimada + 400 > MAX_TOKENS_TOTAIS or custo_estimado > MAX_CUSTO_USD:
         raise ValueError("A chamada Gemini excederia o limite local de tokens ou de US$ 0,01.")
     cliente = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=10_000))
+    # Técnica: zero-shot; o modelo apenas reescreve fatos já conferidos pelo código.
+    # Contrato: JSON SaidaAgente; schema e validação impedem campos extras e tipos inválidos.
+    # Limite: fontes e suficiência vêm do fluxo local, que segue responsável por aprovação e escrita.
     resposta = cliente.models.generate_content(
         model=os.getenv("LLM_MODELO") or "gemini-3.8-flash",
         contents=pedido,
