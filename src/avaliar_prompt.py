@@ -88,10 +88,10 @@ def main() -> int:
         resultado["status"] = "concluido"
     except Exception as exc:
         # Registra apenas o tipo do erro; mensagens de SDK podem conter detalhes de requisição.
-        resultado["status"] = "bloqueado_ou_falha"
+        resultado["status"] = "bloqueado_prevalidacao" if isinstance(exc, ValueError) else "falha_chamada"
         resultado["erro_tipo"] = type(exc).__name__
         _salvar(resultado)
-        print(f"Avaliação interrompida ({type(exc).__name__}); resultado parcial salvo sem detalhes de configuração.")
+        print(f"Avaliação interrompida ({resultado['status']}); resultado parcial salvo sem detalhes de configuração.")
         return 1
 
     _salvar(resultado)

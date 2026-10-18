@@ -46,6 +46,7 @@ def _iniciar_api() -> subprocess.Popen:
 
 def _registrar_log(arquivo: str, caso: str, cliente_id: str, conversa_id: str, texto: str, estado: dict, pausa: dict | None = None, repeticao: dict | None = None) -> None:
     commit = subprocess.run(["git", "rev-parse", "HEAD"], cwd=ROOT, capture_output=True, text=True, check=False).stdout.strip() or "desconhecido"
+    codigo_alterado = subprocess.run(["git", "diff", "--quiet", "HEAD", "--", "src"], cwd=ROOT, check=False).returncode != 0
     impressao = hashlib.sha256()
     arquivos_codigo = sorted((ROOT / "src").rglob("*.py")) + [ROOT / "src" / "prompts" / "agente-v1.txt"]
     for caminho in arquivos_codigo:
@@ -57,7 +58,7 @@ def _registrar_log(arquivo: str, caso: str, cliente_id: str, conversa_id: str, t
         "entrada": {"texto": texto, "cliente_id": cliente_id, "conversa_id": conversa_id},
         "executado_em": datetime.now(timezone.utc).isoformat(),
         "commit_base": commit,
-        "arvore_de_trabalho_alterada": True,
+        "arvore_de_trabalho_alterada": codigo_alterado,
         "impressao_do_codigo": impressao.hexdigest(),
         "saida_validada": saida,
         "eventos": estado.get("eventos", []),
