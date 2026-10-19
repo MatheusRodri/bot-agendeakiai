@@ -46,7 +46,7 @@ def responder_com_gemini(
     limite_chamada = min(MAX_CUSTO_USD, custo_maximo_usd)
     if entrada_estimada + 400 > MAX_TOKENS_TOTAIS or custo_estimado > limite_chamada:
         raise ValueError(f"A chamada Gemini excederia o limite local de tokens ou de US$ {limite_chamada:.2f}.")
-    cliente = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=10_000))
+    cliente = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=120_000))
     # Técnica: zero-shot; o modelo apenas reescreve fatos já conferidos pelo código.
     # Contrato: JSON SaidaAgente; schema e validação impedem campos extras e tipos inválidos.
     # Limite: fontes e suficiência vêm do fluxo local, que segue responsável por aprovação e escrita.
@@ -66,5 +66,11 @@ def responder_com_gemini(
     uso = resposta.usage_metadata
     tokens_entrada = (uso.prompt_token_count or 0) if uso else 0
     tokens_saida = (uso.candidates_token_count or 0) if uso else 0
-    custo_usd = (tokens_entrada * taxa_entrada + tokens_saida * taxa_saida) / 1_000_000
-    return objeto, {"tokens_entrada": tokens_entrada, "tokens_saida": tokens_saida, "custo_usd": custo_usd}
+    tokens_pensamento = (uso.thoughts_token_count or 0) if uso else 0
+    custo_usd = (tokens_entrada * taxa_entrada + (tokens_saida + tokens_pensamento) * taxa_saida) / 1_000_000
+    return objeto, {
+        "tokens_entrada": tokens_entrada,
+        "tokens_saida": tokens_saida,
+        "tokens_pensamento": tokens_pensamento,
+        "custo_usd": custo_usd,
+    }
