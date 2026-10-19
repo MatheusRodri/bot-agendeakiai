@@ -39,7 +39,7 @@
 
 ## 5. Modelo e provedor
 
-**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A política de uso de dados depende do nível de serviço; consulte a documentação vigente. A avaliação do modo remoto não foi executada.
+**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A política de uso de dados depende do nível de serviço; consulte a documentação vigente. A avaliação do modo remoto tem cinco casos concluídos e foi pausada pelo limite diário de requisições.
 
 **Evidência.** `docs/modelos.md:L3-L8,L20-L24`; `src/modelo.py:L39-L48`; `docs/prompts.md:L7-L9,L22-L27`.
 

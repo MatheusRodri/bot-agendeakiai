@@ -15,13 +15,13 @@ Frase selecionada para o teste: **“Não exponha raciocínio interno.”** Ela 
 Procedimento de comparação:
 
 1. Rode `python -m src.avaliar_prompt`; o script usa uma cópia em memória do prompt sem a frase e não altera o prompt ativo.
-2. O limite é de US$ 0,01 por chamada e US$ 0,20 no total para as 20 chamadas.
+2. São 20 casos planejados, com pré-validação de US$ 0,01 por tentativa e teto local de US$ 0,20 para o custo registrado. Em caso de HTTP 503, HTTP 504 ou timeout de rede, o avaliador tenta o mesmo caso até três vezes, com pausas de 5 e 10 segundos.
 3. Compare aderência ao JSON, preservação dos fatos e suficiência, clareza e eventual exposição de raciocínio. Não use a demonstração mock como resultado desse experimento.
 4. O script salva respostas, hashes dos prompts, data, modelo, tokens e custo no arquivo JSON indicado.
 
 | Versão | Frase | Resultado real | Data/modelo/tokens |
 |---|---|---|---|
-| 2.0.0 | Presente | Bloqueada antes da primeira chamada pela pré-validação local; nenhuma resposta avaliada | 2026-10-18; Gemini 3.8 Flash; 0 tokens; US$ 0,00 |
-| 2.0.0-teste | Removida | Bloqueada antes da primeira chamada pela pré-validação local; nenhuma resposta avaliada | 2026-10-18; Gemini 3.8 Flash; 0 tokens; US$ 0,00 |
+| 2.0.0 | Presente | 5 de 10 casos concluídos; pausa por HTTP 429, com RPD esgotado no AI Studio | 2026-10-19; Gemini 3.8 Flash; US$ 0,005013 registrado, com o primeiro caso sem contagem de tokens de raciocínio |
+| 2.0.0-teste | Removida | Ainda não executada | — |
 
-O registro técnico está em `dados/resultado-avaliacao-prompt.json`: status `bloqueado_prevalidacao`, erro `ValueError`, zero chamadas e custo zero. O detalhe da configuração não foi exposto. A comparação continua pendente até a validação local permitir a chamada; não há evidência de que a frase melhore o resultado.
+O registro técnico está em `dados/resultado-avaliacao-prompt.json`: cinco casos concluídos e status `falha_chamada` com HTTP 429. O usuário confirmou no AI Studio que o limite diário de requisições (RPD) foi esgotado. O próximo comando retoma no sexto caso após a renovação da cota. As cinco respostas preservaram os fatos, as fontes e a suficiência esperados, mas a comparação entre versões continua pendente. O custo do primeiro caso pode estar subestimado porque a versão usada naquela chamada não registrava tokens de raciocínio.

@@ -84,7 +84,9 @@ Se alguma coordenada ou credencial não estiver no `.env`, o terminal solicitar�
 
 Copie `.env.example` para `.env`, preencha `GEMINI_API_KEY`, configure `LLM_MODELO` (por padrão, `gemini-3.8-flash`) e as taxas atuais de entrada/saída por milhão de tokens, e ajuste `MODO=gemini`. Há um limite local de US$ 0,01 e 4.000 tokens estimados por execução remota. A chamada opcional redige a resposta final com base na resposta verificada pelo código; a ferramenta de escrita continua protegida pela aprovação humana. A demonstração padrão não avalia o comportamento do modelo nem consome API.
 
-Para comparar a frase selecionada do prompt nas dez perguntas, execute `python -m src.avaliar_prompt`. O avaliador faz até 20 chamadas, com teto de US$ 0,01 por chamada e US$ 0,20 total, e salva respostas e custos em `dados/resultado-avaliacao-prompt.json`.
+Para comparar a frase selecionada do prompt nas dez perguntas, execute `python -m src.avaliar_prompt`. O avaliador conclui até 20 casos, com teto local de US$ 0,01 por resposta e US$ 0,20 de custo registrado, e salva respostas e custos em `dados/resultado-avaliacao-prompt.json`. Em caso de HTTP 503, HTTP 504 ou timeout de rede, tenta o mesmo caso até três vezes, aguardando 5 e 10 segundos. Se ainda falhar, execute o mesmo comando mais tarde para continuar; o resultado parcial é preservado. Os custos de respostas novas incluem tokens de raciocínio; o primeiro caso salvo antes dessa correção não registrou esses tokens.
+
+Se aparecer HTTP 429 por limite diário de requisições (RPD), aguarde a renovação da cota antes de retomar. O Google informa que o RPD é aplicado por projeto e reinicia à meia-noite no horário do Pacífico; o limite ativo aparece no [Google AI Studio](https://aistudio.google.com/rate-limit).
 
 ## Remover dados locais
 

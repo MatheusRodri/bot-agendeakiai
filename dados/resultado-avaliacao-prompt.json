@@ -1,12 +1,126 @@
 {
-  "executado_em": "2026-10-18T19:16:12.840396+00:00",
+  "executado_em": "2026-10-19T19:29:41.856927+00:00",
   "modelo": "gemini-3.8-flash",
   "frase_comparada": "Não exponha raciocínio interno.",
   "hash_prompt_com_frase": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2",
   "hash_prompt_sem_frase": "a1f28bbd439e5293fb36229c057abc1c13002f10ee729fdf36371e954307d88f",
   "teto_total_usd": 0.2,
-  "gasto_usd": 0.0,
-  "casos": [],
-  "status": "bloqueado_prevalidacao",
-  "erro_tipo": "ValueError"
+  "gasto_usd": 0.005013,
+  "casos": [
+    {
+      "variante": "presente",
+      "indice": 1,
+      "pergunta": "Com quantas horas de antecedência posso cancelar?",
+      "resposta_esperada": "48 horas",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Você pode cancelar o seu agendamento com até 48 horas de antecedência.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 371,
+      "tokens_saida": 43,
+      "custo_usd": 0.0004395,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 2,
+      "pergunta": "A regra de cancelamento é de 24 horas?",
+      "resposta_esperada": "Não, a versão de 24 horas foi revogada; são 48 horas",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Não, o prazo de cancelamento não é de 24 horas, pois essa regra foi revogada. O prazo vigente para cancelamento é de 48 horas de antecedência.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 390,
+      "tokens_saida": 64,
+      "tokens_pensamento": 139,
+      "custo_usd": 0.00105375,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 3,
+      "pergunta": "A remarcação tem custo?",
+      "resposta_esperada": "Não tem custo nesta POC",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "A remarcação de serviços não tem custo nesta POC.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 371,
+      "tokens_saida": 37,
+      "tokens_pensamento": 144,
+      "custo_usd": 0.000957,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 4,
+      "pergunta": "O que acontece se o salão cancelar?",
+      "resposta_esperada": "Remarcação sem custo ou reembolso integral",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Se o salão cancelar o agendamento, você tem direito à remarcação sem nenhum custo adicional ou ao reembolso integral do valor pago.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 376,
+      "tokens_saida": 57,
+      "tokens_pensamento": 167,
+      "custo_usd": 0.001122,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 5,
+      "pergunta": "Fiquei doente no dia, posso remarcar?",
+      "resposta_esperada": "Uma remarcação sem custo com contato à operação",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você tem direito a uma remarcação sem custo entrando em contato com a nossa equipe de operação. Por favor, nos avise o quanto antes para que possamos verificar uma nova data para você.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 381,
+      "tokens_saida": 70,
+      "tokens_pensamento": 238,
+      "custo_usd": 0.00144075,
+      "avaliacao_humana": null
+    }
+  ],
+  "status": "falha_chamada",
+  "aviso_custo": "Casos anteriores não registraram tokens de raciocínio; gasto_usd pode estar subestimado.",
+  "erro_tipo": "ClientError",
+  "erro_http": 429,
+  "erro_status_api": "RESOURCE_EXHAUSTED",
+  "erro_limite": "diario"
 }
