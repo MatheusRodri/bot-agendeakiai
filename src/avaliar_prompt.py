@@ -14,7 +14,7 @@ from typing import Any
 import httpx
 from dotenv import load_dotenv
 
-from .modelo import MAX_CUSTO_USD, ROOT, responder_com_gemini
+from .modelo import MAX_CUSTO_USD, MAX_TOKENS_SAIDA, ROOT, responder_com_gemini
 
 
 FRASE = "Não exponha raciocínio interno."
@@ -100,6 +100,8 @@ def main() -> int:
             resultado = anterior
 
     concluidos = len(resultado["casos"])
+    for caso_salvo in resultado["casos"]:
+        caso_salvo.setdefault("limite_tokens_saida", 400)
     if concluidos == len(tarefas):
         resultado["status"] = "concluido"
         _salvar(resultado)
@@ -143,6 +145,7 @@ def main() -> int:
                 "tokens_entrada": int(uso["tokens_entrada"]),
                 "tokens_saida": int(uso["tokens_saida"]),
                 "tokens_pensamento": int(uso["tokens_pensamento"]),
+                "limite_tokens_saida": MAX_TOKENS_SAIDA,
                 "custo_usd": custo,
                 "avaliacao_humana": None,
             })
@@ -151,7 +154,7 @@ def main() -> int:
         resultado["status"] = "concluido"
     except Exception as exc:
         # Registra só metadados seguros da API, nunca o corpo ou a mensagem da requisição.
-        resultado["status"] = "bloqueado_prevalidacao" if isinstance(exc, ValueError) else "falha_chamada"
+        resultado["status"] = "bloqueado_prevalidacao" if isinstance(exc, ValueError) and not isinstance(exc, json.JSONDecodeError) else "falha_chamada"
         resultado["erro_tipo"] = type(exc).__name__
         codigo_http = getattr(exc, "code", None)
         status_api = getattr(exc, "status", None)

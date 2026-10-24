@@ -17,6 +17,7 @@ from .contratos import SaidaAgente
 ROOT = Path(__file__).resolve().parents[1]
 MAX_CUSTO_USD = 0.01
 MAX_TOKENS_TOTAIS = 4000
+MAX_TOKENS_SAIDA = 800
 
 
 def responder_com_gemini(
@@ -42,9 +43,9 @@ def responder_com_gemini(
         raise ValueError("Informe os custos atuais por milhão de tokens antes de habilitar o modo Gemini.")
     taxa_entrada = float(entrada_usd)
     taxa_saida = float(saida_usd)
-    custo_estimado = (entrada_estimada * taxa_entrada + 400 * taxa_saida) / 1_000_000
+    custo_estimado = (entrada_estimada * taxa_entrada + MAX_TOKENS_SAIDA * taxa_saida) / 1_000_000
     limite_chamada = min(MAX_CUSTO_USD, custo_maximo_usd)
-    if entrada_estimada + 400 > MAX_TOKENS_TOTAIS or custo_estimado > limite_chamada:
+    if entrada_estimada + MAX_TOKENS_SAIDA > MAX_TOKENS_TOTAIS or custo_estimado > limite_chamada:
         raise ValueError(f"A chamada Gemini excederia o limite local de tokens ou de US$ {limite_chamada:.2f}.")
     cliente = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=120_000))
     # Técnica: zero-shot; o modelo apenas reescreve fatos já conferidos pelo código.
@@ -58,7 +59,7 @@ def responder_com_gemini(
             response_mime_type="application/json",
             response_schema=SaidaAgente,
             temperature=0.2,
-            max_output_tokens=400,
+            max_output_tokens=MAX_TOKENS_SAIDA,
         ),
     )
     conteudo = resposta.text or "{}"
