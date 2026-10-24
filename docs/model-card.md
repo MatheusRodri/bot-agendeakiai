@@ -1,6 +1,6 @@
 # Model card — AgendeAkiAI
 
-**Data deste documento:** 2026-10-16  
+**Data deste documento:** 2026-10-24  
 **Escopo:** prova de conceito local descrita neste repositório. O catálogo, a API, os clientes e os agendamentos da demonstração são simulados. Este documento não descreve uma implantação em produção.
 
 ## 1. Identificação
@@ -25,7 +25,7 @@
 | Sem escrita antes da aprovação | O grafo pausa antes de `registrar_agendamento`: `src/grafo.py:L166-L195,L243-L247`; verificador rejeita escrita nos cenários sem aprovação: `src/verificar.py:L45-L49`; evidências: `logs/01-caso-simples.json`, `logs/10-aprovacao-expirada.json`. | Aplicado no código e exercitado nos logs. |
 | Aprovar apenas opção apresentada/consultada | `src/grafo.py:L166-L189`; `logs/06-aprovacao-editada.json`. | Aplicado no código. |
 | Credencial | O cliente usa `token-mock`; a API mock compara o mesmo token estático: `src/grafo.py:L270-L272`, `src/demo.py:L76-L79`, `src/mock_api.py:L160-L164`. | **LACUNA:** não há credencial individual ou privilégio limitado por operação/cliente; o token é somente do mock. |
-| Limite de custo e tokens do modo Gemini | Teto local de US$ 0,01 e 4.000 tokens estimados; chamada com máximo de 400 tokens: `src/modelo.py:L17-L18,L29-L48`. | Aplicado no código local; não é limite de plataforma/provedor. |
+| Limite de custo e tokens do modo Gemini | Teto local de US$ 0,01 e 4.000 tokens estimados; chamada com máximo de 800 tokens de saída: `src/modelo.py`. | Aplicado no código local; não é limite de plataforma/provedor. |
 | Limite de passos e tempo | Oito passos, recursão limitada e verificação de tempo no término: `src/grafo.py:L28-L32,L207-L224,L252-L262`. | Código limita passos/recursão; o teto de 30 s é verificado no nó terminal e não interrompe um nó em execução (`docs/arquitetura.md:L52`). |
 | Falha de controle ou API | Falha de consulta termina sem confirmar: `src/tools.py:L57-L68`; verificação de ausência de escrita: `src/verificar.py:L45-L53`. | Aplicado para falhas observadas na API mock; recuperação diante de falhas de produção é **LACUNA**. |
 | Suspender o agente | Não foi encontrado procedimento ou controle operacional para suspender o serviço. | **LACUNA:** definir responsável e mecanismo de suspensão. |
@@ -39,7 +39,7 @@
 
 ## 5. Modelo e provedor
 
-**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A política de uso de dados depende do nível de serviço; consulte a documentação vigente. A avaliação do modo remoto tem cinco casos concluídos e foi pausada pelo limite diário de requisições.
+**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A política de uso de dados depende do nível de serviço; consulte a documentação vigente. A avaliação do modo remoto tem 17 de 20 casos concluídos e foi pausada pelo limite diário de requisições.
 
 **Evidência.** `docs/modelos.md:L3-L8,L20-L24`; `src/modelo.py:L39-L48`; `docs/prompts.md:L7-L9,L22-L27`.
 
@@ -62,7 +62,7 @@
 
 ## 7. Avaliação
 
-**Afirmação.** O verificador local confere dez logs, o contrato de saída, a ausência de escrita em cenários sem aprovação, a idempotência e a expiração. A recuperação lexical atingiu 10/10 perguntas no alvo em 2026-10-04. Não há resultados por fatia para qualidade com clientes reais, versão formal da suíte ou medida de concordância entre juiz e avaliadores humanos. A avaliação Gemini está pendente.
+**Afirmação.** O verificador local confere dez logs, o contrato de saída, a ausência de escrita em cenários sem aprovação, a idempotência e a expiração. A recuperação lexical atingiu 10/10 perguntas no alvo em 2026-10-04. Não há resultados por fatia para qualidade com clientes reais, versão formal da suíte ou medida de concordância entre juiz e avaliadores humanos. A avaliação Gemini está parcial, com 17 de 20 casos concluídos.
 
 **Evidência.** `src/verificar.py:L12-L17,L28-L71`; `docs/case.md:L74-L78`; `docs/rag.md:L15-L32`; `dados/resultado-avaliacao-rag.json`; `docs/prompts.md:L22-L27`; `docs/medicao-baseline.md:L1-L4`.
 

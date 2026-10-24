@@ -21,7 +21,9 @@ Procedimento de comparação:
 
 | Versão | Frase | Resultado real | Data/modelo/tokens |
 |---|---|---|---|
-| 2.0.0 | Presente | 5 de 10 casos concluídos; pausa por HTTP 429, com RPD esgotado no AI Studio | 2026-10-19; Gemini 3.8 Flash; US$ 0,005013 registrado, com o primeiro caso sem contagem de tokens de raciocínio |
-| 2.0.0-teste | Removida | Ainda não executada | — |
+| 2.0.0 | Presente | 10 de 10 casos concluídos | 2026-10-19 e 2026-10-24; Gemini 3.8 Flash; 3.747 tokens de entrada, 512 de resposta e 2.010 de raciocínio registrados; US$ 0,01226775 registrado |
+| 2.0.0-teste | Removida | 7 de 10 casos concluídos; pausa por HTTP 429 (RPD) | 2026-10-24; Gemini 3.8 Flash; 2.582 tokens de entrada, 383 de resposta e 1.412 de raciocínio; US$ 0,00866775 registrado |
 
-O registro técnico está em `dados/resultado-avaliacao-prompt.json`: cinco casos concluídos e status `falha_chamada` com HTTP 429. O usuário confirmou no AI Studio que o limite diário de requisições (RPD) foi esgotado. O próximo comando retoma no sexto caso após a renovação da cota. As cinco respostas preservaram os fatos, as fontes e a suficiência esperados, mas a comparação entre versões continua pendente. O custo do primeiro caso pode estar subestimado porque a versão usada naquela chamada não registrava tokens de raciocínio.
+O registro técnico está em `dados/resultado-avaliacao-prompt.json`: 17 casos concluídos, gasto registrado de US$ 0,0209355 e status `falha_chamada` com HTTP 429 por limite diário. O próximo comando retoma no oitavo caso da versão sem a frase após a renovação da cota. As 17 saídas salvas são JSON válido e preservaram as fontes e a suficiência esperadas. Nenhuma expôs raciocínio interno. A revisão textual ainda é necessária: por exemplo, “com até 48 horas” pode inverter o sentido do prazo mínimo, e “sem custos adicionais” foi acrescentado à resposta sem base explícita naquele caso. Não há evidência suficiente para concluir que uma versão do prompt é melhor.
+
+Os primeiros 16 casos usaram limite de 400 tokens de saída; o caso 17 usou 800 após duas respostas que não puderam ser lidas como JSON. O limite inclui tokens de raciocínio, segundo a [documentação do Gemini](https://ai.google.dev/gemini-api/docs/thinking/). Essa mudança de configuração limita a comparação dos casos posteriores. O primeiro caso não registrou tokens de raciocínio, e tentativas sem resposta válida não tiveram uso registrado; portanto, o gasto informado pode subestimar o consumo real.

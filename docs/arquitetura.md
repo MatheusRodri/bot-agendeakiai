@@ -49,7 +49,7 @@ O desenho condicional é gerado de `GRAFO.get_graph()` pelo comando `python conf
 
 **Estado explícito:** `EstadoAgente` declara os dados de cliente, conversa, texto, mensagens, eventos, histórico, memória, opções, fontes, suficiência, decisão e agendamento. O conteúdo da conversa é uma mensagem curta. A lista `eventos` usa `operator.add` para acumular a trilha de execução sem apagar eventos anteriores.
 
-**Orçamento:** limite de oito passos explícito em `MAX_PASSOS`; limite de recursão LangGraph definido como `MAX_PASSOS + 4` (12) para cobrir nós de suporte; máximo de 4.000 tokens por chamada remota (400 de saída e pré-estimativa da entrada); limite local de US$ 0,01, calculado com taxas configuradas em `.env`; timeout de 120 segundos para Gemini, três segundos por chamada HTTP local e teto de 30 segundos observado no nó terminal. A proteção de tempo total não interrompe um nó no meio.
+**Orçamento:** limite de oito passos explícito em `MAX_PASSOS`; limite de recursão LangGraph definido como `MAX_PASSOS + 4` (12) para cobrir nós de suporte; máximo de 4.000 tokens por chamada remota (800 de saída, incluindo raciocínio, e pré-estimativa da entrada); limite local de US$ 0,01, calculado com taxas configuradas em `.env`; timeout de 120 segundos para Gemini, três segundos por chamada HTTP local e teto de 30 segundos observado no nó terminal. A proteção de tempo total não interrompe um nó no meio.
 
 **Término:** `resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`, `aprovacao_expirada`, `limite_de_passos` e `limite_de_tempo`. Erros de consulta são respostas finais sem escrita, com o erro preservado no evento de ferramenta. Erro irrecuperável de validação Pydantic é levantado antes das consultas.
 

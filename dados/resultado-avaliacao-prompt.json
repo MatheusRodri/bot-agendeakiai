@@ -5,7 +5,7 @@
   "hash_prompt_com_frase": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2",
   "hash_prompt_sem_frase": "a1f28bbd439e5293fb36229c057abc1c13002f10ee729fdf36371e954307d88f",
   "teto_total_usd": 0.2,
-  "gasto_usd": 0.005013,
+  "gasto_usd": 0.0209355,
   "casos": [
     {
       "variante": "presente",
@@ -26,7 +26,8 @@
       "tokens_entrada": 371,
       "tokens_saida": 43,
       "custo_usd": 0.0004395,
-      "avaliacao_humana": null
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
     },
     {
       "variante": "presente",
@@ -48,7 +49,8 @@
       "tokens_saida": 64,
       "tokens_pensamento": 139,
       "custo_usd": 0.00105375,
-      "avaliacao_humana": null
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
     },
     {
       "variante": "presente",
@@ -70,7 +72,8 @@
       "tokens_saida": 37,
       "tokens_pensamento": 144,
       "custo_usd": 0.000957,
-      "avaliacao_humana": null
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
     },
     {
       "variante": "presente",
@@ -92,7 +95,8 @@
       "tokens_saida": 57,
       "tokens_pensamento": 167,
       "custo_usd": 0.001122,
-      "avaliacao_humana": null
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
     },
     {
       "variante": "presente",
@@ -114,6 +118,271 @@
       "tokens_saida": 70,
       "tokens_pensamento": 238,
       "custo_usd": 0.00144075,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "presente",
+      "indice": 6,
+      "pergunta": "Qual é a regra para atraso?",
+      "resposta_esperada": "Sem informação no corpus; encaminhar à operação",
+      "fontes_esperadas": [],
+      "suficiente_esperado": false,
+      "saida": {
+        "resultado": "Não encontrei informações sobre a tolerância ou regras para atrasos no sistema. Por favor, entre em contato diretamente com nossa equipe de atendimento para receber essa orientação.",
+        "fontes": [],
+        "suficiente": false
+      },
+      "tokens_entrada": 364,
+      "tokens_saida": 49,
+      "tokens_pensamento": 197,
+      "custo_usd": 0.0011955,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "presente",
+      "indice": 7,
+      "pergunta": "O salão devolve o valor se cancelar?",
+      "resposta_esperada": "Reembolso integral na exceção simulada",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, o salão realiza o reembolso integral na exceção simulada prevista pelas regras vigentes.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 378,
+      "tokens_saida": 48,
+      "tokens_pensamento": 292,
+      "custo_usd": 0.0015585,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "presente",
+      "indice": 8,
+      "pergunta": "Posso remarcar sem pagar uma taxa?",
+      "resposta_esperada": "Sim, não há custo nesta POC",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você pode remarcar o seu agendamento sem pagar nenhuma taxa nesta POC.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 375,
+      "tokens_saida": 46,
+      "tokens_pensamento": 314,
+      "custo_usd": 0.00163125,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "presente",
+      "indice": 9,
+      "pergunta": "Quantas horas antes devo cancelar a reserva?",
+      "resposta_esperada": "48 horas",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Você deve cancelar a reserva com no mínimo 48 horas de antecedência.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 371,
+      "tokens_saida": 41,
+      "tokens_pensamento": 207,
+      "custo_usd": 0.00120825,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "presente",
+      "indice": 10,
+      "pergunta": "Qual produto é seguro para minha alergia?",
+      "resposta_esperada": "Fora do corpus; recusar e orientar contato com salão",
+      "fontes_esperadas": [],
+      "suficiente_esperado": false,
+      "saida": {
+        "resultado": "Não tenho informações sobre os componentes específicos dos produtos para avaliar restrições alérgicas com segurança. Recomendo entrar em contato diretamente com o salão ou consultar um especialista antes de realizar o procedimento.",
+        "fontes": [],
+        "suficiente": false
+      },
+      "tokens_entrada": 370,
+      "tokens_saida": 57,
+      "tokens_pensamento": 312,
+      "custo_usd": 0.00166125,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 1,
+      "pergunta": "Com quantas horas de antecedência posso cancelar?",
+      "resposta_esperada": "48 horas",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Você pode cancelar o seu agendamento com até 48 horas de antecedência sem custos adicionais.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 364,
+      "tokens_saida": 48,
+      "tokens_pensamento": 183,
+      "custo_usd": 0.00113925,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 2,
+      "pergunta": "A regra de cancelamento é de 24 horas?",
+      "resposta_esperada": "Não, a versão de 24 horas foi revogada; são 48 horas",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Não, a regra de cancelamento de 24 horas foi revogada. Atualmente, o prazo exigido para cancelamento é de 48 horas de antecedência.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 383,
+      "tokens_saida": 62,
+      "tokens_pensamento": 150,
+      "custo_usd": 0.00108225,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 3,
+      "pergunta": "A remarcação tem custo?",
+      "resposta_esperada": "Não tem custo nesta POC",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "A remarcação não tem custo nesta POC.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 364,
+      "tokens_saida": 35,
+      "tokens_pensamento": 200,
+      "custo_usd": 0.00115425,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 4,
+      "pergunta": "O que acontece se o salão cancelar?",
+      "resposta_esperada": "Remarcação sem custo ou reembolso integral",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Caso o salão cancele o seu agendamento, você tem direito à remarcação sem qualquer custo adicional ou ao reembolso integral do valor pago.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 369,
+      "tokens_saida": 59,
+      "tokens_pensamento": 190,
+      "custo_usd": 0.0012105,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 5,
+      "pergunta": "Fiquei doente no dia, posso remarcar?",
+      "resposta_esperada": "Uma remarcação sem custo com contato à operação",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você tem direito a uma remarcação sem custo ao entrar em contato com a nossa equipe de operação. Por favor, fale conosco assim que puder para verificarmos um novo horário.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 374,
+      "tokens_saida": 64,
+      "tokens_pensamento": 198,
+      "custo_usd": 0.001263,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 6,
+      "pergunta": "Qual é a regra para atraso?",
+      "resposta_esperada": "Sem informação no corpus; encaminhar à operação",
+      "fontes_esperadas": [],
+      "suficiente_esperado": false,
+      "saida": {
+        "resultado": "Não localizei informações sobre a política de atrasos em nossa base de dados. Recomendo entrar em contato diretamente com a nossa equipe de atendimento para obter essa orientação.",
+        "fontes": [],
+        "suficiente": false
+      },
+      "tokens_entrada": 357,
+      "tokens_saida": 48,
+      "tokens_pensamento": 222,
+      "custo_usd": 0.00128025,
+      "avaliacao_humana": null,
+      "limite_tokens_saida": 400
+    },
+    {
+      "variante": "removida",
+      "indice": 7,
+      "pergunta": "O salão devolve o valor se cancelar?",
+      "resposta_esperada": "Reembolso integral na exceção simulada",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, o valor é devolvido com reembolso integral na exceção prevista pelas regras vigentes. Caso precise de mais detalhes sobre o seu caso ou queira prosseguir, estou à disposição.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 371,
+      "tokens_saida": 67,
+      "tokens_pensamento": 269,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00153825,
       "avaliacao_humana": null
     }
   ],
