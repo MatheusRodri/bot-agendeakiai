@@ -21,7 +21,7 @@ FRASE = "Não exponha raciocínio interno."
 TETO_TOTAL_USD = 0.20
 ARQUIVO_PROMPT = ROOT / "src" / "prompts" / "agente-v1.txt"
 ARQUIVO_PERGUNTAS = ROOT / "dados" / "perguntas-rag.json"
-ARQUIVO_RESULTADO = ROOT / "dados" / "resultado-avaliacao-prompt.json"
+ARQUIVO_RESULTADO = ROOT / "dados" / "resultado-avaliacao-prompt-cancelamento-livre.json"
 FONTES = ["dados/corpus/regras-vigentes.md"]
 
 

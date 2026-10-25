@@ -4,7 +4,7 @@
 
 O modo padrão é mock determinístico e custa US$ 0. Gemini 3.8 Flash (`gemini-3.8-flash`) é uma opção para redigir a resposta final, acionada por `MODO=gemini`; não escolhe ferramentas, filtros, regras ou autorização. O código verifica as fontes e a suficiência antes da redação. Essa escolha mantém o custo fora do caminho padrão e dá um local claro para avaliar a qualidade de linguagem natural.
 
-O projeto usa o SDK oficial `google-genai`. A chave é lida de `GEMINI_API_KEY` no `.env`, ignorado pelo Git. A avaliação Gemini tem 17 dos 20 casos concluídos e está pausada pelo limite diário de requisições; ainda não há resultado comparativo de qualidade.
+O projeto usa o SDK oficial `google-genai`. A chave é lida de `GEMINI_API_KEY` no `.env`, ignorado pelo Git. A avaliação Gemini concluiu 20 casos com a antiga regra de cancelamento: dez com a frase selecionada do prompt e dez sem ela. O resultado histórico não demonstrou melhora com a frase. Com a regra atual, 11 de 20 casos estão salvos; a comparação foi pausada pelo limite diário de requisições. Veja `docs/prompts.md`.
 
 ## Adequação e limites
 
@@ -21,7 +21,7 @@ O modo remoto não deve ser tratado como garantia de correção: a validação P
 
 ## Escopo e custo consultado
 
-A comparação prática de três modelos em cinco casos foi deixada fora do escopo por decisão do grupo. O projeto adotará o Gemini 3.8 Flash; esta decisão não afirma que ele tenha sido comparado ou que seja superior a outros modelos. A avaliação de qualidade do Gemini está parcial, com 17 casos concluídos.
+A comparação prática de três modelos em cinco casos foi deixada fora do escopo por decisão do grupo. O projeto adotará o Gemini 3.8 Flash; esta decisão não afirma que ele tenha sido comparado ou que seja superior a outros modelos. A comparação histórica de duas versões do prompt concluiu 20 casos antes da mudança da regra de cancelamento; a nova comparação está parcial, com 11 casos concluídos.
 
 Na tabela oficial consultada em 18/10/2026, o preço do plano pago do Gemini 3.8 Flash é:
 
@@ -32,7 +32,7 @@ Na tabela oficial consultada em 18/10/2026, o preço do plano pago do Gemini 3.8
 
 O preço inclui tokens de pensamento na saída. A conta por execução depende dos tokens efetivamente consumidos; quando o modo Gemini for executado, o código registra o uso informado pela API. Fonte: [preços oficiais da API Gemini](https://ai.google.dev/gemini-api/docs/pricing).
 
-O modo mock mede somente fluxo e segurança do código, não a qualidade do modelo. Uma avaliação do Gemini, se realizada depois, pode usar as perguntas em `dados/perguntas-rag.json` e os casos de conversa da demonstração, registrando prompt e hash, texto, fontes, suficiência, tokens, latência e acerto contra o gabarito.
+O modo mock mede somente fluxo e segurança do código, não a qualidade do modelo. A avaliação do prompt usou as perguntas em `dados/perguntas-rag.json` e registrou prompt e hash, texto, fontes, suficiência, tokens e custo. Não mediu latência nem incluiu uma avaliação humana preenchida.
 
 ## Quando rever a decisão
 

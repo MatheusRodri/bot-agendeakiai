@@ -1,0 +1,261 @@
+{
+  "executado_em": "2026-10-25T22:27:32.675890+00:00",
+  "modelo": "gemini-3.8-flash",
+  "frase_comparada": "Não exponha raciocínio interno.",
+  "hash_prompt_com_frase": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2",
+  "hash_prompt_sem_frase": "a1f28bbd439e5293fb36229c057abc1c13002f10ee729fdf36371e954307d88f",
+  "teto_total_usd": 0.2,
+  "gasto_usd": 0.014664,
+  "casos": [
+    {
+      "variante": "presente",
+      "indice": 1,
+      "pergunta": "Com quantas horas de antecedência posso cancelar?",
+      "resposta_esperada": "Não há antecedência mínima; pode cancelar a qualquer momento",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Você pode cancelar seu agendamento a qualquer momento, pois não há exigência de antecedência mínima.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 379,
+      "tokens_saida": 49,
+      "tokens_pensamento": 341,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00174675,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 2,
+      "pergunta": "A regra de cancelamento é de 24 horas?",
+      "resposta_esperada": "Não; o prazo de 24 horas foi revogado e pode cancelar a qualquer momento",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Não, a regra de cancelamento de 24 horas foi revogada. Agora você pode cancelar o seu agendamento a qualquer momento.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 389,
+      "tokens_saida": 55,
+      "tokens_pensamento": 167,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00112425,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 3,
+      "pergunta": "A remarcação tem custo?",
+      "resposta_esperada": "Não tem custo nesta POC",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "A remarcação não tem custo nesta POC.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 371,
+      "tokens_saida": 38,
+      "tokens_pensamento": 204,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00118575,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 4,
+      "pergunta": "O que acontece se o salão cancelar?",
+      "resposta_esperada": "Remarcação sem custo ou reembolso integral",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Se o salão cancelar o agendamento, você tem direito à remarcação sem custo ou ao reembolso integral do valor pago.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 376,
+      "tokens_saida": 52,
+      "tokens_pensamento": 258,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.0014445,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 5,
+      "pergunta": "Fiquei doente no dia, posso remarcar?",
+      "resposta_esperada": "Uma remarcação sem custo com contato à operação",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você pode realizar uma remarcação sem custo entrando em contato direto com a nossa operação. Nossa equipe irá orientar e ajudar a reagendar o seu horário.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 381,
+      "tokens_saida": 62,
+      "tokens_pensamento": 227,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.0013695,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 6,
+      "pergunta": "Qual é a regra para atraso?",
+      "resposta_esperada": "Sem informação no corpus; encaminhar à operação",
+      "fontes_esperadas": [],
+      "suficiente_esperado": false,
+      "saida": {
+        "resultado": "Não encontrei informações sobre as regras de atraso no momento. Por favor, entre em contato diretamente com nossa equipe de atendimento para receber essa orientação.",
+        "fontes": [],
+        "suficiente": false
+      },
+      "tokens_entrada": 364,
+      "tokens_saida": 46,
+      "tokens_pensamento": 252,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.0013905,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 7,
+      "pergunta": "O salão devolve o valor se cancelar?",
+      "resposta_esperada": "Reembolso integral na exceção simulada",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, o salão realiza o reembolso integral na exceção simulada prevista pelas regras vigentes.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 378,
+      "tokens_saida": 45,
+      "tokens_pensamento": 276,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00148725,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 8,
+      "pergunta": "Posso remarcar sem pagar uma taxa?",
+      "resposta_esperada": "Sim, não há custo nesta POC",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você pode remarcar seu agendamento sem pagar nenhuma taxa nesta fase de testes. Caso queira reagendar, basta informar o serviço e o novo horário desejado.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 375,
+      "tokens_saida": 64,
+      "tokens_pensamento": 226,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00136875,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 9,
+      "pergunta": "Posso cancelar com menos de 48 horas de antecedência sem custo extra?",
+      "resposta_esperada": "Sim; pode cancelar a qualquer momento, sem taxa ou custo adicional pelo cancelamento",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você pode cancelar a qualquer momento sem cobrança de taxa ou custo adicional.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 392,
+      "tokens_saida": 42,
+      "tokens_pensamento": 190,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.001164,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "presente",
+      "indice": 10,
+      "pergunta": "Qual produto é seguro para minha alergia?",
+      "resposta_esperada": "Fora do corpus; recusar e orientar contato com salão",
+      "fontes_esperadas": [],
+      "suficiente_esperado": false,
+      "saida": {
+        "resultado": "Não possuo informações técnicas ou médicas sobre a composição dos produtos para avaliar alergias. Recomendo que você entre em contato diretamente com o salão ou consulte um profissional de saúde para verificar os produtos adequados com segurança.",
+        "fontes": [],
+        "suficiente": false
+      },
+      "tokens_entrada": 370,
+      "tokens_saida": 61,
+      "tokens_pensamento": 220,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00133125,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "removida",
+      "indice": 1,
+      "pergunta": "Com quantas horas de antecedência posso cancelar?",
+      "resposta_esperada": "Não há antecedência mínima; pode cancelar a qualquer momento",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Você pode cancelar o seu agendamento a qualquer momento, pois não há exigência de antecedência mínima.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 372,
+      "tokens_saida": 50,
+      "tokens_pensamento": 156,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.0010515,
+      "avaliacao_humana": null
+    }
+  ],
+  "status": "falha_chamada",
+  "erro_tipo": "ClientError",
+  "erro_http": 429,
+  "erro_status_api": "RESOURCE_EXHAUSTED",
+  "erro_limite": "diario"
+}

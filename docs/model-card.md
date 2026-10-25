@@ -1,6 +1,6 @@
 # Model card — AgendeAkiAI
 
-**Data deste documento:** 2026-10-24  
+**Data deste documento:** 2026-10-25  
 **Escopo:** prova de conceito local descrita neste repositório. O catálogo, a API, os clientes e os agendamentos da demonstração são simulados. Este documento não descreve uma implantação em produção.
 
 ## 1. Identificação
@@ -39,7 +39,7 @@
 
 ## 5. Modelo e provedor
 
-**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A política de uso de dados depende do nível de serviço; consulte a documentação vigente. A avaliação do modo remoto tem 17 de 20 casos concluídos e foi pausada pelo limite diário de requisições.
+**Afirmação.** O modo padrão é determinístico/local e não chama modelo. O modo opcional chama Gemini 3.8 Flash `gemini-3.8-flash` pelo SDK oficial `google-genai` e pela Gemini Developer API. Região de processamento e retenção pelo provedor não estão registradas no repositório. A avaliação do prompt concluiu 20 casos com a antiga regra de cancelamento; a nova execução com o corpus atualizado está parcial, com 11 de 20 casos salvos.
 
 **Evidência.** `docs/modelos.md:L3-L8,L20-L24`; `src/modelo.py:L39-L48`; `docs/prompts.md:L7-L9,L22-L27`.
 
@@ -62,7 +62,7 @@
 
 ## 7. Avaliação
 
-**Afirmação.** O verificador local confere dez logs, o contrato de saída, a ausência de escrita em cenários sem aprovação, a idempotência e a expiração. A recuperação lexical atingiu 10/10 perguntas no alvo em 2026-10-04. Não há resultados por fatia para qualidade com clientes reais, versão formal da suíte ou medida de concordância entre juiz e avaliadores humanos. A avaliação Gemini está parcial, com 17 de 20 casos concluídos.
+**Afirmação.** O verificador local confere dez logs, o contrato de saída, a ausência de escrita em cenários sem aprovação, a idempotência e a expiração. A recuperação lexical atingiu 10/10 perguntas no alvo com o corpus atualizado em 2026-10-25. A avaliação Gemini histórica concluiu 20/20 respostas com formato, fontes e suficiência esperados, mas encontrou uma formulação ambígua do antigo prazo. A nova avaliação Gemini salvou 11 de 20 casos antes de atingir o limite diário; ainda não há comparação completa entre as versões do prompt para a regra atual. Não há resultados por fatia para qualidade com clientes reais, versão formal da suíte ou medida de concordância entre juiz e avaliadores humanos.
 
 **Evidência.** `src/verificar.py:L12-L17,L28-L71`; `docs/case.md:L74-L78`; `docs/rag.md:L15-L32`; `dados/resultado-avaliacao-rag.json`; `docs/prompts.md:L22-L27`; `docs/medicao-baseline.md:L1-L4`.
 

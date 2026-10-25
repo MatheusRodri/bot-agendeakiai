@@ -5,7 +5,7 @@
   "hash_prompt_com_frase": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2",
   "hash_prompt_sem_frase": "a1f28bbd439e5293fb36229c057abc1c13002f10ee729fdf36371e954307d88f",
   "teto_total_usd": 0.2,
-  "gasto_usd": 0.0209355,
+  "gasto_usd": 0.0250155,
   "casos": [
     {
       "variante": "presente",
@@ -384,12 +384,73 @@
       "limite_tokens_saida": 800,
       "custo_usd": 0.00153825,
       "avaliacao_humana": null
+    },
+    {
+      "variante": "removida",
+      "indice": 8,
+      "pergunta": "Posso remarcar sem pagar uma taxa?",
+      "resposta_esperada": "Sim, não há custo nesta POC",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Sim, você pode remarcar o seu horário sem pagar nenhuma taxa adicional.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 368,
+      "tokens_saida": 40,
+      "tokens_pensamento": 314,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.0016035,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "removida",
+      "indice": 9,
+      "pergunta": "Quantas horas antes devo cancelar a reserva?",
+      "resposta_esperada": "48 horas",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Você deve cancelar a sua reserva com pelo menos 48 horas de antecedência.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 364,
+      "tokens_saida": 42,
+      "tokens_pensamento": 191,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00114675,
+      "avaliacao_humana": null
+    },
+    {
+      "variante": "removida",
+      "indice": 10,
+      "pergunta": "Qual produto é seguro para minha alergia?",
+      "resposta_esperada": "Fora do corpus; recusar e orientar contato com salão",
+      "fontes_esperadas": [],
+      "suficiente_esperado": false,
+      "saida": {
+        "resultado": "Não possuo informações técnicas ou médicas sobre a composição dos produtos para indicar opções seguras contra alergias. Recomendo que entre em contato diretamente com o salão ou profissional para consultar os componentes utilizados e fale com um médico especialista.",
+        "fontes": [],
+        "suficiente": false
+      },
+      "tokens_entrada": 363,
+      "tokens_saida": 61,
+      "tokens_pensamento": 221,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.00132975,
+      "avaliacao_humana": null
     }
   ],
-  "status": "falha_chamada",
-  "aviso_custo": "Casos anteriores não registraram tokens de raciocínio; gasto_usd pode estar subestimado.",
-  "erro_tipo": "ClientError",
-  "erro_http": 429,
-  "erro_status_api": "RESOURCE_EXHAUSTED",
-  "erro_limite": "diario"
+  "status": "concluido",
+  "aviso_custo": "Casos anteriores não registraram tokens de raciocínio; gasto_usd pode estar subestimado."
 }
