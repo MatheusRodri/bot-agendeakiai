@@ -1,7 +1,7 @@
 status: vigente
 
 ## Cancelamento
-O cancelamento de um agendamento exige antecedência mínima de 48 horas. Esta é a regra simulada vigente do AgendeAkiAI.
+O cliente pode cancelar um agendamento a qualquer momento, sem taxa ou custo adicional pelo cancelamento. Não há prazo mínimo de antecedência: não é preciso avisar 24 ou 48 horas antes. Esta é a regra vigente informada para esta POC.
 
 ## Remarcação
 A remarcação não tem custo nesta POC. Regra simulada para avaliação, sem pesquisa com clientes reais.

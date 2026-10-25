@@ -8,7 +8,7 @@ O usuário que sofre diretamente é o **cliente final que precisa se preparar pa
 
 Hoje o cliente navega por filtros de serviço, salão, profissional, preço e horário; compara resultados e reinicia a busca quando uma combinação não existe. A entrada é uma mensagem em linguagem natural e a saída é uma recomendação de até três opções, seguida de confirmação explícita antes de qualquer agendamento. Depois da confirmação, a plataforma registra o agendamento e o cliente recebe a identificação dele.
 
-As regras desta primeira versão são: orçamento máximo e bairro restringem a busca; o pedido atual prevalece sobre o histórico; só se confirma uma opção retornada na consulta da sessão; e cancelamento exige 48 horas de antecedência, enquanto remarcação não tem custo. Não há, por enquanto, regra definida para atraso, falta ou lembrete de confirmação — esses casos são encaminhados para a operação humana.
+As regras desta primeira versão são: orçamento máximo e bairro restringem a busca; o pedido atual prevalece sobre o histórico; só se confirma uma opção retornada na consulta da sessão; o cancelamento pode ocorrer a qualquer momento, sem antecedência mínima nem custo adicional; e a remarcação não tem custo. Não há, por enquanto, regra definida para atraso, falta ou lembrete de confirmação — esses casos são encaminhados para a operação humana.
 
 Os casos difíceis são: preferência atual que contradiz o histórico, cliente inexistente, não haver uma opção compatível e o cliente querer somente comparar, sem autorizar escrita.
 
@@ -32,7 +32,7 @@ Quando uma regra ainda não existe, há conflito que o agente não consegue escl
 >
 > Cliente: Sim, confirmo.
 >
-> Agente: Agendamento confirmado. Se quiser cancelar, a regra atual exige antecedência de 48 horas.
+> Agente: Agendamento confirmado. Se quiser cancelar, você pode fazer isso a qualquer momento, sem custo adicional pelo cancelamento.
 
 O cliente normalmente não informa todos os filtros na primeira mensagem. O agente pergunta apenas pelo filtro que impede a busca; se o histórico disser “moderno” e o cliente pedir “clássico”, usa o pedido atual e informa essa priorização. Só considera que sabe o suficiente quando serviço e os filtros disponíveis permitem consultar opções. A confirmação é uma decisão do cliente, nunca uma inferência do modelo.
 
@@ -73,7 +73,7 @@ O modo mock custa US$ 0. Para o Gemini 3.8 Flash, a estimativa de tokens e custo
 
 O verificador construído é `src/verificar.py`. Ele confere os dez logs de `src/demo.py`: contrato de saída Pydantic, ausência de escrita fora da aprovação, erro de cliente inexistente, recusa sem suporte, aprovação editada/repetida e rejeição por expiração. A execução é `python -m src.verificar` depois de `python -m src.demo`.
 
-**Verificação observada em 2026-10-04:** os **10 de 10** logs passaram; nenhum cenário sem aprovação realizou escrita; a aprovação editada repetida manteve um único identificador; a aprovação expirada terminou sem reserva. A avaliação lexical das dez perguntas marcou **10/10 no alvo**. Os resultados testam a POC mock, não comportamento com clientes reais.
+**Verificação observada em 2026-10-04:** os **10 de 10** logs passaram; nenhum cenário sem aprovação realizou escrita; a aprovação editada repetida manteve um único identificador; a aprovação expirada terminou sem reserva. A avaliação lexical foi repetida com a regra atual em 2026-10-25 e marcou **10/10 no alvo**. Os resultados testam a POC mock, não comportamento com clientes reais.
 
 ## Dados e privacidade
 
@@ -92,7 +92,7 @@ Nesta POC, a palavra **opção** designa um conjunto já consultado de serviço,
 
 O catálogo é filtrado por nome de serviço, bairro e teto de preço. A frase “maquiagem natural”, por exemplo, nomeia um serviço e não é tratada automaticamente como preferência pessoal. Preferências semânticas só entram na memória quando o cliente as explicita com termos como “prefiro” ou “gosto”. O pedido atual ainda prevalece sobre histórico e memória.
 
-As regras de cancelamento em 48 horas e remarcação sem custo são regras simuladas desta POC. Duas exceções — cancelamento pelo salão e doença no dia — foram criadas exclusivamente para avaliar recuperação e citação. Não houve entrevista nem pesquisa com clientes reais, salões ou operação. A regra antiga de 24 horas está no corpus apenas como documento revogado e não pode fundamentar resposta.
+O cancelamento a qualquer momento e sem custo adicional é a regra informada pelo grupo para esta POC. A remarcação sem custo e duas exceções — cancelamento pelo salão e doença no dia — foram usadas para avaliar recuperação e citação. Não houve entrevista nem pesquisa com clientes reais, salões ou operação. Os antigos prazos de 24 e 48 horas estão no corpus apenas como regras revogadas e não podem fundamentar respostas.
 
 O agente não sabe responder sobre atraso, alergias, falta ou lembretes porque o corpus não contém orientação aprovada para esses assuntos. A lacuna produz uma recusa com orientação à operação. A busca por catálogo e por regras é lexical e pequena; ela não mede adequação estética de um serviço a uma ocasião.
 

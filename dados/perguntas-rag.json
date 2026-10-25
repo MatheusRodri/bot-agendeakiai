@@ -1,12 +1,12 @@
 [
-  {"pergunta":"Com quantas horas de antecedência posso cancelar?","resposta":"48 horas","tipo":"regra vigente"},
-  {"pergunta":"A regra de cancelamento é de 24 horas?","resposta":"Não, a versão de 24 horas foi revogada; são 48 horas","tipo":"regra revogada"},
-  {"pergunta":"A remarcação tem custo?","resposta":"Não tem custo nesta POC","tipo":"regra vigente"},
-  {"pergunta":"O que acontece se o salão cancelar?","resposta":"Remarcação sem custo ou reembolso integral","tipo":"exceção simulada"},
-  {"pergunta":"Fiquei doente no dia, posso remarcar?","resposta":"Uma remarcação sem custo com contato à operação","tipo":"exceção simulada"},
-  {"pergunta":"Qual é a regra para atraso?","resposta":"Sem informação no corpus; encaminhar à operação","tipo":"sem resposta"},
-  {"pergunta":"O salão devolve o valor se cancelar?","resposta":"Reembolso integral na exceção simulada","tipo":"exceção simulada"},
-  {"pergunta":"Posso remarcar sem pagar uma taxa?","resposta":"Sim, não há custo nesta POC","tipo":"regra vigente"},
-  {"pergunta":"Quantas horas antes devo cancelar a reserva?","resposta":"48 horas","tipo":"regra vigente"},
-  {"pergunta":"Qual produto é seguro para minha alergia?","resposta":"Fora do corpus; recusar e orientar contato com salão","tipo":"fora do corpus"}
+  {"pergunta":"Com quantas horas de antecedência posso cancelar?","resposta":"Não há antecedência mínima; pode cancelar a qualquer momento","tipo":"regra vigente","alvo":"Cancelamento"},
+  {"pergunta":"A regra de cancelamento é de 24 horas?","resposta":"Não; o prazo de 24 horas foi revogado e pode cancelar a qualquer momento","tipo":"regra revogada","alvo":"Cancelamento"},
+  {"pergunta":"A remarcação tem custo?","resposta":"Não tem custo nesta POC","tipo":"regra vigente","alvo":"Remarcação"},
+  {"pergunta":"O que acontece se o salão cancelar?","resposta":"Remarcação sem custo ou reembolso integral","tipo":"exceção simulada","alvo":"Exceção por cancelamento do salão"},
+  {"pergunta":"Fiquei doente no dia, posso remarcar?","resposta":"Uma remarcação sem custo com contato à operação","tipo":"exceção simulada","alvo":"Exceção por doença no dia"},
+  {"pergunta":"Qual é a regra para atraso?","resposta":"Sem informação no corpus; encaminhar à operação","tipo":"sem resposta","alvo":null},
+  {"pergunta":"O salão devolve o valor se cancelar?","resposta":"Reembolso integral na exceção simulada","tipo":"exceção simulada","alvo":"Exceção por cancelamento do salão"},
+  {"pergunta":"Posso remarcar sem pagar uma taxa?","resposta":"Sim, não há custo nesta POC","tipo":"regra vigente","alvo":"Remarcação"},
+  {"pergunta":"Posso cancelar com menos de 48 horas de antecedência sem custo extra?","resposta":"Sim; pode cancelar a qualquer momento, sem taxa ou custo adicional pelo cancelamento","tipo":"regra revogada","alvo":"Cancelamento"},
+  {"pergunta":"Qual produto é seguro para minha alergia?","resposta":"Fora do corpus; recusar e orientar contato com salão","tipo":"fora do corpus","alvo":null}
 ]

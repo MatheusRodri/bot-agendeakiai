@@ -1,0 +1,144 @@
+{
+  "executado_em": "2026-10-25T22:27:06.273288+00:00",
+  "corpus_sha256": "d04b18f93e83db5dae63923af5302d871861041bb7e4058ddec208bfa11da84f",
+  "perguntas_sha256": "cdbb3735670ec8623dcddfa4ca5ae20dfe40931322a97a03d994a918c6e81e59",
+  "acertos": 10,
+  "total": 10,
+  "casos": [
+    {
+      "indice": 1,
+      "pergunta": "Com quantas horas de antecedência posso cancelar?",
+      "resposta_esperada": "Não há antecedência mínima; pode cancelar a qualquer momento",
+      "alvo": "Cancelamento",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Cancelamento\nO cliente pode cancelar um agendamento a qualquer momento, sem taxa ou custo adicional pelo cancelamento. Não há prazo mínimo de antecedência: não é preciso avisar 24 ou 48 horas antes. Esta é a regra vigente informada para esta POC.",
+        "titulo": "Cancelamento",
+        "pontos": "3"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 2,
+      "pergunta": "A regra de cancelamento é de 24 horas?",
+      "resposta_esperada": "Não; o prazo de 24 horas foi revogado e pode cancelar a qualquer momento",
+      "alvo": "Cancelamento",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Cancelamento\nO cliente pode cancelar um agendamento a qualquer momento, sem taxa ou custo adicional pelo cancelamento. Não há prazo mínimo de antecedência: não é preciso avisar 24 ou 48 horas antes. Esta é a regra vigente informada para esta POC.",
+        "titulo": "Cancelamento",
+        "pontos": "4"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 3,
+      "pergunta": "A remarcação tem custo?",
+      "resposta_esperada": "Não tem custo nesta POC",
+      "alvo": "Remarcação",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Remarcação\nA remarcação não tem custo nesta POC. Regra simulada para avaliação, sem pesquisa com clientes reais.",
+        "titulo": "Remarcação",
+        "pontos": "3"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 4,
+      "pergunta": "O que acontece se o salão cancelar?",
+      "resposta_esperada": "Remarcação sem custo ou reembolso integral",
+      "alvo": "Exceção por cancelamento do salão",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Exceção por cancelamento do salão\nRegra simulada para avaliação: se o salão cancelar, o cliente pode escolher remarcação sem custo ou solicitar reembolso integral.",
+        "titulo": "Exceção por cancelamento do salão",
+        "pontos": "2"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 5,
+      "pergunta": "Fiquei doente no dia, posso remarcar?",
+      "resposta_esperada": "Uma remarcação sem custo com contato à operação",
+      "alvo": "Exceção por doença no dia",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Exceção por doença no dia\nRegra simulada para avaliação: em caso de doença no dia, é permitida uma remarcação sem custo mediante contato com a operação.",
+        "titulo": "Exceção por doença no dia",
+        "pontos": "3"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 6,
+      "pergunta": "Qual é a regra para atraso?",
+      "resposta_esperada": "Sem informação no corpus; encaminhar à operação",
+      "alvo": null,
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Cancelamento\nO cliente pode cancelar um agendamento a qualquer momento, sem taxa ou custo adicional pelo cancelamento. Não há prazo mínimo de antecedência: não é preciso avisar 24 ou 48 horas antes. Esta é a regra vigente informada para esta POC.",
+        "titulo": "Cancelamento",
+        "pontos": "1"
+      },
+      "suficiente": false,
+      "passou": true
+    },
+    {
+      "indice": 7,
+      "pergunta": "O salão devolve o valor se cancelar?",
+      "resposta_esperada": "Reembolso integral na exceção simulada",
+      "alvo": "Exceção por cancelamento do salão",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Exceção por cancelamento do salão\nRegra simulada para avaliação: se o salão cancelar, o cliente pode escolher remarcação sem custo ou solicitar reembolso integral.",
+        "titulo": "Exceção por cancelamento do salão",
+        "pontos": "3"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 8,
+      "pergunta": "Posso remarcar sem pagar uma taxa?",
+      "resposta_esperada": "Sim, não há custo nesta POC",
+      "alvo": "Remarcação",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Remarcação\nA remarcação não tem custo nesta POC. Regra simulada para avaliação, sem pesquisa com clientes reais.",
+        "titulo": "Remarcação",
+        "pontos": "3"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 9,
+      "pergunta": "Posso cancelar com menos de 48 horas de antecedência sem custo extra?",
+      "resposta_esperada": "Sim; pode cancelar a qualquer momento, sem taxa ou custo adicional pelo cancelamento",
+      "alvo": "Cancelamento",
+      "primeiro_trecho": {
+        "fonte": "dados/corpus/regras-vigentes.md",
+        "trecho": "## Cancelamento\nO cliente pode cancelar um agendamento a qualquer momento, sem taxa ou custo adicional pelo cancelamento. Não há prazo mínimo de antecedência: não é preciso avisar 24 ou 48 horas antes. Esta é a regra vigente informada para esta POC.",
+        "titulo": "Cancelamento",
+        "pontos": "6"
+      },
+      "suficiente": true,
+      "passou": true
+    },
+    {
+      "indice": 10,
+      "pergunta": "Qual produto é seguro para minha alergia?",
+      "resposta_esperada": "Fora do corpus; recusar e orientar contato com salão",
+      "alvo": null,
+      "primeiro_trecho": null,
+      "suficiente": false,
+      "passou": true
+    }
+  ]
+}
