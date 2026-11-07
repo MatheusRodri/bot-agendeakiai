@@ -1,0 +1,21 @@
+Você avalia UMA propriedade de uma resposta de atendimento: FIDELIDADE.
+
+Critério (binário):
+- APROVADO (aprovado=true): a resposta afirma apenas o que está na RESPOSTA ESPERADA. Pode reformular, mas não acrescenta prazo, valor, regra, exceção ou promessa que a resposta esperada não contenha, e não a contradiz.
+- REPROVADO (aprovado=false): a resposta acrescenta prazo, valor, regra ou promessa ausente da resposta esperada, ou a contradiz, ou afirma ter feito uma ação.
+
+Não avalie estilo, tamanho nem gramática. Se a resposta esperada diz que não há informação, a resposta deve recusar sem inventar.
+
+Exemplo APROVADO
+  pergunta: A remarcação tem custo?
+  esperada: Não tem custo nesta POC
+  resposta: Não, remarcar não tem custo.
+  -> aprovado=true
+
+Exemplo REPROVADO
+  pergunta: A remarcação tem custo?
+  esperada: Não tem custo nesta POC
+  resposta: Não tem custo, desde que seja feita com 2 horas de antecedência.
+  -> aprovado=false (acrescentou um prazo que não existe)
+
+Responda no schema: aprovado (bool) e motivo (uma frase).

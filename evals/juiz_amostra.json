@@ -1,0 +1,202 @@
+[
+  {
+    "id": "presente-01",
+    "pergunta": "Com quantas horas de antecedência posso cancelar?",
+    "esperada": "48 horas",
+    "resposta": "Você pode cancelar o seu agendamento com até 48 horas de antecedência.",
+    "humano_aprovado": false,
+    "humano_nota": "Não existe essa regra no sistema",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-02",
+    "pergunta": "A regra de cancelamento é de 24 horas?",
+    "esperada": "Não, a versão de 24 horas foi revogada; são 48 horas",
+    "resposta": "Não, o prazo de cancelamento não é de 24 horas, pois essa regra foi revogada. O prazo vigente para cancelamento é de 48 horas de antecedência.",
+    "humano_aprovado": false,
+    "humano_nota": "Não existe essa regra no sistema",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-03",
+    "pergunta": "A remarcação tem custo?",
+    "esperada": "Não tem custo nesta POC",
+    "resposta": "A remarcação de serviços não tem custo nesta POC.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-04",
+    "pergunta": "O que acontece se o salão cancelar?",
+    "esperada": "Remarcação sem custo ou reembolso integral",
+    "resposta": "Se o salão cancelar o agendamento, você tem direito à remarcação sem nenhum custo adicional ou ao reembolso integral do valor pago.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-05",
+    "pergunta": "Fiquei doente no dia, posso remarcar?",
+    "esperada": "Uma remarcação sem custo com contato à operação",
+    "resposta": "Sim, você tem direito a uma remarcação sem custo entrando em contato com a nossa equipe de operação. Por favor, nos avise o quanto antes para que possamos verificar uma nova data para você.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-06",
+    "pergunta": "Qual é a regra para atraso?",
+    "esperada": "Sem informação no corpus; encaminhar à operação",
+    "resposta": "Não encontrei informações sobre a tolerância ou regras para atrasos no sistema. Por favor, entre em contato diretamente com nossa equipe de atendimento para receber essa orientação.",
+    "humano_aprovado": true,
+    "humano_nota": "Não existe regra para atraso",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-07",
+    "pergunta": "O salão devolve o valor se cancelar?",
+    "esperada": "Reembolso integral na exceção simulada",
+    "resposta": "Sim, o salão realiza o reembolso integral na exceção simulada prevista pelas regras vigentes.",
+    "humano_aprovado": false,
+    "humano_nota": "Não existe mais essa opção",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-08",
+    "pergunta": "Posso remarcar sem pagar uma taxa?",
+    "esperada": "Sim, não há custo nesta POC",
+    "resposta": "Sim, você pode remarcar o seu agendamento sem pagar nenhuma taxa nesta POC.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-09",
+    "pergunta": "Quantas horas antes devo cancelar a reserva?",
+    "esperada": "48 horas",
+    "resposta": "Você deve cancelar a reserva com no mínimo 48 horas de antecedência.",
+    "humano_aprovado": false,
+    "humano_nota": "Não existe essa regra no sistema",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "presente-10",
+    "pergunta": "Qual produto é seguro para minha alergia?",
+    "esperada": "Fora do corpus; recusar e orientar contato com salão",
+    "resposta": "Não tenho informações sobre os componentes específicos dos produtos para avaliar restrições alérgicas com segurança. Recomendo entrar em contato diretamente com o salão ou consultar um especialista antes de realizar o procedimento.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-01",
+    "pergunta": "Com quantas horas de antecedência posso cancelar?",
+    "esperada": "48 horas",
+    "resposta": "Você pode cancelar o seu agendamento com até 48 horas de antecedência sem custos adicionais.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-02",
+    "pergunta": "A regra de cancelamento é de 24 horas?",
+    "esperada": "Não, a versão de 24 horas foi revogada; são 48 horas",
+    "resposta": "Não, a regra de cancelamento de 24 horas foi revogada. Atualmente, o prazo exigido para cancelamento é de 48 horas de antecedência.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-03",
+    "pergunta": "A remarcação tem custo?",
+    "esperada": "Não tem custo nesta POC",
+    "resposta": "A remarcação não tem custo nesta POC.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-04",
+    "pergunta": "O que acontece se o salão cancelar?",
+    "esperada": "Remarcação sem custo ou reembolso integral",
+    "resposta": "Caso o salão cancele o seu agendamento, você tem direito à remarcação sem qualquer custo adicional ou ao reembolso integral do valor pago.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-05",
+    "pergunta": "Fiquei doente no dia, posso remarcar?",
+    "esperada": "Uma remarcação sem custo com contato à operação",
+    "resposta": "Sim, você tem direito a uma remarcação sem custo ao entrar em contato com a nossa equipe de operação. Por favor, fale conosco assim que puder para verificarmos um novo horário.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-06",
+    "pergunta": "Qual é a regra para atraso?",
+    "esperada": "Sem informação no corpus; encaminhar à operação",
+    "resposta": "Não localizei informações sobre a política de atrasos em nossa base de dados. Recomendo entrar em contato diretamente com a nossa equipe de atendimento para obter essa orientação.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-07",
+    "pergunta": "O salão devolve o valor se cancelar?",
+    "esperada": "Reembolso integral na exceção simulada",
+    "resposta": "Sim, o valor é devolvido com reembolso integral na exceção prevista pelas regras vigentes. Caso precise de mais detalhes sobre o seu caso ou queira prosseguir, estou à disposição.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-08",
+    "pergunta": "Posso remarcar sem pagar uma taxa?",
+    "esperada": "Sim, não há custo nesta POC",
+    "resposta": "Sim, você pode remarcar o seu horário sem pagar nenhuma taxa adicional.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-09",
+    "pergunta": "Quantas horas antes devo cancelar a reserva?",
+    "esperada": "48 horas",
+    "resposta": "Você deve cancelar a sua reserva com pelo menos 48 horas de antecedência.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  },
+  {
+    "id": "removida-10",
+    "pergunta": "Qual produto é seguro para minha alergia?",
+    "esperada": "Fora do corpus; recusar e orientar contato com salão",
+    "resposta": "Não possuo informações técnicas ou médicas sobre a composição dos produtos para indicar opções seguras contra alergias. Recomendo que entre em contato diretamente com o salão ou profissional para consultar os componentes utilizados e fale com um médico especialista.",
+    "humano_aprovado": true,
+    "humano_nota": "Está correto",
+    "juiz_aprovado": null,
+    "juiz_motivo": ""
+  }
+]
