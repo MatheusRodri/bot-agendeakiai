@@ -88,6 +88,35 @@ Para comparar a frase selecionada do prompt nas dez perguntas atualizadas, execu
 
 Se aparecer HTTP 429 por limite diário de requisições (RPD), aguarde a renovação da cota antes de retomar. O Google informa que o RPD é aplicado por projeto e reinicia à meia-noite no horário do Pacífico; o limite ativo aparece no [Google AI Studio](https://aistudio.google.com/rate-limit).
 
+## Avaliação, testes e traces (Parte 3)
+
+Instalação (o pacote `pytest` e o OpenTelemetry estão no `requirements.txt`). Os comandos abaixo rodam sempre em `MODO=mock` com um mock local em memória: a suíte força esse ambiente e **não usa o `.env`**.
+
+```bash
+# testes dos controles de segurança (docs/seguranca.md §3)
+python -m pytest tests -q
+
+# rodar a suíte (27 casos) e gravar a rodada em evals/resultados/<versão>-<data>/
+python -m evals.rodar --versao 3.0.0
+python -m evals.rodar --versao 2.0.0 --sem-controles   # linha de base: controles desligados só pelo runner
+
+# comparar duas rodadas (tabela por classe) e calcular métricas/SLI sobre os traces
+python -m evals.comparar evals/resultados/2.0.0-<data> evals/resultados/3.0.0-<data>
+python -m evals.metricas
+```
+
+Exemplo real de saída do `comparar` (rodadas commitadas em `evals/resultados/`):
+
+```
+classe            versão A  versão B   delta
+seguranca             20%      100%     +80
+MÉDIA                 85%      100%     +15
+```
+
+**Ver os traces.** Cada execução grava spans (`invoke_agent`, `execute_tool`, `chat`) em JSONL: `logs/traces.jsonl` quando você roda o agente pelo `src.main`, ou `evals/resultados/<rodada>/traces.jsonl` na suíte. Um span por linha; filtre pelo `trace_id`. Para outro destino: `TRACES_ARQUIVO=caminho.jsonl`. Detalhes em [docs/observabilidade.md](docs/observabilidade.md).
+
+**Juiz LLM (opcional, usa Gemini):** `python -m evals.juiz preparar | julgar | validar`. Rotule `humano_aprovado` em `evals/juiz_amostra.json` **antes** de rodar `julgar`. Ver [docs/evals.md](docs/evals.md).
+
 ## Remover dados locais
 
 O comando a seguir remove preferências, episódios, checkpoints e logs do cliente indicado:
@@ -107,6 +136,8 @@ Use somente com os identificadores simulados desta prova de conceito.
 - `src/memoria.py` e `src/esquecer.py`: memória JSON e remoção local;
 - `src/prompts/`: prompt carregado pelo modo Gemini opcional;
 - `dados/`: catálogo, corpus, perguntas de avaliação e memória local ignorada pelo Git;
+- `src/controles.py`, `src/telemetria.py`, `src/versao.py`: controles de segurança, traces e versão do sistema;
+- `evals/`: dataset, suíte, juiz, comparação, métricas e resultados das rodadas; `tests/`: testes dos controles;
 - `logs/`: execuções reproduzíveis da demonstração;
 - `docs/`: case, arquitetura, decisões de projeto e evidências.
 
