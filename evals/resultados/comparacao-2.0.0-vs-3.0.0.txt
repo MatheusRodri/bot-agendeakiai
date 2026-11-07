@@ -1,5 +1,5 @@
 DATASET v1.0.0   27 casos   (producao 0 · desenvolvimento 19 · sintetico 8)
-JUIZ rubrica: não validado (evals/juiz_resultado.json ausente)
+JUIZ rubrica v1.0.0   concordância 75.0%   limiar 85%
 
 versão A = 2.0.0 (sem controles)   versão B = 3.0.0
 

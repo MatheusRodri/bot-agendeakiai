@@ -6,8 +6,8 @@
     "resposta": "Você pode cancelar o seu agendamento com até 48 horas de antecedência.",
     "humano_aprovado": false,
     "humano_nota": "Não existe essa regra no sistema",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta apenas reformula a informação fornecida na resposta esperada, sem adicionar regras ou prazos novos."
   },
   {
     "id": "presente-02",
@@ -16,8 +16,8 @@
     "resposta": "Não, o prazo de cancelamento não é de 24 horas, pois essa regra foi revogada. O prazo vigente para cancelamento é de 48 horas de antecedência.",
     "humano_aprovado": false,
     "humano_nota": "Não existe essa regra no sistema",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula fielmente as informações da resposta esperada sem adicionar novas regras ou contradições."
   },
   {
     "id": "presente-03",
@@ -26,8 +26,8 @@
     "resposta": "A remarcação de serviços não tem custo nesta POC.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula adequadamente a resposta esperada sem adicionar regras, prazos ou dados inexistentes."
   },
   {
     "id": "presente-04",
@@ -36,8 +36,8 @@
     "resposta": "Se o salão cancelar o agendamento, você tem direito à remarcação sem nenhum custo adicional ou ao reembolso integral do valor pago.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula a resposta esperada sem acrescentar novas regras, prazos ou promessas."
   },
   {
     "id": "presente-05",
@@ -46,8 +46,8 @@
     "resposta": "Sim, você tem direito a uma remarcação sem custo entrando em contato com a nossa equipe de operação. Por favor, nos avise o quanto antes para que possamos verificar uma nova data para você.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula adequadamente a informação da resposta esperada sem inventar prazos, valores ou novas regras."
   },
   {
     "id": "presente-06",
@@ -56,8 +56,8 @@
     "resposta": "Não encontrei informações sobre a tolerância ou regras para atrasos no sistema. Por favor, entre em contato diretamente com nossa equipe de atendimento para receber essa orientação.",
     "humano_aprovado": true,
     "humano_nota": "Não existe regra para atraso",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta segue fielmente a orientação de ausência de informações no corpus e encaminhamento à equipe de atendimento, sem acrescentar regras ou prazos inventados."
   },
   {
     "id": "presente-07",
@@ -66,8 +66,8 @@
     "resposta": "Sim, o salão realiza o reembolso integral na exceção simulada prevista pelas regras vigentes.",
     "humano_aprovado": false,
     "humano_nota": "Não existe mais essa opção",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula adequadamente a resposta esperada sem adicionar prazos, valores ou novas regras."
   },
   {
     "id": "presente-08",
@@ -76,8 +76,8 @@
     "resposta": "Sim, você pode remarcar o seu agendamento sem pagar nenhuma taxa nesta POC.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta confirma fielmente que não há custos para remarcar na POC, sem inventar regras adicionais."
   },
   {
     "id": "presente-09",
@@ -86,8 +86,8 @@
     "resposta": "Você deve cancelar a reserva com no mínimo 48 horas de antecedência.",
     "humano_aprovado": false,
     "humano_nota": "Não existe essa regra no sistema",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula a informação da resposta esperada sem adicionar prazos, regras ou informações extras."
   },
   {
     "id": "presente-10",
@@ -96,8 +96,8 @@
     "resposta": "Não tenho informações sobre os componentes específicos dos produtos para avaliar restrições alérgicas com segurança. Recomendo entrar em contato diretamente com o salão ou consultar um especialista antes de realizar o procedimento.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta recusa adequadamente por falta de informação e orienta o contato com o salão sem inventar regras, prazos ou valores."
   },
   {
     "id": "removida-01",
@@ -106,8 +106,8 @@
     "resposta": "Você pode cancelar o seu agendamento com até 48 horas de antecedência sem custos adicionais.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": false,
+    "juiz_motivo": "A resposta acrescentou a informação de que o cancelamento é 'sem custos adicionais', regra que não consta na resposta esperada."
   },
   {
     "id": "removida-02",
@@ -116,8 +116,8 @@
     "resposta": "Não, a regra de cancelamento de 24 horas foi revogada. Atualmente, o prazo exigido para cancelamento é de 48 horas de antecedência.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula adequadamente as informações presentes na resposta esperada sem acrescentar novas regras ou prazos."
   },
   {
     "id": "removida-03",
@@ -126,8 +126,8 @@
     "resposta": "A remarcação não tem custo nesta POC.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reproduz fielmente a informacao da resposta esperada sem acrescentar novas regras ou contradicoes."
   },
   {
     "id": "removida-04",
@@ -136,8 +136,8 @@
     "resposta": "Caso o salão cancele o seu agendamento, você tem direito à remarcação sem qualquer custo adicional ou ao reembolso integral do valor pago.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula a resposta esperada sem adicionar regras, prazos ou promessas ausentes."
   },
   {
     "id": "removida-05",
@@ -146,8 +146,8 @@
     "resposta": "Sim, você tem direito a uma remarcação sem custo ao entrar em contato com a nossa equipe de operação. Por favor, fale conosco assim que puder para verificarmos um novo horário.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta transmite fielmente as informações da resposta esperada sem adicionar regras, prazos ou promessas indevidas."
   },
   {
     "id": "removida-06",
@@ -156,8 +156,8 @@
     "resposta": "Não localizei informações sobre a política de atrasos em nossa base de dados. Recomendo entrar em contato diretamente com a nossa equipe de atendimento para obter essa orientação.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta segue fielmente a instrução esperada, informando a ausência de dados e direcionando o usuário para a equipe de atendimento sem inventar regras."
   },
   {
     "id": "removida-07",
@@ -166,8 +166,8 @@
     "resposta": "Sim, o valor é devolvido com reembolso integral na exceção prevista pelas regras vigentes. Caso precise de mais detalhes sobre o seu caso ou queira prosseguir, estou à disposição.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta mantém as informações da resposta esperada sobre o reembolso integral em caso de exceção sem adicionar prazos ou regras indevidas."
   },
   {
     "id": "removida-08",
@@ -176,8 +176,8 @@
     "resposta": "Sim, você pode remarcar o seu horário sem pagar nenhuma taxa adicional.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta confirma que a remarcação não tem custo sem acrescentar regras, prazos ou promessas ausentes na resposta esperada."
   },
   {
     "id": "removida-09",
@@ -186,8 +186,8 @@
     "resposta": "Você deve cancelar a sua reserva com pelo menos 48 horas de antecedência.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta reformula adequadamente a informação da resposta esperada sem acrescentar regras ou dados extras."
   },
   {
     "id": "removida-10",
@@ -196,7 +196,7 @@
     "resposta": "Não possuo informações técnicas ou médicas sobre a composição dos produtos para indicar opções seguras contra alergias. Recomendo que entre em contato diretamente com o salão ou profissional para consultar os componentes utilizados e fale com um médico especialista.",
     "humano_aprovado": true,
     "humano_nota": "Está correto",
-    "juiz_aprovado": null,
-    "juiz_motivo": ""
+    "juiz_aprovado": true,
+    "juiz_motivo": "A resposta recusa a solicitação por falta de informação e orienta o contato com o salão sem inventar regras, prazos ou valores."
   }
 ]

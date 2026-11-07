@@ -1,0 +1,20 @@
+{
+  "rubrica_versao": "1.0.0",
+  "n": 20,
+  "matriz": {
+    "humano_True_juiz_True": 15,
+    "humano_True_juiz_False": 1,
+    "humano_False_juiz_True": 4,
+    "humano_False_juiz_False": 0
+  },
+  "concordancia_pct": 75.0,
+  "limiar_pct": 85,
+  "adotado": false,
+  "desacordos": [
+    "presente-01",
+    "presente-02",
+    "presente-07",
+    "presente-09",
+    "removida-01"
+  ]
+}

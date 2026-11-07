@@ -65,11 +65,11 @@
 
 ## 7. Avaliação
 
-**Afirmação.** A suíte `evals/` (dataset `1.0.0`, 27 casos, 4 classes) roda `src.grafo.executar` em modo mock. A versão `3.0.0` passou em 27/27 e a linha de base `2.0.0` (mesmo código, controles desligados pelo runner) em 23/27; por classe: agendamento 100→100, rag 100→100, recusa 100→100, segurança 20→100. A melhora vem inteira do controle de memória; os outros dois controles são verificados por teste de unidade. O dataset é pequeno, escrito pelo grupo, sem casos de produção, e 8 sintéticos aguardam revisão humana. O juiz de fidelidade existe, mas **não foi validado**: faltam os 20 rótulos humanos. A avaliação Gemini da Parte 2 (20/20 em formato, fontes e suficiência) é anterior e mede só a redação, não o sistema.
+**Afirmação.** A suíte `evals/` (dataset `1.0.0`, 27 casos, 4 classes) roda `src.grafo.executar` em modo mock. A versão `3.0.0` passou em 27/27 e a linha de base `2.0.0` (mesmo código, controles desligados pelo runner) em 23/27; por classe: agendamento 100→100, rag 100→100, recusa 100→100, segurança 20→100. A melhora vem inteira do controle de memória; os outros dois controles são verificados por teste de unidade. O dataset é pequeno, escrito pelo grupo, sem casos de produção, e 8 sintéticos aguardam revisão humana. O juiz de fidelidade foi validado contra 20 rótulos humanos e **não foi adotado**: concordância de 75%, abaixo do limiar de 85% (matriz e os 5 desacordos em `docs/evals.md` §3; `evals/juiz_resultado.json`). A avaliação Gemini da Parte 2 (20/20 em formato, fontes e suficiência) é anterior e mede só a redação, não o sistema.
 
 **Evidência.** `evals/resultados/2.0.0-20261106-203956/resultado.json`, `evals/resultados/3.0.0-20261106-203959/resultado.json`, `evals/resultados/comparacao-2.0.0-vs-3.0.0.txt`; `docs/evals.md`; `tests/test_controles.py` (`python -m pytest tests -q`: 12 passam).
 
-**LACUNA:** concordância juiz × humano; comportamento ponta a ponta com Gemini real; casos de produção.
+**LACUNA:** nenhuma propriedade tem juiz adotado (rubrica a revisar); comportamento ponta a ponta com Gemini real; casos de produção.
 
 ## 8. Limites conhecidos
 
@@ -123,7 +123,7 @@ Pergunta: *por que o agente reservou o "Penteado elegante com Lívia" (opc-005, 
 | Responsável individual por incidentes e aprovador de mudanças não identificados; commits `PENDENTE` em `docs/mudancas.md`. | Nomear responsável, preencher commits e aprovadores. | Alta |
 | `src/esquecer.py` não apaga traces (`*.jsonl`); trace guarda entrada completa e `cliente_id`; sem prazo de retenção. | Incluir traces na rotina de esquecimento e definir prazo (proposta: 30 dias). | Alta |
 | Controle 3 nunca exercitado com resposta real do Gemini; o defeito do `finalizar` fazia a resposta do modelo nunca chegar à saída. | Rodar parte da suíte com `MODO=gemini` e medir. | Alta |
-| Juiz de fidelidade sem validação (20 rótulos humanos ausentes); 8 casos sintéticos sem revisor. | Rotular, rodar `julgar` e `validar`; revisar os sintéticos. | Média |
+| Juiz de fidelidade não adotado (75% < 85%): a rubrica não diz contra que fonte julgar e a amostra usa a regra antiga. | Reescrever a rubrica, trocar a amostra e validar de novo como nova medição. | Média |
 | Custo por execução não medido (traces só de mock). | Rodar com Gemini e reportar custo por versão. | Média |
 | Quem aceitou formalmente os riscos aceitos (R4 e disponibilidade). | Registrar nome e data. | Média |
 | Credencial mock sem privilégio granular; identidade do cliente não é autenticada pela API demonstrativa. | Antes de produção, usar autenticação individual e autorização por cliente/operação. | Alta |
