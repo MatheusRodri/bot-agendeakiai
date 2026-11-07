@@ -42,7 +42,27 @@ def recuperar(cliente_id: str, texto: str) -> dict[str, Any]:
     return {"episodio": melhor if maior >= 0.15 else None, "preferencias": memoria["preferencias"].get(cliente_id, {})}
 
 
-def registrar(cliente_id: str, texto: str) -> None:
+PADROES_BLOQUEADOS = {
+    "email": r"[\w.+-]+@[\w-]+\.[\w.-]+",
+    "documento_ou_telefone": r"(?:\d[\s.\-()]*){9,}",
+    "credencial": r"\b(?:senha|password|token|api[_ -]?key|bearer)\b",
+    "instrucao_injetada": r"(?:ignore|desconsidere|esqueca|esqueça)\s+(?:todas?\s+)?(?:as\s+)?(?:instru|regras|ordens)|system prompt|prompt de sistema|voce agora e|você agora é",
+}
+
+
+def motivo_bloqueio(texto: str) -> str | None:
+    """Controle de gravação: devolve o motivo se o texto não pode ir para a memória."""
+    for motivo, padrao in PADROES_BLOQUEADOS.items():
+        if re.search(padrao, texto, re.IGNORECASE):
+            return motivo
+    return None
+
+
+def registrar(cliente_id: str, texto: str) -> str | None:
+    """Grava o episódio. Fail-closed: se o filtro bloquear, nada é gravado e o motivo é devolvido."""
+    motivo = motivo_bloqueio(texto)
+    if motivo:
+        return motivo
     memoria = carregar()
     agora = datetime.now(timezone.utc).isoformat()
     memoria["episodios"].append({"cliente_id": cliente_id, "texto": texto[:180], "criado_em": agora})
@@ -59,6 +79,7 @@ def registrar(cliente_id: str, texto: str) -> None:
     if declaracoes:
         preferencias["estilo"] = {"valor": max(declaracoes)[1], "atualizado_em": agora}
     salvar(memoria)
+    return None
 
 
 def remover(cliente_id: str) -> None:
