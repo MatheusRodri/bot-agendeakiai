@@ -10,6 +10,7 @@ from __future__ import annotations
 import json
 import os
 import sys
+import time
 from pathlib import Path
 
 from pydantic import BaseModel
@@ -34,7 +35,7 @@ def _ler() -> list[dict]:
 
 
 def _gravar(itens: list[dict]) -> None:
-    AMOSTRA.write_text("".join(json.dumps(i, ensure_ascii=False) + "\n" for i in itens), encoding="utf-8")
+    AMOSTRA.write_text(json.dumps(itens, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
 
 
 def preparar() -> None:
@@ -43,6 +44,10 @@ def preparar() -> None:
     assert len(itens) == 20, len(itens)
     _gravar(itens)
     print(f"{len(itens)} itens em {AMOSTRA}. Preencha humano_aprovado (true/false) e humano_nota em cada linha.")
+
+
+def _gerar(cliente, types, pedido):
+    return cliente.models.generate_content(model=os.getenv("LLM_MODELO") or "gemini-3.8-flash", contents=pedido, config=types.GenerateContentConfig(system_instruction=RUBRICA.read_text(encoding="utf-8"), response_mime_type="application/json", response_schema=Veredito, temperature=0, max_output_tokens=800))
 
 
 def julgar() -> None:
@@ -54,8 +59,17 @@ def julgar() -> None:
     cliente = genai.Client(api_key=os.environ["GEMINI_API_KEY"])
     itens = _ler()
     for item in itens:
+        if item["juiz_aprovado"] is not None:
+            continue  # retomada: já julgado
         pedido = f"pergunta: {item['pergunta']}\nRESPOSTA ESPERADA: {item['esperada']}\nRESPOSTA A AVALIAR: {item['resposta']}"
-        r = cliente.models.generate_content(model=os.getenv("LLM_MODELO") or "gemini-3.8-flash", contents=pedido, config=types.GenerateContentConfig(system_instruction=RUBRICA.read_text(encoding="utf-8"), response_mime_type="application/json", response_schema=Veredito, temperature=0, max_output_tokens=800))
+        for tentativa in range(5):
+            try:
+                r = _gerar(cliente, types, pedido)
+                break
+            except Exception as erro:  # 503/504 transitórios: espera e tenta de novo
+                if tentativa == 4 or not any(c in str(erro) for c in ("503", "504")):
+                    raise
+                time.sleep(10 * (tentativa + 1))
         v = Veredito.model_validate(json.loads(r.text))
         item["juiz_aprovado"], item["juiz_motivo"] = v.aprovado, v.motivo
         _gravar(itens)  # grava a cada item: retomável
