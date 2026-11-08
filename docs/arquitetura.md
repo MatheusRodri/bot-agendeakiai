@@ -4,42 +4,85 @@
 
 ```text
  texto livre + cliente_id + conversa_id
-                    |
-                    v
-              validar_entrada
-                    |
-                    v
-              consultar_contexto <---- API mock: histórico
-                    |                  JSON: episódios/preferências
-                    v
-             decidir_proxima_acao <------------------+
-                    |                                |
-                    v                                |
-               consultar_fontes ---------------------+
-                /           \
-     busca de regras       catálogo/API mock
-       Markdown
-                    |
-             decidir_proxima_acao
-                /             \
-           finalizar   preparar_aprovacao
-                           |
-                           v
-                    [interrupt: cliente]
-                     /            \
-                  rejeitar     aprovar/editar
-                     |              |
-                     |              v
-                     |     registrar_agendamento
-                     |        [escrita mock]
-                     \_____________/
-                           |
-                          END
+        |
+        |  AGENTE_SUSPENSO=1 ? --> encerra aqui: motivo "suspenso", nada é consultado nem escrito
+        v
+ validar_entrada [CÓDIGO]            valida o contrato Pydantic; carrega o prompt e grava seu sha256
+        |
+        v
+ consultar_contexto [CÓDIGO] <------ tool consultar_historico (leitura, API mock)
+        |                            memória JSON: recuperar (leitura, Jaccard >= 0,15)
+        v
+ decidir_proxima_acao [CÓDIGO] <----------------------------------+
+        |        aresta condicional, regra em código (campo)      |
+        |                                                         |
+        +-- sem "resultado" ----------> consultar_fontes [CÓDIGO] +
+        |                                tools (leitura): buscar_regra (corpus .md)
+        |                                                 buscar_opcoes (catálogo, API mock)
+        |
+        +-- exige_aprovacao -----------> preparar_aprovacao [CÓDIGO]
+        |                                        |
+        |                                        v
+        |                          aprovar_agendamento [CÓDIGO + INTERRUPT: cliente, 15 min]
+        |                           aresta condicional: decisao.aprovada (regra em código)
+        |                              |                          |
+        |                  rejeitar / expirou            aprovar / editar (só opção consultada)
+        |                              |                          v
+        |                              |        registrar_agendamento [CÓDIGO, ESCRITA IRREVERSÍVEL]
+        |                              |          verificar_escrita (fail-closed) -> tool
+        |                              |          confirmar_agendamento (chave de idempotência)
+        |                              |                          |
+        +-- senão / MAX_PASSOS --------+--------------------------+
+                                       |
+                                       v
+                          finalizar [CÓDIGO; MODELO só em MODO=gemini]
+                            - Gemini redige o texto; validar_saida_modelo rejeita o que inventar
+                            - grava memória (filtro de gravação, idempotente)
+                            - define o motivo de término
+                                       |
+                                       v
+                                      END
 
- Checkpointer SqliteSaver: dados/checkpoints.sqlite, endereçado por conversa_id
+ Términos: resposta_final | agendamento_confirmado | aprovacao_rejeitada | aprovacao_expirada |
+           escrita_bloqueada | limite_de_passos | limite_de_tempo | suspenso
+           (na raiz do trace também: aguardando_humano, quando o grafo pausa, e erro)
+
+ O modelo não decide nenhuma aresta: todas as bifurcações são regra em código.
+ Checkpointer SqliteSaver: dados/checkpoints.sqlite, endereçado por conversa_id (thread_id)
 ```
 
-O desenho condicional é gerado de `GRAFO.get_graph()` pelo comando `python conferir_grafo.py`; o script importa o mesmo objeto compilado que `src.grafo.executar` usa. A saída registrada em `docs/grafo.md` deve ser atualizada se o código mudar.
+## Conferência contra o código
+
+Comando: `python conferir_grafo.py` (importa o mesmo objeto `GRAFO` que `src.grafo.executar` usa e imprime `GRAFO.get_graph()`). Saída observada em **2026-11-08**, versão do sistema `3.1.0`:
+
+```text
+Nós:
+- __end__
+- __start__
+- aprovar_agendamento
+- consultar_contexto
+- consultar_fontes
+- decidir_proxima_acao
+- finalizar
+- preparar_aprovacao
+- registrar_agendamento
+- validar_entrada
+Arestas:
+- __start__ -> validar_entrada
+- aprovar_agendamento -> finalizar [condicional]
+- aprovar_agendamento -> registrar_agendamento [condicional]
+- consultar_contexto -> decidir_proxima_acao
+- consultar_fontes -> decidir_proxima_acao
+- decidir_proxima_acao -> consultar_fontes [condicional]
+- decidir_proxima_acao -> finalizar [condicional]
+- decidir_proxima_acao -> preparar_aprovacao [condicional]
+- finalizar -> __end__
+- preparar_aprovacao -> aprovar_agendamento
+- registrar_agendamento -> finalizar
+- validar_entrada -> consultar_contexto
+```
+
+Se esta lista e o desenho divergirem, **vale o código** e o desenho está errado. O ciclo `decidir_proxima_acao` → `consultar_fontes` → `decidir_proxima_acao` está nas arestas acima. O interruptor de suspensão fica em `executar`, antes do grafo, e por isso não aparece como nó.
 
 ## Decisões do sistema
 
@@ -51,7 +94,7 @@ O desenho condicional é gerado de `GRAFO.get_graph()` pelo comando `python conf
 
 **Orçamento:** limite de oito passos explícito em `MAX_PASSOS`; limite de recursão LangGraph definido como `MAX_PASSOS + 4` (12) para cobrir nós de suporte; máximo de 4.000 tokens por chamada remota (800 de saída, incluindo raciocínio, e pré-estimativa da entrada); limite local de US$ 0,01, calculado com taxas configuradas em `.env`; timeout de 120 segundos para Gemini, três segundos por chamada HTTP local e teto de 30 segundos observado no nó terminal. A proteção de tempo total não interrompe um nó no meio.
 
-**Término:** `resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`, `aprovacao_expirada`, `limite_de_passos` e `limite_de_tempo`. Erros de consulta são respostas finais sem escrita, com o erro preservado no evento de ferramenta. Erro irrecuperável de validação Pydantic é levantado antes das consultas.
+**Término:** `resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`, `aprovacao_expirada`, `escrita_bloqueada`, `limite_de_passos`, `limite_de_tempo` e `suspenso` (interruptor `AGENTE_SUSPENSO=1`); no trace da raiz há ainda `aguardando_humano` (pausa) e `erro`. Erros de consulta são respostas finais sem escrita, com o erro preservado no evento de ferramenta. Erro irrecuperável de validação Pydantic é levantado antes das consultas.
 
 **Humano:** cliente final autenticado revisa a opção escolhida antes de qualquer reserva. A tela de aprovação inclui serviço, profissional, horário, preço e alternativas consultadas. A ausência de resposta por 15 minutos rejeita a escrita. Veja [humano.md](humano.md).
 
