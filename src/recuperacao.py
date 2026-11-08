@@ -42,6 +42,6 @@ def buscar_regra(pergunta: str) -> list[dict[str, str]]:
             pontos = len(consulta & termos)
             if pontos:
                 titulo = next((linha[3:].strip() for linha in trecho.splitlines() if linha.startswith("## ")), caminho.stem)
-                resultados.append({"fonte": str(caminho.relative_to(ROOT)), "trecho": trecho.strip(), "titulo": titulo, "pontos": str(pontos)})
+                resultados.append({"fonte": caminho.relative_to(ROOT).as_posix(), "trecho": trecho.strip(), "titulo": titulo, "pontos": str(pontos)})
     resultados.sort(key=lambda item: int(item["pontos"]), reverse=True)
     return resultados
