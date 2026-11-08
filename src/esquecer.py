@@ -8,9 +8,22 @@ from pathlib import Path
 
 from .grafo import CHECKPOINTER
 from .memoria import carregar, salvar
+from .telemetria import ARQUIVO_TRACES
 
 
 ROOT = Path(__file__).resolve().parents[1]
+
+
+def remover_traces(cliente_id: str, arquivo: Path = ARQUIVO_TRACES) -> int:
+    """Apaga do JSONL de traces todo trace cuja raiz tem o cliente_id (a raiz e seus spans filhos)."""
+    if not arquivo.exists():
+        return 0
+    linhas = [linha for linha in arquivo.read_text(encoding="utf-8").splitlines() if linha.strip()]
+    spans = [json.loads(linha) for linha in linhas]
+    removidos = {span["trace_id"] for span in spans if span.get("atributos", {}).get("cliente_id") == cliente_id}
+    restantes = [linha for linha, span in zip(linhas, spans) if span["trace_id"] not in removidos]
+    arquivo.write_text("".join(linha + "\n" for linha in restantes), encoding="utf-8")
+    return len(removidos)
 
 
 def remover_dados_cliente(cliente_id: str) -> dict[str, int]:
@@ -40,7 +53,7 @@ def remover_dados_cliente(cliente_id: str) -> dict[str, int]:
             logs_removidos += 1
     for conversa in conversas:
         CHECKPOINTER.delete_thread(conversa)
-    return {"episodios_removidos": episodios, "checkpoints_removidos": len(conversas), "logs_removidos": logs_removidos}
+    return {"episodios_removidos": episodios, "checkpoints_removidos": len(conversas), "logs_removidos": logs_removidos, "traces_removidos": remover_traces(cliente_id)}
 
 
 def main() -> int:
