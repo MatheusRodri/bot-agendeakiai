@@ -4,6 +4,24 @@ Versão do sistema: constante `VERSAO_SISTEMA` em [src/versao.py](../src/versao.
 
 > **Commits:** controles em `19862a6`; traces, versão e ligação ao grafo em `49b2ec3`; suíte em `65a7694`. Os controles 2 e 3 têm duas partes: a função (`19862a6`) e a chamada no grafo (`49b2ec3`). **Aprovador de cada mudança:** a preencher pelo grupo.
 
+## 3.1.0 — Fechamento das pendências da Parte 2 e da Parte 3 (2026-11-08)
+
+> **Commit:** ainda não commitado quando este texto foi escrito. Depois do commit, preencher a coluna Commit e regenerar `logs/` (`python -m src.demo`), que carregam o hash do código.
+
+| Mudança | Por quê | Arquivos | Commit |
+|---|---|---|---|
+| `memoria.registrar` passa a derivar chave de idempotência do conteúdo e a devolver `{gravado, ja_existia, bloqueado}` | Parte 2 §5.3: escrita de memória é escrita e precisa ser idempotente | `src/memoria.py`, `src/grafo.py`, `tests/test_controles.py` | a preencher |
+| Memória procedural em texto no system prompt | Parte 2 §5.2: as três memórias | `src/prompts/memoria-procedural.txt`, `src/modelo.py` | a preencher |
+| Interruptor de suspensão `AGENTE_SUSPENSO=1` e término `suspenso` | Governança: quem pode suspender o agente | `src/grafo.py`, `tests/test_controles.py`, `.env.example` | a preencher |
+| `esquecer` apaga os traces do cliente em `logs/traces.jsonl` | Cobertura da remoção (Parte 2 §5.4) e dado pessoal no trace (Parte 3 §3.4) | `src/esquecer.py`, `tests/test_controles.py` | a preencher |
+| `saida_modelo_rejeitada` e `memoria_bloqueada` viram atributos do span raiz | Falhas silenciosas sem sinal no trace (observabilidade §1.3) | `src/grafo.py` | a preencher |
+| `evals.rodar` aceita `--modo gemini` e `--casos` | Medir o sistema com o modelo real | `evals/rodar.py` | a preencher |
+| Caminho da fonte do corpus em POSIX (`as_posix`) | Em Windows a fonte vinha com `\\` e `avaliar_rag` marcava 2/10 em vez de 10/10 | `src/recuperacao.py` | a preencher |
+| Avaliação de registro e experimento do documento revogado | Parte 2 §4: perguntas de registro e curadoria | `src/avaliar_registro.py`, `src/demo_revogado.py`, `dados/perguntas-registro.json` | a preencher |
+| `logs/traces.jsonl` no `.gitignore` | O trace guarda a entrada completa e o `cliente_id` | `.gitignore` | a preencher |
+
+**Achado não corrigido (decisão do grupo).** Na rodada com Gemini real, `finalizar` sobrescreve o motivo de término por `limite_de_tempo` quando a chamada ao modelo passa dos 30 s, **mesmo que a reserva já tenha sido feita** (`ag-05`). O motivo de término deixa de dizer a verdade sobre a escrita. Correções possíveis: não sobrescrever `agendamento_confirmado`, ou reduzir o timeout do Gemini abaixo do teto. Medido em `evals/resultados/3.1.0-gemini-20261108-135625`.
+
 ## 3.0.0 — Parte 3 (2026-11-06)
 
 | Mudança | Por quê | Arquivos | Commit |

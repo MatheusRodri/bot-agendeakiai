@@ -13,7 +13,7 @@ Código em [evals/](../evals/). Resultados commitados em [evals/resultados/](../
 | `recusa` | 4 | sem resposta no corpus (atraso), saúde (alergia, gravidez), fora do escopo |
 | `seguranca` | 5 | e-mail, senha, injeção direta, injeção persistente, "aprovação" afirmada no texto |
 
-Cada caso tem `entrada`, `esperado` (critérios verificáveis), `origem`, `classe` e `por_que_existe`. Os 8 sintéticos foram **escritos por IA (Claude) e ainda não revisados por uma pessoa**: o campo `revisado_por` está `PENDENTE` em cada um. **Antes de entregar, um integrante do grupo lê os 8 casos e troca `PENDENTE` pelo próprio nome** (ou corrige/remove o caso). Os casos de `desenvolvimento` vêm dos cenários do §9 da Parte 2 (`logs/01`–`10`) e de `dados/perguntas-rag.json`; a pergunta 6 do arquivo RAG (atraso) é `rec-01`, e `rec-02` reproduz o cenário `logs/05`.
+Cada caso tem `entrada`, `esperado` (critérios verificáveis), `origem`, `classe` e `por_que_existe`. Os 8 sintéticos foram **escritos por IA (Claude)**. O campo `revisado_por` de cada um registra `Matheus Rodrigues` em `evals/dataset.jsonl`; a data da revisão e os ajustes feitos não estão registrados (ver `PENDENTE.md`, item de avaliação). Os casos de `desenvolvimento` vêm dos cenários do §9 da Parte 2 (`logs/01`–`10`) e de `dados/perguntas-rag.json`; a pergunta 6 do arquivo RAG (atraso) é `rec-01`, e `rec-02` reproduz o cenário `logs/05`.
 
 **Cuidado de leitura.** Os trechos esperados nas respostas (`resposta_contem`) foram escritos depois de ver a saída do sistema para os casos de desenvolvimento. Eles medem **regressão** (o comportamento atual continua igual), não correção em absoluto. O único critério escrito antes de ver o sistema falhar é o dos casos `seguranca`.
 
@@ -92,12 +92,32 @@ Mudaram: `seg-01` (e-mail), `seg-02` (senha), `seg-03` (injeção direta), `seg-
 - Os controles 2 e 3 **não são exercitados pela suíte**. O controle 2 (escrita) só pode ser violado chamando o nó `agendar` fora do caminho do grafo, e isso é o que os testes unitários fazem (`tests/test_controles.py`). O controle 3 age só em `MODO=gemini`, e a suíte roda em mock. A melhora de +80 pontos vem **toda do controle 1**.
 - 100% em 27 casos não diz que o sistema é correto: o dataset é pequeno, escrito pelo grupo, e 19 dos 27 casos têm critério escrito depois de ver a saída.
 - Nenhum caso `producao`.
-- **LACUNA:** o comportamento ponta a ponta com Gemini real não está medido (ver `docs/mudancas.md`, defeito do `finalizar`).
+- O comportamento ponta a ponta com Gemini real foi medido em um subconjunto (§4.1) e **não** é conclusivo: 7 casos, 6 chamadas ao modelo, 5 com erro.
+
+### 4.1 Rodadas de 2026-11-08 (versão `3.1.0`)
+
+A versão `3.1.0` acrescenta a memória idempotente e a procedural, o interruptor de suspensão, os traces na rotina de esquecimento e dois atributos na raiz do trace (`docs/mudancas.md`). Nenhuma delas muda o caminho dos 27 casos.
+
+| Rodada | Pasta | Resultado |
+|---|---|---|
+| mock | `evals/resultados/3.1.0-20261108-135612` | **27/27** (agendamento, rag, recusa e segurança a 100%) |
+| Gemini real, 7 casos | `evals/resultados/3.1.0-gemini-20261108-135625` | **6/7** |
+
+Comparação `3.0.0` × `3.1.0` ([comparacao-3.0.0-vs-3.1.0.txt](../evals/resultados/comparacao-3.0.0-vs-3.1.0.txt)): 100% × 100% em todas as classes, delta 0 — a mudança não regrediu nada, e é isso que a comparação diz (não que melhorou).
+
+**A rodada com Gemini** (`--modo gemini --casos ag-01-caso-simples,ag-04-so-comparar,ag-05-aprovacao-editada,rag-01,rag-04,rec-01-sem-resposta-atraso,seg-05-reserva-por-texto`) roda o mesmo `src.grafo.executar`, com o `.env` e o modelo real; a pasta sai rotulada `-gemini` e a versão do trace também. Achados:
+
+- **Falha em `ag-05`:** a reserva foi feita (`agd-001`, nenhuma duplicada), mas o motivo de término saiu `limite_de_tempo` em vez de `agendamento_confirmado`, porque a chamada ao Gemini levou 118 s e `finalizar` sobrescreve o motivo quando passam 30 s. É um defeito de projeto (o motivo de término mente quando a escrita ocorreu), registrado em `docs/mudancas.md`.
+- **5 de 6 chamadas ao modelo terminaram em erro** (duas no teto de 120 s do SDK); a resposta verificada pelo código foi mantida nesses casos, como o contrato prevê. A única chamada bem-sucedida custou US$ 0,0022 (633 + 93 tokens) e foi aceita pelo controle 3 com um texto que cita `20/11/2027`: confirma na prática o limite já documentado do controle (esse formato de data não é detectado).
+- O runner confere trechos exatos; a redação do Gemini pode quebrar essas checagens mesmo estando correta. Nesta rodada isso não ocorreu porque quase todas as chamadas falharam.
+
+Limites: 7 casos, provedor instável na hora (HTTP 503/504 também em `src.avaliar_prompt`). Não é uma medida da qualidade do Gemini.
 
 ## 5. Como reproduzir
 
 ```bash
 python -m pytest tests -q                      # controles do §3.2
-python -m evals.rodar --versao 3.0.0           # grava evals/resultados/3.0.0-<ts>/
+python -m evals.rodar --versao 3.1.0           # grava evals/resultados/3.1.0-<ts>/
+python -m evals.rodar --versao 3.1.0 --modo gemini --casos ag-01-caso-simples,rag-01   # usa o .env e gera custo
 python -m evals.metricas                       # métricas e SLI sobre os traces das rodadas
 ```
