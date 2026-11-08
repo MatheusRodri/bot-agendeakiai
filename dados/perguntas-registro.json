@@ -1,0 +1,6 @@
+[
+  {"pergunta":"Quais opções de penteado existem no Centro até R$ 150?","tipo":"registro","esperado_opcoes":["opc-001","opc-005"],"resposta":"Penteado clássico com Bianca (R$ 120) e Penteado elegante com Lívia (R$ 135)"},
+  {"pergunta":"Qual o preço da maquiagem natural no Centro?","tipo":"registro","esperado_opcoes":["opc-002"],"resposta":"R$ 140 com Carla no Bela Forma"},
+  {"pergunta":"Existe corte em Moema até R$ 100?","tipo":"registro","esperado_opcoes":["opc-003"],"resposta":"Corte executivo com Diego, R$ 75"},
+  {"pergunta":"Tem penteado em Moema?","tipo":"registro","esperado_opcoes":[],"resposta":"Nenhuma opção; o registro não existe e o sistema deve dizer isso"}
+]

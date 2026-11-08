@@ -1,7 +1,7 @@
 {
-  "executado_em": "2026-10-25T22:27:06.273288+00:00",
-  "corpus_sha256": "d04b18f93e83db5dae63923af5302d871861041bb7e4058ddec208bfa11da84f",
-  "perguntas_sha256": "cdbb3735670ec8623dcddfa4ca5ae20dfe40931322a97a03d994a918c6e81e59",
+  "executado_em": "2026-11-08T17:03:37.712081+00:00",
+  "corpus_sha256": "a37af0efd25c7980b83821d7abce56e7f0e3eeb222eed1bbfe261c13e0e03f09",
+  "perguntas_sha256": "66f590bd6830f740fdfae9569cef87efc0f57fb567b990ae0ff1b62703ed996a",
   "acertos": 10,
   "total": 10,
   "casos": [

@@ -1,0 +1,69 @@
+{
+  "executado_em": "2026-11-08T17:03:28.023668+00:00",
+  "acertos": 4,
+  "total": 4,
+  "casos": [
+    {
+      "indice": 1,
+      "pergunta": "Quais opções de penteado existem no Centro até R$ 150?",
+      "filtros": {
+        "servico": "penteado",
+        "bairro": "Centro",
+        "orcamento_max": 150.0
+      },
+      "esperado": [
+        "opc-001",
+        "opc-005"
+      ],
+      "obtido": [
+        "opc-001",
+        "opc-005"
+      ],
+      "passou": true
+    },
+    {
+      "indice": 2,
+      "pergunta": "Qual o preço da maquiagem natural no Centro?",
+      "filtros": {
+        "servico": "maquiagem",
+        "bairro": "Centro",
+        "orcamento_max": null
+      },
+      "esperado": [
+        "opc-002"
+      ],
+      "obtido": [
+        "opc-002"
+      ],
+      "passou": true
+    },
+    {
+      "indice": 3,
+      "pergunta": "Existe corte em Moema até R$ 100?",
+      "filtros": {
+        "servico": "corte",
+        "bairro": "Moema",
+        "orcamento_max": 100.0
+      },
+      "esperado": [
+        "opc-003"
+      ],
+      "obtido": [
+        "opc-003"
+      ],
+      "passou": true
+    },
+    {
+      "indice": 4,
+      "pergunta": "Tem penteado em Moema?",
+      "filtros": {
+        "servico": "penteado",
+        "bairro": "Moema",
+        "orcamento_max": null
+      },
+      "esperado": [],
+      "obtido": [],
+      "passou": true
+    }
+  ]
+}
