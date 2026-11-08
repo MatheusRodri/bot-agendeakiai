@@ -14,7 +14,7 @@ O cliente envia texto livre em português. O identificador do cliente e o da con
 | `fontes` | `list[str]` | Ferramenta, corpus ou entrada que sustenta a resposta |
 | `suficiente` | `bool` | Se a base consultada permite responder. Recusa e pergunta de esclarecimento usam `false` |
 
-Os exemplos abaixo foram serializados diretamente dos logs e executados em **2026-10-18 (UTC)**. Os logs guardam `executado_em`, `commit_base` e impressão SHA-256 de todos os arquivos Python em `src/` e do prompt ativo. Eles apontam para o commit `01f0b54978bff9a5040973fbb5deb4e910e7f2ca`; `arvore_de_trabalho_alterada: false` confirma que o código e o prompt correspondiam à revisão durante a execução.
+Os exemplos abaixo foram serializados diretamente dos logs e executados em **2026-11-08 (UTC)**. Os logs guardam `executado_em`, `commit_base` e impressão SHA-256 de todos os arquivos Python em `src/` e do prompt ativo. Eles apontam para o commit `5931e524242ad8ed438b95ca6d5a389e97a8a368`; `arvore_de_trabalho_alterada: false` confirma que o código e o prompt correspondiam à revisão durante a execução.
 
 ## Exemplo 1 — caminho feliz
 
@@ -34,7 +34,7 @@ Saída completa validada:
 }
 ```
 
-O log mostra uma aprovação humana antes da escrita e a confirmação de uma opção que veio do catálogo mock. Metadados da execução: `2026-10-18T19:17:36Z`, revisão `01f0b54978bff9a5040973fbb5deb4e910e7f2ca`.
+O log mostra uma aprovação humana antes da escrita e a confirmação de uma opção que veio do catálogo mock. Metadados da execução: `2026-11-08T16:26:00Z`, revisão `5931e524242ad8ed438b95ca6d5a389e97a8a368`.
 
 ## Exemplo 2 — recusa sem suporte no corpus
 

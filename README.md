@@ -25,7 +25,7 @@ python conferir_grafo.py
 python -m src.verificar_checkpoint
 ```
 
-A demonstração inicia a API mock em `127.0.0.1:8765` e grava dez cenários em `logs/`. Cada log registra o commit-base e o hash do código; os logs atuais foram gerados a partir do commit `01f0b54978bff9a5040973fbb5deb4e910e7f2ca`, com a árvore de código limpa.
+A demonstração inicia a API mock em `127.0.0.1:8765` e grava dez cenários em `logs/`. Cada log registra o commit-base e o hash do código; os logs atuais foram gerados a partir do commit `5931e524242ad8ed438b95ca6d5a389e97a8a368`, com `src/` sem alterações em relação a esse commit.
 
 ## Como usar
 
@@ -90,18 +90,19 @@ Se aparecer HTTP 429 por limite diário de requisições (RPD), aguarde a renova
 
 ## Avaliação, testes e traces (Parte 3)
 
-Instalação (o pacote `pytest` e o OpenTelemetry estão no `requirements.txt`). Os comandos abaixo rodam sempre em `MODO=mock` com um mock local em memória: a suíte força esse ambiente e **não usa o `.env`**.
+Instalação (o pacote `pytest` e o OpenTelemetry estão no `requirements.txt`). Os comandos abaixo rodam sempre em `MODO=mock` com um mock local em memória: a suíte força esse ambiente e **não usa o `.env`** (exceto com `--modo gemini`).
 
 ```bash
-# testes dos controles de segurança (docs/seguranca.md §3)
+# testes dos controles de segurança, memória, esquecimento e suspensão (docs/seguranca.md §3)
 python -m pytest tests -q
 
 # rodar a suíte (27 casos) e gravar a rodada em evals/resultados/<versão>-<data>/
-python -m evals.rodar --versao 3.0.0
+python -m evals.rodar --versao 3.1.0
 python -m evals.rodar --versao 2.0.0 --sem-controles   # linha de base: controles desligados só pelo runner
+python -m evals.rodar --versao 3.1.0 --modo gemini --casos ag-01-caso-simples,rag-01   # usa o .env e o modelo real (gera custo)
 
 # comparar duas rodadas (tabela por classe) e calcular métricas/SLI sobre os traces
-python -m evals.comparar evals/resultados/2.0.0-<data> evals/resultados/3.0.0-<data>
+python -m evals.comparar evals/resultados/2.0.0-<data> evals/resultados/3.1.0-<data>
 python -m evals.metricas
 ```
 
@@ -113,13 +114,15 @@ seguranca             20%      100%     +80
 MÉDIA                 85%      100%     +15
 ```
 
-**Ver os traces.** Cada execução grava spans (`invoke_agent`, `execute_tool`, `chat`) em JSONL: `logs/traces.jsonl` quando você roda o agente pelo `src.main`, ou `evals/resultados/<rodada>/traces.jsonl` na suíte. Um span por linha; filtre pelo `trace_id`. Para outro destino: `TRACES_ARQUIVO=caminho.jsonl`. Detalhes em [docs/observabilidade.md](docs/observabilidade.md).
+**Suspender o agente.** Com `AGENTE_SUSPENSO=1` no ambiente, o agente responde que está suspenso e não consulta nem escreve nada (motivo de término `suspenso`).
+
+**Ver os traces.** Cada execução grava spans (`invoke_agent`, `execute_tool`, `chat`) em JSONL: `logs/traces.jsonl` quando você roda o agente pelo `src.main`, ou `evals/resultados/<rodada>/traces.jsonl` na suíte. Um span por linha; filtre pelo `trace_id`, por exemplo: `python -c "import json; [print(json.dumps(l, ensure_ascii=False)) for l in map(json.loads, open('logs/traces.jsonl', encoding='utf-8')) if l['trace_id']=='<ID>']"`. O `logs/traces.jsonl` é gerado localmente (ignorado pelo Git); exemplos commitados estão em `evals/resultados/<rodada>/traces.jsonl`. `TRACES_ARQUIVO` e `VERSAO_SISTEMA` são lidos do ambiente. Para outro destino: `TRACES_ARQUIVO=caminho.jsonl`. Detalhes em [docs/observabilidade.md](docs/observabilidade.md).
 
 **Juiz LLM (opcional, usa Gemini):** `python -m evals.juiz preparar | julgar | validar`. Rotule `humano_aprovado` em `evals/juiz_amostra.json` **antes** de rodar `julgar`. Ver [docs/evals.md](docs/evals.md).
 
 ## Remover dados locais
 
-O comando a seguir remove preferências, episódios, checkpoints e logs do cliente indicado:
+O comando a seguir remove preferências, episódios, checkpoints, logs e traces (`logs/traces.jsonl`) do cliente indicado:
 
 ```bash
 python -m src.esquecer --cliente-id cliente-001 --confirmar
@@ -133,7 +136,7 @@ Use somente com os identificadores simulados desta prova de conceito.
 - `src/mock_api.py` e `src/tools.py`: API mock e ferramentas locais;
 - `src/agendeaki_api.py`: consultas somente de leitura ao backend real do AgendeAki;
 - `src/recuperacao.py`: busca textual nas regras Markdown vigentes;
-- `src/memoria.py` e `src/esquecer.py`: memória JSON e remoção local;
+- `src/memoria.py` e `src/esquecer.py`: memória JSON (idempotente) e remoção local (memória, checkpoint, logs e traces);
 - `src/prompts/`: prompt carregado pelo modo Gemini opcional;
 - `dados/`: catálogo, corpus, perguntas de avaliação e memória local ignorada pelo Git;
 - `src/controles.py`, `src/telemetria.py`, `src/versao.py`: controles de segurança, traces e versão do sistema;
