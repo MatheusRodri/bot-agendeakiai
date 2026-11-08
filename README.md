@@ -14,6 +14,7 @@ Requer Python 3.11 ou superior.
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install -r requirements.txt
+# alternativa reprodutível, com verificação de hash: python -m pip install --require-hashes -r requirements.lock
 ```
 
 Execute a demonstração e confira os logs:
