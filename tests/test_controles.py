@@ -127,6 +127,23 @@ def test_esquecer_remove_traces_do_cliente_e_preserva_os_outros(tmp_path):
     assert "c1" not in arquivo.read_text(encoding="utf-8")
 
 
+def test_expirar_traces_apaga_so_os_vencidos(tmp_path):
+    import json
+    from src.esquecer import expirar_traces
+    dia = 86_400 * 10**9
+    agora = 100 * dia
+    arquivo = tmp_path / "traces.jsonl"
+    spans = [
+        {"trace_id": "velho", "inicio_ns": agora - 40 * dia, "atributos": {}},
+        {"trace_id": "velho", "inicio_ns": agora - 40 * dia + 5, "atributos": {}},
+        {"trace_id": "novo", "inicio_ns": agora - 2 * dia, "atributos": {}},
+    ]
+    arquivo.write_text("".join(json.dumps(s) + "\n" for s in spans), encoding="utf-8")
+    assert expirar_traces(30, arquivo, agora_ns=agora) == 1
+    restantes = [json.loads(l)["trace_id"] for l in arquivo.read_text(encoding="utf-8").splitlines()]
+    assert restantes == ["novo"]
+
+
 # --- Suspensão do agente (docs/model-card.md, Autoridade) ---
 
 class _FerramentasQueNaoDevemSerChamadas:

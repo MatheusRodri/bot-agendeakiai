@@ -67,7 +67,7 @@ Ordem por impacto. Os dois primeiros são os que o §3 mitiga.
 
 | Campo | |
 |---|---|
-| **Onde** | `requirements.txt` (versões fixadas, sem hashes); `dados/corpus/*.md` (conteúdo que vira resposta); `src/prompts/agente-v1.txt` (versionado, hash registrado no trace). |
+| **Onde** | `requirements.txt` (versões fixadas) e `requirements.lock` (mesmas versões com hash SHA-256 por arquivo, gerado com `uv pip compile --generate-hashes`; instalação com `--require-hashes` testada num clone limpo em 2026-11-08, 17 testes passaram); `dados/corpus/*.md` (conteúdo que vira resposta); `src/prompts/agente-v1.txt` (versionado, hash registrado no trace). |
 | **Cenário** | Um pacote comprometido numa versão fixada, ou um trecho do corpus adulterado por quem tem acesso de escrita ao repositório, passa a ser servido como "regra vigente". |
 | **Impacto** | 2. |
 | **Mitigação** | Versões fixas; corpus e prompt versionados em Git (mudança aparece no `git diff`); `prompt.sha256` no trace. **LACUNA:** sem `--require-hashes` e sem verificação de integridade do corpus em tempo de execução. |
@@ -131,10 +131,10 @@ Os dados do case são **fictícios** (nomes e clientes do `dados/catalogo.json`)
 | Índice | não há índice vetorial; o corpus é texto público fictício | — | — | não se aplica |
 | Memória (`dados/memoria.json`) | `cliente_id`, 180 primeiros caracteres da mensagem, estilo | personalizar | sem expiração; remoção por `src/esquecer.py` | LACUNA |
 | Checkpoint (`dados/checkpoints.sqlite`) | estado completo, incluindo texto e opções | retomar a aprovação | até remoção manual | LACUNA |
-| **Trace** (`logs/traces.jsonl`, `evals/resultados/*/traces.jsonl`) | `cliente_id`, **entrada completa**, argumentos e resultado de ferramentas, saída | registro da decisão (§2.3) | até apagar o arquivo; proposta: 30 dias | LACUNA |
+| **Trace** (`logs/traces.jsonl`, `evals/resultados/*/traces.jsonl`) | `cliente_id`, **entrada completa**, argumentos e resultado de ferramentas, saída | registro da decisão (§2.3) | 30 dias, com `python -m src.esquecer --expirar-traces 30 --confirmar` (manual, não agendado) | Parcial |
 | Provedor externo (Gemini) | idem prompt | idem | termos do provedor | LACUNA |
 
-**Fechado na versão 3.1.0:** o trace guarda a entrada completa e o `cliente_id`, e `python -m src.esquecer` agora também remove de `logs/traces.jsonl` todo trace do cliente (`remover_traces`, `src/esquecer.py:17`; teste `test_esquecer_remove_traces_do_cliente_e_preserva_os_outros`). **Continua fora do alcance, declarado:** `evals/resultados/*/traces.jsonl` (clientes simulados, evidência commitada) e qualquer arquivo apontado por `TRACES_ARQUIVO`. **Prazo:** continua sem expiração automática; a proposta de 30 dias segue como proposta.
+**Fechado na versão 3.1.0:** o trace guarda a entrada completa e o `cliente_id`, e `python -m src.esquecer` agora também remove de `logs/traces.jsonl` todo trace do cliente (`remover_traces`, `src/esquecer.py:17`; teste `test_esquecer_remove_traces_do_cliente_e_preserva_os_outros`). **Continua fora do alcance, declarado:** `evals/resultados/*/traces.jsonl` (clientes simulados, evidência commitada) e qualquer arquivo apontado por `TRACES_ARQUIVO`. **Prazo:** `expirar_traces` (`src/esquecer.py`, teste `test_expirar_traces_apaga_so_os_vencidos`) apaga traces com mais de N dias, mas só quando alguém roda o comando; não há agendador. A proposta de 30 dias segue como proposta.
 
 ### O que a memória não guarda, e onde isso é impedido
 
