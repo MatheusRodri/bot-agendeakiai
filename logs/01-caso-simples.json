@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero um penteado clássico para casamento no Centro até R$ 150. Confirmo o agendamento da melhor opção encontrada.",
     "cliente_id": "cliente-001",
-    "conversa_id": "demo-01-caso-simples-1794155160461"
+    "conversa_id": "demo-01-caso-simples-1794168032508"
   },
-  "executado_em": "2026-11-08T16:26:00.870129+00:00",
-  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
+  "executado_em": "2026-11-08T20:00:32.680824+00:00",
+  "commit_base": "b6ef0d9f64827b84893755d4a9a00ba27d1057fc",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
+  "impressao_do_codigo": "83b1937679d81062b7642400d7bbbfbaa2a2906e077e41d890ff1a3c60f46c26",
   "saida_validada": {
     "resultado": "Agendamento agd-001 confirmado: Penteado clássico com Bianca no Studio Aurora, por R$ 120.00.",
     "fontes": [
@@ -56,10 +56,15 @@
       "resultado": {
         "episodio": {
           "cliente_id": "cliente-001",
-          "texto": "Quero penteado clássico no Centro até R$ 150. Confirmo.",
-          "criado_em": "2026-11-06T22:53:48.250092+00:00"
+          "texto": "Quero um penteado clássico para casamento no Centro até R$ 150. Confirmo o agendamento da melhor opção encontrada.",
+          "criado_em": "2026-11-08T16:26:00.597784+00:00"
         },
-        "preferencias": {}
+        "preferencias": {
+          "estilo": {
+            "valor": "moderno",
+            "atualizado_em": "2026-11-08T16:26:00.891209+00:00"
+          }
+        }
       }
     },
     {
@@ -138,7 +143,7 @@
       "decisao": "aprovar",
       "motivo": "",
       "opcao_id": "opc-001",
-      "expira_em": "2026-11-08T16:41:00.553315+00:00"
+      "expira_em": "2026-11-08T20:15:32.555286+00:00"
     },
     {
       "tipo": "ferramenta",
@@ -154,7 +159,7 @@
           "idAgendamento": "agd-001",
           "clienteId": "cliente-001",
           "status": "CONFIRMADO",
-          "criadoEm": "2026-11-08T16:26:00.589784+00:00",
+          "criadoEm": "2026-11-08T20:00:32.581287+00:00",
           "opcao": {
             "opcaoId": "opc-001",
             "idUnidade": 101,
@@ -194,7 +199,7 @@
       "idAgendamento": "agd-001",
       "clienteId": "cliente-001",
       "status": "CONFIRMADO",
-      "criadoEm": "2026-11-08T16:26:00.589784+00:00",
+      "criadoEm": "2026-11-08T20:00:32.581287+00:00",
       "opcao": {
         "opcaoId": "opc-001",
         "idUnidade": 101,
@@ -250,6 +255,6 @@
         "preco": 135.0
       }
     ],
-    "expira_em": "2026-11-08T16:41:00.553315+00:00"
+    "expira_em": "2026-11-08T20:15:32.555286+00:00"
   }
 }

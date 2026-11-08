@@ -6,19 +6,19 @@ Versão do sistema: constante `VERSAO_SISTEMA` em [src/versao.py](../src/versao.
 
 ## 3.1.0 — Fechamento das pendências da Parte 2 e da Parte 3 (2026-11-08)
 
-> **Commit:** ainda não commitado quando este texto foi escrito. Depois do commit, preencher a coluna Commit e regenerar `logs/` (`python -m src.demo`), que carregam o hash do código.
+> **Commits:** ver a coluna abaixo; testes em `30d4b25`, rodadas em `46c0dd1`, logs regenerados a partir de `b6ef0d9`.
 
 | Mudança | Por quê | Arquivos | Commit |
 |---|---|---|---|
-| `memoria.registrar` passa a derivar chave de idempotência do conteúdo e a devolver `{gravado, ja_existia, bloqueado}` | Parte 2 §5.3: escrita de memória é escrita e precisa ser idempotente | `src/memoria.py`, `src/grafo.py`, `tests/test_controles.py` | a preencher |
-| Memória procedural em texto no system prompt | Parte 2 §5.2: as três memórias | `src/prompts/memoria-procedural.txt`, `src/modelo.py` | a preencher |
-| Interruptor de suspensão `AGENTE_SUSPENSO=1` e término `suspenso` | Governança: quem pode suspender o agente | `src/grafo.py`, `tests/test_controles.py`, `.env.example` | a preencher |
-| `esquecer` apaga os traces do cliente em `logs/traces.jsonl` | Cobertura da remoção (Parte 2 §5.4) e dado pessoal no trace (Parte 3 §3.4) | `src/esquecer.py`, `tests/test_controles.py` | a preencher |
-| `saida_modelo_rejeitada` e `memoria_bloqueada` viram atributos do span raiz | Falhas silenciosas sem sinal no trace (observabilidade §1.3) | `src/grafo.py` | a preencher |
-| `evals.rodar` aceita `--modo gemini` e `--casos` | Medir o sistema com o modelo real | `evals/rodar.py` | a preencher |
-| Caminho da fonte do corpus em POSIX (`as_posix`) | Em Windows a fonte vinha com `\\` e `avaliar_rag` marcava 2/10 em vez de 10/10 | `src/recuperacao.py` | a preencher |
-| Avaliação de registro e experimento do documento revogado | Parte 2 §4: perguntas de registro e curadoria | `src/avaliar_registro.py`, `src/demo_revogado.py`, `dados/perguntas-registro.json` | a preencher |
-| `logs/traces.jsonl` no `.gitignore` | O trace guarda a entrada completa e o `cliente_id` | `.gitignore` | a preencher |
+| `memoria.registrar` passa a derivar chave de idempotência do conteúdo e a devolver `{gravado, ja_existia, bloqueado}` | Parte 2 §5.3: escrita de memória é escrita e precisa ser idempotente | `src/memoria.py`, `src/grafo.py`, `tests/test_controles.py` | 9b0e12b |
+| Memória procedural em texto no system prompt | Parte 2 §5.2: as três memórias | `src/prompts/memoria-procedural.txt`, `src/modelo.py` | 9b0e12b |
+| Interruptor de suspensão `AGENTE_SUSPENSO=1` e término `suspenso` | Governança: quem pode suspender o agente | `src/grafo.py`, `tests/test_controles.py`, `.env.example` | 9b0e12b |
+| `esquecer` apaga os traces do cliente em `logs/traces.jsonl` | Cobertura da remoção (Parte 2 §5.4) e dado pessoal no trace (Parte 3 §3.4) | `src/esquecer.py`, `tests/test_controles.py` | ea31ad5 |
+| `saida_modelo_rejeitada` e `memoria_bloqueada` viram atributos do span raiz | Falhas silenciosas sem sinal no trace (observabilidade §1.3) | `src/grafo.py` | 9b0e12b |
+| `evals.rodar` aceita `--modo gemini` e `--casos` | Medir o sistema com o modelo real | `evals/rodar.py` | 819a0f0 |
+| Caminho da fonte do corpus em POSIX (`as_posix`) | Em Windows a fonte vinha com `\\` e `avaliar_rag` marcava 2/10 em vez de 10/10 | `src/recuperacao.py` | 8e13ec5 |
+| Avaliação de registro e experimento do documento revogado | Parte 2 §4: perguntas de registro e curadoria | `src/avaliar_registro.py`, `src/demo_revogado.py`, `dados/perguntas-registro.json` | 88f508c |
+| `logs/traces.jsonl` no `.gitignore` | O trace guarda a entrada completa e o `cliente_id` | `.gitignore` | 9b0e12b |
 
 **Achado não corrigido (decisão do grupo).** Na rodada com Gemini real, `finalizar` sobrescreve o motivo de término por `limite_de_tempo` quando a chamada ao modelo passa dos 30 s, **mesmo que a reserva já tenha sido feita** (`ag-05`). O motivo de término deixa de dizer a verdade sobre a escrita. Correções possíveis: não sobrescrever `agendamento_confirmado`, ou reduzir o timeout do Gemini abaixo do teto. Medido em `evals/resultados/3.1.0-gemini-20261108-135625`.
 

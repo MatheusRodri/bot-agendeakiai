@@ -25,7 +25,7 @@ python conferir_grafo.py
 python -m src.verificar_checkpoint
 ```
 
-A demonstração inicia a API mock em `127.0.0.1:8765` e grava dez cenários em `logs/`. Cada log registra o commit-base e o hash do código; os logs atuais foram gerados a partir do commit `5931e524242ad8ed438b95ca6d5a389e97a8a368`, com `src/` sem alterações em relação a esse commit.
+A demonstração inicia a API mock em `127.0.0.1:8765` e grava dez cenários em `logs/`. Cada log registra o commit-base e o hash do código; os logs atuais foram gerados a partir do commit `b6ef0d9f64827b84893755d4a9a00ba27d1057fc`, com `src/` sem alterações em relação a esse commit.
 
 ## Como usar
 

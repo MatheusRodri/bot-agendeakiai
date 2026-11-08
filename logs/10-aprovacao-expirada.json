@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero agendar penteado clássico no Centro até R$ 150. Confirmo.",
     "cliente_id": "cliente-002",
-    "conversa_id": "demo-10-aprovacao-expirada-1794155161854"
+    "conversa_id": "demo-10-aprovacao-expirada-1794168033584"
   },
-  "executado_em": "2026-11-08T16:26:01.966902+00:00",
-  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
+  "executado_em": "2026-11-08T20:00:33.739022+00:00",
+  "commit_base": "b6ef0d9f64827b84893755d4a9a00ba27d1057fc",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
+  "impressao_do_codigo": "83b1937679d81062b7642400d7bbbfbaa2a2906e077e41d890ff1a3c60f46c26",
   "saida_validada": {
     "resultado": "A aprovação foi rejeitada ou expirou. Nenhum agendamento foi realizado.",
     "fontes": [
@@ -50,8 +50,8 @@
       "resultado": {
         "episodio": {
           "cliente_id": "cliente-002",
-          "texto": "Quero penteado clássico no Centro até R$ 150. Confirmo o agendamento.",
-          "criado_em": "2026-11-08T16:26:01.375409+00:00"
+          "texto": "Quero agendar penteado clássico no Centro até R$ 150. Confirmo.",
+          "criado_em": "2026-11-08T16:26:01.886198+00:00"
         },
         "preferencias": {}
       }

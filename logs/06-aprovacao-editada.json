@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero penteado clássico no Centro até R$ 150. Confirmo o agendamento.",
     "cliente_id": "cliente-002",
-    "conversa_id": "demo-06-aprovacao-editada-1794155161324"
+    "conversa_id": "demo-06-aprovacao-editada-1794168033136"
   },
-  "executado_em": "2026-11-08T16:26:01.459767+00:00",
-  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
+  "executado_em": "2026-11-08T20:00:33.251242+00:00",
+  "commit_base": "b6ef0d9f64827b84893755d4a9a00ba27d1057fc",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
+  "impressao_do_codigo": "83b1937679d81062b7642400d7bbbfbaa2a2906e077e41d890ff1a3c60f46c26",
   "saida_validada": {
     "resultado": "Agendamento agd-002 confirmado: Penteado elegante com Lívia no Ateliê Brisa, por R$ 135.00.",
     "fontes": [
@@ -50,8 +50,8 @@
       "resultado": {
         "episodio": {
           "cliente_id": "cliente-002",
-          "texto": "Só quero comparar maquiagem natural para formatura até R$ 150; não quero reservar agora.",
-          "criado_em": "2026-11-08T16:26:01.117991+00:00"
+          "texto": "Quero penteado clássico no Centro até R$ 150. Confirmo o agendamento.",
+          "criado_em": "2026-11-08T16:26:01.375409+00:00"
         },
         "preferencias": {}
       }
@@ -132,7 +132,7 @@
       "decisao": "editar",
       "motivo": "",
       "opcao_id": "opc-005",
-      "expira_em": "2026-11-08T16:41:01.343194+00:00"
+      "expira_em": "2026-11-08T20:15:33.154906+00:00"
     },
     {
       "tipo": "ferramenta",
@@ -148,7 +148,7 @@
           "idAgendamento": "agd-002",
           "clienteId": "cliente-002",
           "status": "CONFIRMADO",
-          "criadoEm": "2026-11-08T16:26:01.372390+00:00",
+          "criadoEm": "2026-11-08T20:00:33.163917+00:00",
           "opcao": {
             "opcaoId": "opc-005",
             "idUnidade": 105,
@@ -188,7 +188,7 @@
       "idAgendamento": "agd-002",
       "clienteId": "cliente-002",
       "status": "CONFIRMADO",
-      "criadoEm": "2026-11-08T16:26:01.372390+00:00",
+      "criadoEm": "2026-11-08T20:00:33.163917+00:00",
       "opcao": {
         "opcaoId": "opc-005",
         "idUnidade": 105,
@@ -244,7 +244,7 @@
         "preco": 135.0
       }
     ],
-    "expira_em": "2026-11-08T16:41:01.343194+00:00"
+    "expira_em": "2026-11-08T20:15:33.154906+00:00"
   },
   "repeticao_idempotente": {
     "primeira_escrita": {
@@ -253,7 +253,7 @@
         "idAgendamento": "agd-002",
         "clienteId": "cliente-002",
         "status": "CONFIRMADO",
-        "criadoEm": "2026-11-08T16:26:01.372390+00:00",
+        "criadoEm": "2026-11-08T20:00:33.163917+00:00",
         "opcao": {
           "opcaoId": "opc-005",
           "idUnidade": 105,
@@ -288,7 +288,7 @@
         "idAgendamento": "agd-002",
         "clienteId": "cliente-002",
         "status": "CONFIRMADO",
-        "criadoEm": "2026-11-08T16:26:01.372390+00:00",
+        "criadoEm": "2026-11-08T20:00:33.163917+00:00",
         "opcao": {
           "opcaoId": "opc-005",
           "idUnidade": 105,

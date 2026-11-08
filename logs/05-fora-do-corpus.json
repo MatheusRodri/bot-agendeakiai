@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Qual produto devo usar para tratar minha alergia na pele?",
     "cliente_id": "cliente-002",
-    "conversa_id": "demo-05-fora-do-corpus-1794155161204"
+    "conversa_id": "demo-05-fora-do-corpus-1794168033029"
   },
-  "executado_em": "2026-11-08T16:26:01.323191+00:00",
-  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
+  "executado_em": "2026-11-08T20:00:33.135387+00:00",
+  "commit_base": "b6ef0d9f64827b84893755d4a9a00ba27d1057fc",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
+  "impressao_do_codigo": "83b1937679d81062b7642400d7bbbfbaa2a2906e077e41d890ff1a3c60f46c26",
   "saida_validada": {
     "resultado": "Não encontrei uma regra suficiente no corpus para responder com segurança. Procure a operação do AgendeAki.",
     "fontes": [],
@@ -46,7 +46,11 @@
     {
       "tipo": "memoria",
       "resultado": {
-        "episodio": null,
+        "episodio": {
+          "cliente_id": "cliente-002",
+          "texto": "Qual produto devo usar para tratar minha alergia na pele?",
+          "criado_em": "2026-11-08T16:26:01.234616+00:00"
+        },
         "preferencias": {}
       }
     },
