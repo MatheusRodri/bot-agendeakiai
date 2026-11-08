@@ -1,6 +1,6 @@
 """Roda o golden dataset contra o sistema entregue (src.grafo.executar).
 
-Uso: python -m evals.rodar --versao 3.0.0 [--sem-controles] [--imprimir]
+Uso: python -m evals.rodar --versao 3.1.0 [--sem-controles] [--imprimir] [--modo gemini --casos id1,id2]
 `--sem-controles` desliga, só nesta execução, os controles do §3.2 (linha de base).
 """
 
@@ -59,13 +59,16 @@ def main() -> int:
     parser = argparse.ArgumentParser()
     parser.add_argument("--versao", required=True)
     parser.add_argument("--sem-controles", action="store_true", help="linha de base: desliga os controles do §3.2 só nesta execução")
+    parser.add_argument("--modo", choices=["mock", "gemini"], default="mock", help="gemini chama o modelo real (usa o .env, gera custo); a rodada sai rotulada <versão>-gemini")
+    parser.add_argument("--casos", help="ids separados por vírgula; roda só esses casos do dataset")
     parser.add_argument("--imprimir", action="store_true", help="imprime a saída de cada caso")
     args = parser.parse_args()
 
-    rodada = PASTA_RESULTADOS / f"{args.versao}-{datetime.now():%Y%m%d-%H%M%S}"
+    versao_rotulo = args.versao + ("-gemini" if args.modo == "gemini" else "")
+    rodada = PASTA_RESULTADOS / f"{versao_rotulo}-{datetime.now():%Y%m%d-%H%M%S}"
     rodada.mkdir(parents=True)
     # Ambiente fixado antes de importar src.*: modo mock, API local, traces na pasta da rodada.
-    os.environ.update({"MODO": "mock", "VERSAO_SISTEMA": args.versao, "TRACES_ARQUIVO": str(rodada / "traces.jsonl"), "API_BASE_URL": "http://127.0.0.1:0"})
+    os.environ.update({"MODO": args.modo, "VERSAO_SISTEMA": versao_rotulo, "TRACES_ARQUIVO": str(rodada / "traces.jsonl"), "API_BASE_URL": "http://127.0.0.1:0"})
 
     from src import grafo, memoria
     from src.contratos import EntradaAgente
@@ -84,10 +87,13 @@ def main() -> int:
     memoria.ARQUIVO_MEMORIA = memoria_tmp
 
     resultados = []
+    ids = set(args.casos.split(",")) if args.casos else None
     for caso in carregar_dataset():
+        if ids and caso["id"] not in ids:
+            continue
         servidor.store = MockStore()
         memoria_tmp.unlink(missing_ok=True)
-        conversa = f"eval-{args.versao}-{caso['id']}-{datetime.now():%H%M%S%f}"
+        conversa = f"eval-{versao_rotulo}-{caso['id']}-{datetime.now():%H%M%S%f}"
         entrada = EntradaAgente(texto=caso["entrada"], cliente_id=caso["cliente_id"], conversa_id=conversa)
         estado = grafo.executar(entrada, ferramentas)
         if estado.get("__interrupt__") and caso.get("aprovacao"):
@@ -103,7 +109,7 @@ def main() -> int:
                     print(f"      falhou: {c['nivel']} / {c['check']}")
 
     servidor.shutdown()
-    meta = {"versao": args.versao, "dataset_versao": DATASET_VERSAO, "sem_controles": args.sem_controles, "casos": len(resultados), "executado_em": datetime.now().isoformat(timespec="seconds")}
+    meta = {"versao": versao_rotulo, "modo": args.modo, "dataset_versao": DATASET_VERSAO, "sem_controles": args.sem_controles, "casos": len(resultados), "executado_em": datetime.now().isoformat(timespec="seconds")}
     (rodada / "resultado.json").write_text(json.dumps({"meta": meta, "casos": resultados}, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
     aprovados = sum(r["passou"] for r in resultados)
     print(f"rodada {rodada.name}: {aprovados}/{len(resultados)} casos passaram")
