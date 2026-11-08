@@ -13,7 +13,7 @@ Código em [evals/](../evals/). Resultados commitados em [evals/resultados/](../
 | `recusa` | 4 | sem resposta no corpus (atraso), saúde (alergia, gravidez), fora do escopo |
 | `seguranca` | 5 | e-mail, senha, injeção direta, injeção persistente, "aprovação" afirmada no texto |
 
-Cada caso tem `entrada`, `esperado` (critérios verificáveis), `origem`, `classe` e `por_que_existe`. Os 8 sintéticos foram **escritos por IA (Claude)**. O campo `revisado_por` de cada um registra `Matheus Rodrigues` em `evals/dataset.jsonl`; a data da revisão e os ajustes feitos não estão registrados (ver `PENDENTE.md`, item de avaliação). Os casos de `desenvolvimento` vêm dos cenários do §9 da Parte 2 (`logs/01`–`10`) e de `dados/perguntas-rag.json`; a pergunta 6 do arquivo RAG (atraso) é `rec-01`, e `rec-02` reproduz o cenário `logs/05`.
+Cada caso tem `entrada`, `esperado` (critérios verificáveis), `origem`, `classe` e `por_que_existe`. Os 8 sintéticos foram **escritos por IA (Claude)**. O campo `revisado_por` de cada um registra `Matheus Rodrigues` em `evals/dataset.jsonl`; a leitura foi feita por Matheus Rodrigues em 08/11/2026. Os casos de `desenvolvimento` vêm dos cenários do §9 da Parte 2 (`logs/01`–`10`) e de `dados/perguntas-rag.json`; a pergunta 6 do arquivo RAG (atraso) é `rec-01`, e `rec-02` reproduz o cenário `logs/05`.
 
 **Cuidado de leitura.** Os trechos esperados nas respostas (`resposta_contem`) foram escritos depois de ver a saída do sistema para os casos de desenvolvimento. Eles medem **regressão** (o comportamento atual continua igual), não correção em absoluto. O único critério escrito antes de ver o sistema falhar é o dos casos `seguranca`.
 
@@ -49,19 +49,19 @@ A suíte roda em `MODO=mock`: não avalia a redação do Gemini. O juiz existe j
 
 Concordância **75%** (15 + 0 de 20), contra o limiar de **85%**. **O juiz NÃO foi adotado.** O limiar não foi alterado depois da medição. Rótulos: 16 aprovados e 4 reprovados pelo humano; o juiz aprovou 19 e reprovou 1.
 
-**Os 5 desacordos, lidos um a um.** Classificação **proposta** pela IA que escreveu este documento; **o grupo confirma ou corrige antes de entregar** (marcado `A CONFIRMAR`).
+**Os 5 desacordos, lidos um a um.** Classificação proposta pela IA que escreveu este documento e revisada por Matheus Rodrigues em 08/11/2026. As linhas ainda marcadas `A CONFIRMAR` não foram revisadas.
 
-| Item | Humano | Juiz | Leitura | Classificação (A CONFIRMAR) |
+| Item | Humano | Juiz | Leitura | Classificação |
 |---|---|---|---|---|
-| `presente-01` | reprova: "Não existe essa regra no sistema" | aprova | A resposta repete a `esperada` do item ("48 horas"). O humano julgou contra a regra **atual** do corpus (cancelamento livre), não contra a `esperada` do item, que é a regra antiga. | defeito do **rótulo humano** (e fragilidade da amostra, ver abaixo) |
-| `presente-02` | reprova: "Não existe essa regra no sistema" | aprova | Mesmo caso: fiel à `esperada` antiga. | **rótulo humano** |
-| `presente-07` | reprova: "Não existe mais essa opção" | aprova | A `esperada` ("Reembolso integral na exceção simulada") é repetida; o humano julgou pela existência atual da regra. | **rótulo humano** |
-| `presente-09` | reprova: "Não existe essa regra no sistema" | aprova | Mesmo caso de `presente-01`. | **rótulo humano** |
-| `removida-01` | aprova: "Está correto" | reprova: acrescentou "sem custos adicionais", ausente da `esperada` | A rubrica manda reprovar o que não está na `esperada`; o juiz aplicou a rubrica corretamente. O humano aprovou por a frase ser factualmente verdadeira. | **rótulo humano** (o juiz seguiu a rubrica) |
+| `presente-01` | reprova: "Não existe essa regra no sistema" | aprova | A resposta repete a `esperada` do item ("48 horas"). O humano julgou contra a regra **atual** do corpus (cancelamento livre), não contra a `esperada` do item, que é a regra antiga. | defeito do **rótulo humano** (confirmado por Matheus Rodrigues, 08/11/2026): o juiz seguiu a rubrica |
+| `presente-02` | reprova: "Não existe essa regra no sistema" | aprova | Mesmo caso: fiel à `esperada` antiga. | defeito do **rótulo humano** (confirmado por Matheus Rodrigues, 08/11/2026): o juiz seguiu a rubrica |
+| `presente-07` | reprova: "Não existe mais essa opção" | aprova | A `esperada` ("Reembolso integral na exceção simulada") é repetida; o humano julgou pela existência atual da regra. | defeito da **rubrica** (Matheus Rodrigues, 08/11/2026): o rótulo humano estava certo contra o sistema atual, mas o juiz aprovou uma opção que deixou de existir porque a rubrica não manda conferir o corpus vigente |
+| `presente-09` | reprova: "Não existe essa regra no sistema" | aprova | Mesmo caso de `presente-01`. | **rotúlo humano** (confimado por Matheus Rodrigues, 08/11/2026) |
+| `removida-01` | aprova: "Está correto" | reprova: acrescentou "sem custos adicionais", ausente da `esperada` | A rubrica manda reprovar o que não está na `esperada`; o juiz aplicou a rubrica corretamente. O humano aprovou por a frase ser factualmente verdadeira. | **rotúlo humano** (confimado por Matheus Rodrigues, 08/11/2026)) |
 
 **Leitura do conjunto.** Em 5 de 5 desacordos o juiz aplicou a rubrica como escrita. A divergência vem de o humano ter julgado "isto é verdade no sistema hoje?" enquanto a rubrica pergunta "isto é fiel à `esperada` do item?". A amostra agrava o problema: as 20 saídas vêm da avaliação da Parte 2, cuja `esperada` é a regra revogada de 48 horas, que o corpus atual contradiz. Se o grupo preferir que a rubrica meça correção contra o corpus vigente, isso é **defeito da rubrica** (ela não diz contra que fonte julgar) e deve ser reclassificado.
 
-**Decisão.** Não adotado: 75% < 85%. Nenhuma propriedade deste projeto é avaliada por juiz; o §2 permanece válido porque todas as propriedades medidas hoje são de nível determinístico, de trajetória ou de resultado. **Próximo passo, se quiserem adotar o juiz:** reescrever a rubrica dizendo contra que fonte julgar, usar uma amostra cuja `esperada` corresponda ao corpus vigente, rotular de novo e medir como uma **nova** validação (rubrica `2.0.0`), mantendo esta medição registrada como está.
+**Decisão.** Não adotado: 75% < 85%. Nenhuma propriedade deste projeto é avaliada por juiz; o §2 permanece válido porque todas as propriedades medidas hoje são de nível determinístico, de trajetória ou de resultado. A rubrica pergunta "a resposta é fiel à `esperada` do item?", e o humano julgou "isso é verdade no sistema hoje?"; os critérios são diferentes, então o desacordo vem da **rubrica** e do rótulo (conclusão de Matheus Rodrigues, 08/11/2026). **Próximo passo, se quiserem adotar o juiz:** reescrever a rubrica dizendo contra que fonte julgar, usar uma amostra cuja `esperada` corresponda ao corpus vigente, rotular de novo e medir como uma **nova** validação (rubrica `2.0.0`), mantendo esta medição registrada como está.
 
 ## 4. A suíte e a comparação entre versões
 
