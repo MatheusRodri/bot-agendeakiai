@@ -33,7 +33,11 @@ def responder_com_gemini(
     chave = os.getenv("GEMINI_API_KEY", "")
     if not chave:
         raise ValueError("Defina GEMINI_API_KEY no .env para usar o modo Gemini.")
-    prompt = prompt_override if prompt_override is not None else (ROOT / "src" / "prompts" / "agente-v1.txt").read_text(encoding="utf-8")
+    if prompt_override is not None:
+        prompt = prompt_override
+    else:  # memória procedural: regras aprendidas, em texto, no system prompt
+        prompt = (ROOT / "src" / "prompts" / "agente-v1.txt").read_text(encoding="utf-8")
+        prompt += "\n\n" + (ROOT / "src" / "prompts" / "memoria-procedural.txt").read_text(encoding="utf-8")
     pedido = json.dumps({"pedido": texto, "resposta_verificada": resposta_base, "fontes": fontes, "suficiente": suficiente}, ensure_ascii=False)
     # Cada token consome pelo menos um byte; os bytes dão um teto conservador antes da chamada.
     entrada_estimada = len(prompt.encode("utf-8")) + len(pedido.encode("utf-8")) + 100

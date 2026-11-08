@@ -34,6 +34,7 @@ CAMINHO_CHECKPOINT = ROOT / "dados" / "checkpoints.sqlite"
 MAX_PASSOS = 8
 TEMPO_MAXIMO_SEGUNDOS = 30
 PRAZO_APROVACAO_MINUTOS = 15
+MENSAGEM_SUSPENSO = "O serviço está temporariamente suspenso. Procure a operação do AgendeAki. Nenhum agendamento foi realizado."
 
 
 class EstadoAgente(TypedDict, total=False):
@@ -251,9 +252,11 @@ def criar_nos(ferramentas: ApiTools):
             except Exception as erro:
                 eventos.append({"tipo": "modelo", "erro": str(erro), "resposta_base_preservada": True})
         if getattr(ferramentas, "usar_memoria_local", True):
-            bloqueio = registrar(estado["cliente_id"], estado["texto"])
-            if bloqueio:
-                eventos.append({"tipo": "memoria_bloqueada", "motivo": bloqueio})
+            gravacao = registrar(estado["cliente_id"], estado["texto"])
+            if gravacao["bloqueado"]:
+                eventos.append({"tipo": "memoria_bloqueada", "motivo": gravacao["bloqueado"]})
+            elif gravacao["ja_existia"]:
+                eventos.append({"tipo": "memoria_ja_existia"})
         evento_aprovacao = next((evento for evento in estado.get("eventos", []) if evento.get("tipo") == "aprovacao_humana"), {})
         motivo = "agendamento_confirmado" if estado.get("agendamento") else evento_aprovacao.get("motivo") or ("aprovacao_rejeitada" if evento_aprovacao else "resposta_final")
         if any(evento.get("tipo") == "escrita_bloqueada" for evento in estado.get("eventos", [])):
@@ -304,6 +307,9 @@ def executar(entrada: EntradaAgente, ferramentas: ApiTools, aprovar: bool | dict
         raiz.set_attribute("cliente_id", entrada.cliente_id)
         raiz.set_attribute("entrada", entrada.texto)
         raiz.set_attribute("retomada", aprovar is not None)
+        if os.getenv("AGENTE_SUSPENSO") == "1":  # interruptor de suspensão: nada é consultado nem escrito
+            raiz.set_attribute("motivo_termino", "suspenso")
+            return {"resultado": MENSAGEM_SUSPENSO, "fontes": [], "suficiente": False, "motivo_terminacao": "suspenso", "eventos": [{"tipo": "fim", "motivo": "suspenso"}]}
         try:
             estado = _invocar(entrada, ferramentas, aprovar)
         except Exception as erro:
@@ -317,6 +323,9 @@ def executar(entrada: EntradaAgente, ferramentas: ApiTools, aprovar: bool | dict
         raiz.set_attribute("prompt.sha256", estado.get("prompt_hash", ""))
         raiz.set_attribute("contexto_recuperado", json_curto(estado.get("fontes", [])))
         raiz.set_attribute("saida", estado.get("resultado", ""))
+        tipos = {e.get("tipo") for e in estado.get("eventos", [])}
+        raiz.set_attribute("saida_modelo_rejeitada", "saida_modelo_rejeitada" in tipos)
+        raiz.set_attribute("memoria_bloqueada", "memoria_bloqueada" in tipos)
         aprovacao_humana = [e for e in estado.get("eventos", []) if e.get("tipo") == "aprovacao_humana"]
         if aprovacao_humana:
             raiz.set_attribute("aprovacao_humana", json_curto({**aprovacao_humana[-1], "aprovador": entrada.cliente_id, "quando": datetime.now(timezone.utc).isoformat()}))

@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import hashlib
 import json
 import re
 from datetime import datetime, timezone
@@ -58,14 +59,25 @@ def motivo_bloqueio(texto: str) -> str | None:
     return None
 
 
-def registrar(cliente_id: str, texto: str) -> str | None:
-    """Grava o episódio. Fail-closed: se o filtro bloquear, nada é gravado e o motivo é devolvido."""
+def chave_episodio(cliente_id: str, texto: str) -> str:
+    """Chave de idempotência derivada do conteúdo: mesmo cliente e mesmo texto, mesma chave."""
+    return hashlib.sha256(f"{cliente_id}|{texto[:180]}".encode("utf-8")).hexdigest()
+
+
+def registrar(cliente_id: str, texto: str) -> dict[str, Any]:
+    """Grava o episódio. Fail-closed: se o filtro bloquear, nada é gravado.
+
+    Devolve {"gravado", "ja_existia", "bloqueado"}; "bloqueado" traz o motivo ou None.
+    """
     motivo = motivo_bloqueio(texto)
     if motivo:
-        return motivo
+        return {"gravado": False, "ja_existia": False, "bloqueado": motivo}
     memoria = carregar()
+    chave = chave_episodio(cliente_id, texto)
+    if any(item.get("chave") == chave for item in memoria["episodios"]):
+        return {"gravado": False, "ja_existia": True, "bloqueado": None}
     agora = datetime.now(timezone.utc).isoformat()
-    memoria["episodios"].append({"cliente_id": cliente_id, "texto": texto[:180], "criado_em": agora})
+    memoria["episodios"].append({"cliente_id": cliente_id, "texto": texto[:180], "criado_em": agora, "chave": chave})
     preferencias = memoria["preferencias"].setdefault(cliente_id, {})
     texto_lower = re.sub(r"\s+", " ", texto.lower())
     formas = {
@@ -79,7 +91,7 @@ def registrar(cliente_id: str, texto: str) -> str | None:
     if declaracoes:
         preferencias["estilo"] = {"valor": max(declaracoes)[1], "atualizado_em": agora}
     salvar(memoria)
-    return None
+    return {"gravado": True, "ja_existia": False, "bloqueado": None}
 
 
 def remover(cliente_id: str) -> None:
