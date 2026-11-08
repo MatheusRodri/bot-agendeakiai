@@ -5,7 +5,7 @@
   "hash_prompt_com_frase": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2",
   "hash_prompt_sem_frase": "a1f28bbd439e5293fb36229c057abc1c13002f10ee729fdf36371e954307d88f",
   "teto_total_usd": 0.2,
-  "gasto_usd": 0.014664,
+  "gasto_usd": 0.016308,
   "casos": [
     {
       "variante": "presente",
@@ -28,7 +28,7 @@
       "tokens_pensamento": 341,
       "limite_tokens_saida": 800,
       "custo_usd": 0.00174675,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -51,7 +51,7 @@
       "tokens_pensamento": 167,
       "limite_tokens_saida": 800,
       "custo_usd": 0.00112425,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -74,7 +74,7 @@
       "tokens_pensamento": 204,
       "limite_tokens_saida": 800,
       "custo_usd": 0.00118575,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -97,7 +97,7 @@
       "tokens_pensamento": 258,
       "limite_tokens_saida": 800,
       "custo_usd": 0.0014445,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -120,7 +120,7 @@
       "tokens_pensamento": 227,
       "limite_tokens_saida": 800,
       "custo_usd": 0.0013695,
-      "avaliacao_humana": null
+      "avaliacao_humana": false
     },
     {
       "variante": "presente",
@@ -139,7 +139,7 @@
       "tokens_pensamento": 252,
       "limite_tokens_saida": 800,
       "custo_usd": 0.0013905,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -162,7 +162,7 @@
       "tokens_pensamento": 276,
       "limite_tokens_saida": 800,
       "custo_usd": 0.00148725,
-      "avaliacao_humana": null
+      "avaliacao_humana": false
     },
     {
       "variante": "presente",
@@ -185,7 +185,7 @@
       "tokens_pensamento": 226,
       "limite_tokens_saida": 800,
       "custo_usd": 0.00136875,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -208,7 +208,7 @@
       "tokens_pensamento": 190,
       "limite_tokens_saida": 800,
       "custo_usd": 0.001164,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "presente",
@@ -227,7 +227,7 @@
       "tokens_pensamento": 220,
       "limite_tokens_saida": 800,
       "custo_usd": 0.00133125,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
     },
     {
       "variante": "removida",
@@ -250,12 +250,31 @@
       "tokens_pensamento": 156,
       "limite_tokens_saida": 800,
       "custo_usd": 0.0010515,
-      "avaliacao_humana": null
+      "avaliacao_humana": true
+    },
+    {
+      "variante": "removida",
+      "indice": 2,
+      "pergunta": "A regra de cancelamento é de 24 horas?",
+      "resposta_esperada": "Não; o prazo de 24 horas foi revogado e pode cancelar a qualquer momento",
+      "fontes_esperadas": [
+        "dados/corpus/regras-vigentes.md"
+      ],
+      "suficiente_esperado": true,
+      "saida": {
+        "resultado": "Não, a regra de cancelamento de 24 horas foi revogada. Atualmente, você pode cancelar o seu agendamento a qualquer momento.",
+        "fontes": [
+          "dados/corpus/regras-vigentes.md"
+        ],
+        "suficiente": true
+      },
+      "tokens_entrada": 382,
+      "tokens_saida": 57,
+      "tokens_pensamento": 305,
+      "limite_tokens_saida": 800,
+      "custo_usd": 0.001644,
+      "avaliacao_humana": true
     }
   ],
-  "status": "falha_chamada",
-  "erro_tipo": "ClientError",
-  "erro_http": 429,
-  "erro_status_api": "RESOURCE_EXHAUSTED",
-  "erro_limite": "diario"
+  "status": "em_andamento"
 }

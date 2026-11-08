@@ -31,9 +31,9 @@ Em 2026-10-25, o grupo informou que o cancelamento passou a ser possível a qual
 | Versão com a regra atual | Frase | Resultado até 2026-10-25 | Uso e custo registrados |
 |---|---|---|---|
 | 2.0.0 | Presente | 10 de 10 casos concluídos | 3.775 tokens de entrada, 514 de resposta e 2.361 de raciocínio; US$ 0,0136125 |
-| 2.0.0-teste | Removida | 1 de 10 casos concluído; pausa por HTTP 429 (limite diário) | 372 tokens de entrada, 50 de resposta e 156 de raciocínio; US$ 0,0010515 |
+| 2.0.0-teste | Removida | 2 de 10 casos concluídos; interrompida por HTTP 504/503 (instabilidade do provedor) em 2026-11-08, depois de um 429 diário em 2026-10-25 | 754 tokens de entrada, 107 de resposta e 461 de raciocínio; US$ 0,0026955 |
 
-O arquivo novo registra **11 de 20 casos** e US$ 0,014664 de gasto conhecido. As 11 respostas salvas têm JSON válido e preservam fontes e suficiência esperadas. A revisão textual completa e a comparação entre versões aguardam os nove casos restantes. Chamadas que falharam antes de retornar uso podem elevar o custo real acima do valor registrado. A execução pode ser retomada com o mesmo comando após a renovação da cota diária.
+O arquivo novo registra **12 de 20 casos** e US$ 0,016308 de gasto conhecido (retomada de 2026-11-08: dois casos concluídos; duas tentativas seguintes terminaram em HTTP 504/503 do provedor, com três tentativas cada). As 12 respostas salvas têm JSON válido e preservam fontes e suficiência esperadas. A revisão textual completa e a comparação entre versões aguardam os oito casos restantes da versão sem a frase. Chamadas que falharam antes de retornar uso podem elevar o custo real acima do valor registrado. A execução pode ser retomada com o mesmo comando após a renovação da cota diária.
 
 Na revisão humana, ler cada `saida.resultado` junto de `pergunta`, `resposta_esperada` e do trecho vigente do corpus. Marcar `avaliacao_humana` como aprovado ou revisar, com uma observação quando houver erro de fato, condição inventada, texto confuso ou exposição de raciocínio interno. Fontes, suficiência e formato já são conferidos pelo avaliador; a leitura humana verifica o conteúdo da frase entregue ao cliente. O campo permanece vazio até alguém efetivamente revisar cada resposta.
 
