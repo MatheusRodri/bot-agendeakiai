@@ -5,7 +5,7 @@
 
 ## 1. Identificação
 
-**Afirmação.** AgendeAkiAI é uma prova de conceito para descobrir e agendar serviços de beleza por texto. O grupo identificado no repositório é Emily Oliveira, Felipe Macena e Matheus Rodrigues. A versão do sistema é `3.1.0` (`src/versao.py`), gravada em cada trace; o prompt segue em `2.0.0`. A pessoa individual responsável por incidentes não está identificada.
+**Afirmação.** AgendeAkiAI é uma prova de conceito para descobrir e agendar serviços de beleza por texto. O grupo identificado no repositório é Emily Oliveira, Felipe Macena e Matheus Rodrigues. A versão do sistema é `3.1.0` (`src/versao.py`), gravada em cada trace; o prompt segue em `2.0.0`. Responsável: Matheus Rodrigues.
 
 **Evidência.** `README.md:L3-L7`; `src/prompts/agente-v1.txt:L1-L5`; `src/versao.py`.
 
@@ -30,7 +30,7 @@
 | Limite por execução | Uma escrita por execução: `verificar_escrita`, `src/controles.py:9-26`, chamado em `src/grafo.py:220`; custo do Gemini: teto de US$ 0,01 e 4.000 tokens estimados, 800 tokens de saída: `src/modelo.py:18-20,50-52`. | Aplicado no código local; o teto de custo não é limite de plataforma/provedor. |
 | Limite de passos e tempo | Oito passos, recursão limitada a 12 e verificação de tempo no término: `src/grafo.py:34-35,174-176,264-267,342`. | Passos e recursão limitam. O teto de 30 s é verificado só no nó terminal e **não interrompe um nó em execução**: medido com o Gemini lento, a execução passou dos 30 s e o término foi `limite_de_tempo` (`docs/observabilidade.md` §3). |
 | Falha de controle ou API | Falha de consulta termina sem confirmar: `src/tools.py:47-75`, `src/grafo.py:158-159`; controles de memória, escrita e saída do modelo são **fail-closed** (`docs/seguranca.md` §3); verificação em `src/verificar.py:45-53`. | Aplicado para as falhas observadas na API mock; recuperação diante de falhas de produção é **LACUNA**. |
-| Suspender o agente | Interruptor `AGENTE_SUSPENSO=1`: `executar` encerra com `suspenso` antes do grafo, sem consultar nem escrever: `src/grafo.py:310`; teste `tests/test_controles.py::test_agente_suspenso_nao_consulta_nem_escreve`. | Mecanismo aplicado no código, com teste. **LACUNA:** quem tem autoridade para acionar (nome do responsável) não está registrado. |
+| Suspender o agente | Interruptor `AGENTE_SUSPENSO=1`: `executar` encerra com `suspenso` antes do grafo, sem consultar nem escrever: `src/grafo.py:310`; teste `tests/test_controles.py::test_agente_suspenso_nao_consulta_nem_escreve`. | Mecanismo aplicado no código, com teste. Quem aciona: Matheus Rodrigues (§1 e §10). |
 | **Uma escrita por execução, só com aprovação e opção consultada** | `verificar_escrita` em `src/controles.py:9`, chamado em `src/grafo.py:220`; testes `tests/test_controles.py::test_escrita_bloqueada_*`. | Aplicado no código, com teste. Fail-closed. |
 | **Resposta do modelo não introduz id, preço, horário nem afirma escrita** | `validar_saida_modelo` em `src/controles.py:39`, chamado em `src/grafo.py:247`; testes `test_saida_*`. | Aplicado no código, com teste de unidade e **uma** resposta real do Gemini (aceita; ela continha uma data no formato `20/11/2027`, que o controle não detecta). O ataque do R3 contra o Gemini real não foi repetido: **LACUNA**. |
 | **Memória não grava dado sensível nem instrução injetada** | `motivo_bloqueio` em `src/memoria.py:54`, usado em `registrar` (`:67`); testes `test_memoria_*`; casos `seg-01`..`seg-04` em `evals/resultados/`. | Aplicado no código, com teste. Fail-closed. |
@@ -59,7 +59,7 @@
 | Memória local | `cliente_id`, trecho de até 180 caracteres da mensagem, preferência declarada e horário; personalização entre execuções. | `dados/memoria.json`, ignorado pelo Git; sem expiração automática; remoção explícita por cliente. | Para dados reais: **LACUNA**. |
 | Checkpoint SQLite | Estado da conversa e aprovação pendente, para retomar após interrupção. | `dados/checkpoints.sqlite`; fica até remoção explícita; sem criptografia de aplicação. | Para dados reais: **LACUNA**. |
 | Logs JSON | Entrada, identificadores, saída, eventos de ferramentas/contexto, aprovação, hash do código e horário; evidência das demonstrações. | Arquivos em `logs/`; não há prazo automático documentado. Remoção disponível pelo comando de esquecimento. | Dados demonstrativos fictícios. Para logs reais: **LACUNA**. |
-| Gemini opcional | O pedido remoto inclui texto do cliente, resposta já verificada, fontes e suficiência, além do prompt. | Retenção, região e eliminação pelo provedor: **LACUNA**. Usar somente dados fictícios até isso ser documentado. | Para envio de dados reais: **LACUNA**. |
+| Gemini opcional | O pedido remoto inclui texto do cliente, resposta já verificada, fontes e suficiência, além do prompt. | Termos lidos em 2026-11-08 (`docs/modelos.md`, "Termos do provedor"): na cota não paga o Google usa o conteúdo para melhorar produtos, revisores humanos podem lê-lo e não há prazo de retenção nem garantia de região. Usar somente dados fictícios; eliminação pelo provedor e configuração real da conta: **LACUNA**. | Para envio de dados reais: **LACUNA**. |
 
 **Evidência.** `src/contratos.py:L6-L16`; `dados/catalogo.json:L1-L19`; `src/grafo.py:40-65,188-192`; `src/memoria.py:12-25,46-94`; `docs/memoria.md:L5-L12,L22-L30`; `src/demo.py:L60-L72`; `src/modelo.py:23-62`; `docs/case.md:L80-L85`. Referência legal: [LGPD, art. 7º — Planalto](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/L13709.htm).
 
@@ -81,15 +81,15 @@
 
 ## 9. Riscos aceitos
 
-**Afirmação.** Dois riscos aceitos. (1) **R4 — identidade não autenticada no mock (ASI03):** aceito porque o mock é local e fictício; limitado por escuta só em `127.0.0.1` e por o backend real ser somente leitura (`allow_booking = False`) com HTTPS; reavaliar se a escrita no backend real for habilitada, se o mock sair de `localhost` ou se houver dado real. (2) Disponibilidade que muda entre busca e reserva (`docs/case.md:L103-L105`): revalidar no backend real e não confirmar em caso de falha. Quem aceitou cada risco: **não está registrado**.
+**Afirmação.** Dois riscos aceitos. (1) **R4 — identidade não autenticada no mock (ASI03):** aceito porque o mock é local e fictício; limitado por escuta só em `127.0.0.1` e por o backend real ser somente leitura (`allow_booking = False`) com HTTPS; reavaliar se a escrita no backend real for habilitada, se o mock sair de `localhost` ou se houver dado real. (2) Disponibilidade que muda entre busca e reserva (`docs/case.md:L103-L105`): revalidar no backend real e não confirmar em caso de falha. Quem aceitou cada risco: R4 foi aceito por Matheus Rodrigues; disponibilidade foi aceita pelo grupo, mas não há registro de quem aceitou nem quando.
 
 **Evidência.** `docs/seguranca.md` §4; `src/agendeaki_api.py:111`; `src/tools.py:36-38`; `src/mock_api.py:96,129,161`; `docs/case.md:L103-L105`.
 
-**LACUNA:** nome de quem aceitou cada risco e data.
+**LACUNA:** a data da aceitação de R4 e o nome de quem aceitou o risco de disponibilidade não estão registrados.
 
 ## 10. Supervisão humana
 
-**Afirmação.** O cliente revisa serviço, profissional, horário e preço antes da escrita de negócio. Pode aprovar, rejeitar ou editar para outra opção já consultada. A aprovação expira em 15 minutos; uma decisão tardia termina sem agendamento. Para suspender o agente existe o interruptor `AGENTE_SUSPENSO=1` (`src/grafo.py:310`, com teste); quem tem autoridade para acioná-lo não está registrado (**LACUNA**).
+**Afirmação.** O cliente revisa serviço, profissional, horário e preço antes da escrita de negócio. Pode aprovar, rejeitar ou editar para outra opção já consultada. A aprovação expira em 15 minutos; uma decisão tardia termina sem agendamento. Para suspender o agente existe o interruptor `AGENTE_SUSPENSO=1` (`src/grafo.py:310`, com teste); quem tem autoridade para acioná-lo é Matheus Rodrigues.
 
 **Evidência.** `src/grafo.py:180-181,188-217`; `docs/humano.md:L3-L21`; `logs/06-aprovacao-editada.json`; `logs/10-aprovacao-expirada.json`; fluxo de retomada em `README.md:L45-L53`.
 
@@ -116,22 +116,21 @@ Pergunta: *por que o agente reservou o "Penteado elegante com Lívia" (opc-005, 
 
 **Evidência.** `docs/mudancas.md`; `src/versao.py`; `src/prompts/agente-v1.txt:L1-L5`.
 
-**LACUNA:** o aprovador de cada mudança está `PENDENTE` em `docs/mudancas.md`.
+O aprovador das mudanças é Matheus Rodrigues, em 08/11/2026 (`docs/mudancas.md`).
 
 ## Lacunas
 
 | Lacuna | Correção proposta | Prioridade |
 |---|---|---|
-| Responsável individual por incidentes, quem pode acionar a suspensão e aprovador de cada mudança (`docs/mudancas.md`) não estão identificados. | O grupo nomear o responsável e preencher os aprovadores. | Alta |
-| Trace sem prazo de retenção automático; `evals/resultados/*/traces.jsonl` e `TRACES_ARQUIVO` fora da rotina de esquecimento (declarado). | Definir prazo (proposta: 30 dias) e expiração automática quando houver dado real. | Média |
+| Expiração de traces é manual (`python -m src.esquecer --expirar-traces 30 --confirmar`), sem agendador; `evals/resultados/*/traces.jsonl` e `TRACES_ARQUIVO` fora da rotina de esquecimento (declarado). | Agendar a expiração e definir o prazo oficial quando houver dado real. | Média |
 | Controle 3 testado com **uma** resposta real do Gemini; o ataque do R3 não foi repetido contra o modelo real; o formato de data `20/11/2027` passa. | Repetir o R3 com `MODO=gemini` quando a cota/estabilidade permitir e ampliar a detecção de datas. | Alta |
 | Teto de 30 s verificado só no fim: com o Gemini lento, o término vira `limite_de_tempo` mesmo com a reserva feita. | Reduzir o timeout do Gemini abaixo do teto, ou não sobrescrever `agendamento_confirmado`. | Alta |
 | Juiz de fidelidade não adotado (75% < 85%): a rubrica não diz contra que fonte julgar e a amostra usa a regra antiga. | Reescrever a rubrica, trocar a amostra e validar de novo como nova medição. | Média |
 | Custo por execução: uma única chamada bem-sucedida medida (≈ US$ 0,0022). | Rodar mais casos com Gemini e reportar custo por versão. | Média |
-| Quem aceitou formalmente os riscos aceitos (R4 e disponibilidade) e quando. | Registrar nome e data. | Média |
+| Data da aceitação de R4 e quem aceitou o risco de disponibilidade. | Registrar nome e data. | Média |
 | Credencial mock sem privilégio granular; identidade do cliente não é autenticada pela API demonstrativa. | Antes de produção, usar autenticação individual e autorização por cliente/operação. | Alta |
 | Base legal para dados reais não documentada. | Controlador deve definir e registrar hipótese do art. 7º por finalidade antes de uso real. | Alta |
-| Região, retenção e uso para treino do provedor não comprovados. | Documentar configuração e termos aplicáveis; manter dados fictícios até essa verificação. | Alta |
+| Região e retenção do provedor: os termos não garantem região nem informam prazo na cota não paga; a chave é da cota não paga, sem faturamento (confirmado por Matheus Rodrigues, 2026-11-08). | Antes de dado real, usar plano pago e decidir a região. | Alta |
 | Prazo de retenção dos dados locais (memória, checkpoint, logs) é indefinido, embora haja remoção manual. | Definir prazos por armazenamento e automatizar expiração quando necessário. | Alta |
 | Acesso e proteção de checkpoint, memória e logs não documentados; SQLite sem criptografia de aplicação. | Definir controle de acesso e proteção dos arquivos antes de dados reais. | Alta |
 | Nenhum caso `producao` no dataset; 100% de acerto em 27 casos escritos pelo grupo. | Coletar casos reais quando houver uso. | Média |
