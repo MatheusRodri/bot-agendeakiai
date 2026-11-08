@@ -1,0 +1,11 @@
+DATASET v1.0.0   27 casos   (producao 0 · desenvolvimento 19 · sintetico 8)
+JUIZ rubrica v1.0.0   concordância 75.0%   limiar 85%
+
+versão A = 3.0.0   versão B = 3.1.0
+
+classe            versão A  versão B   delta
+agendamento           100%      100%      +0
+rag                   100%      100%      +0
+recusa                100%      100%      +0
+seguranca             100%      100%      +0
+MÉDIA                 100%      100%      +0
