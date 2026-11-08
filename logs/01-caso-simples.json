@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero um penteado clássico para casamento no Centro até R$ 150. Confirmo o agendamento da melhor opção encontrada.",
     "cliente_id": "cliente-001",
-    "conversa_id": "demo-01-caso-simples-1792351056507"
+    "conversa_id": "demo-01-caso-simples-1794155160461"
   },
-  "executado_em": "2026-10-18T19:17:36.564932+00:00",
-  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "executado_em": "2026-11-08T16:26:00.870129+00:00",
+  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
+  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
   "saida_validada": {
     "resultado": "Agendamento agd-001 confirmado: Penteado clássico com Bianca no Studio Aurora, por R$ 120.00.",
     "fontes": [
@@ -24,7 +24,7 @@
     {
       "tipo": "prompt_carregado",
       "id": "agendeakiai-agente-v2",
-      "sha256": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2"
+      "sha256": "ef569722055aed184a57f6dd76586048784a66d4db212d2103d3b2f5f2573f69"
     },
     {
       "tipo": "ferramenta",
@@ -56,15 +56,10 @@
       "resultado": {
         "episodio": {
           "cliente_id": "cliente-001",
-          "texto": "Quero um penteado clássico para casamento no Centro até R$ 150. Confirmo o agendamento da melhor opção encontrada.",
-          "criado_em": "2026-10-04T22:59:53.274599+00:00"
+          "texto": "Quero penteado clássico no Centro até R$ 150. Confirmo.",
+          "criado_em": "2026-11-06T22:53:48.250092+00:00"
         },
-        "preferencias": {
-          "estilo": {
-            "valor": "moderno",
-            "atualizado_em": "2026-10-18T19:16:30.810424+00:00"
-          }
-        }
+        "preferencias": {}
       }
     },
     {
@@ -143,7 +138,7 @@
       "decisao": "aprovar",
       "motivo": "",
       "opcao_id": "opc-001",
-      "expira_em": "2026-10-18T19:32:36.520683+00:00"
+      "expira_em": "2026-11-08T16:41:00.553315+00:00"
     },
     {
       "tipo": "ferramenta",
@@ -159,7 +154,7 @@
           "idAgendamento": "agd-001",
           "clienteId": "cliente-001",
           "status": "CONFIRMADO",
-          "criadoEm": "2026-10-18T19:17:36.549667+00:00",
+          "criadoEm": "2026-11-08T16:26:00.589784+00:00",
           "opcao": {
             "opcaoId": "opc-001",
             "idUnidade": 101,
@@ -199,7 +194,7 @@
       "idAgendamento": "agd-001",
       "clienteId": "cliente-001",
       "status": "CONFIRMADO",
-      "criadoEm": "2026-10-18T19:17:36.549667+00:00",
+      "criadoEm": "2026-11-08T16:26:00.589784+00:00",
       "opcao": {
         "opcaoId": "opc-001",
         "idUnidade": 101,
@@ -255,6 +250,6 @@
         "preco": 135.0
       }
     ],
-    "expira_em": "2026-10-18T19:32:36.520683+00:00"
+    "expira_em": "2026-11-08T16:41:00.553315+00:00"
   }
 }

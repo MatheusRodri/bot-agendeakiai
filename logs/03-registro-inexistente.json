@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero um corte profissional para entrevista em Moema até R$ 100.",
     "cliente_id": "cliente-inexistente",
-    "conversa_id": "demo-03-registro-inexistente-1792351056598"
+    "conversa_id": "demo-03-registro-inexistente-1794155160976"
   },
-  "executado_em": "2026-10-18T19:17:36.638422+00:00",
-  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "executado_em": "2026-11-08T16:26:01.098991+00:00",
+  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
+  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
   "saida_validada": {
     "resultado": "Opções: opc-003: Corte executivo com Diego, Moema, 2027-11-22T09:00:00-03:00, R$ 75.00. Nenhum agendamento foi realizado.",
     "fontes": [
@@ -24,7 +24,7 @@
     {
       "tipo": "prompt_carregado",
       "id": "agendeakiai-agente-v2",
-      "sha256": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2"
+      "sha256": "ef569722055aed184a57f6dd76586048784a66d4db212d2103d3b2f5f2573f69"
     },
     {
       "tipo": "ferramenta",
@@ -44,11 +44,7 @@
     {
       "tipo": "memoria",
       "resultado": {
-        "episodio": {
-          "cliente_id": "cliente-inexistente",
-          "texto": "Quero um corte profissional para entrevista em Moema até R$ 100.",
-          "criado_em": "2026-10-04T22:45:56.441042+00:00"
-        },
+        "episodio": null,
         "preferencias": {}
       }
     },

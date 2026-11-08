@@ -3,12 +3,12 @@
   "entrada": {
     "texto": "Quero maquiagem para formatura até R$ 200.",
     "cliente_id": "cliente-002",
-    "conversa_id": "demo-08-ambigua-1792351056800"
+    "conversa_id": "demo-08-ambigua-1794155161613"
   },
-  "executado_em": "2026-10-18T19:17:36.840035+00:00",
-  "commit_base": "01f0b54978bff9a5040973fbb5deb4e910e7f2ca",
+  "executado_em": "2026-11-08T16:26:01.753187+00:00",
+  "commit_base": "5931e524242ad8ed438b95ca6d5a389e97a8a368",
   "arvore_de_trabalho_alterada": false,
-  "impressao_do_codigo": "e3bddf2f372642fc64c418fd58936dcd2584b6de033f2d3ab0546aa37201e420",
+  "impressao_do_codigo": "00f0130f3976fd1245e77e1cec288a4156f6cd4f6b07bddc0bc2539c87755628",
   "saida_validada": {
     "resultado": "Encontrei opções em Centro, Vila Mariana. Qual bairro prefere?",
     "fontes": [
@@ -24,7 +24,7 @@
     {
       "tipo": "prompt_carregado",
       "id": "agendeakiai-agente-v2",
-      "sha256": "afd641ba0b182dd346f1daede2e2f754a2d121a779f2ac6e347575d421a5dea2"
+      "sha256": "ef569722055aed184a57f6dd76586048784a66d4db212d2103d3b2f5f2573f69"
     },
     {
       "tipo": "ferramenta",
@@ -50,8 +50,8 @@
       "resultado": {
         "episodio": {
           "cliente_id": "cliente-002",
-          "texto": "Quero maquiagem para formatura até R$ 200.",
-          "criado_em": "2026-10-04T22:59:53.661951+00:00"
+          "texto": "Só quero comparar maquiagem natural para formatura até R$ 150; não quero reservar agora.",
+          "criado_em": "2026-11-08T16:26:01.117991+00:00"
         },
         "preferencias": {}
       }
