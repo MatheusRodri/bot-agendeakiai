@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import re
+import unicodedata
 from typing import Any
 
 
@@ -47,4 +48,68 @@ def validar_saida_modelo(resposta_base: str, candidata: str, agendou: bool) -> s
         return "preco_inventado"
     if not agendou and _AFIRMA_ESCRITA.search(candidata) and not _NEGA_ESCRITA.search(candidata):
         return "afirma_escrita_inexistente"
+    return None
+
+
+# --- Modo conversa (src/conversa.py) ---
+
+def _sem_acento(texto: str) -> str:
+    return "".join(c for c in unicodedata.normalize("NFKD", texto.lower()) if not unicodedata.combining(c))
+
+
+_PEDE_AGENDAR = (
+    re.compile(r"\bpode(?:s|ria)?\s+(?:ja\s+|sim\s+)?(?:agendar|marcar|reservar|confirmar|fechar)\b"),
+    re.compile(r"\b(?:agende|agenda|marque|marca|reserve|reserva)\s+(?:isso\s+|tudo\s+)?(?:pra|para)\s+mim\b"),
+    re.compile(r"\b(?:agende|marque|reserve)\b"),
+    re.compile(r"\b(?:quero|vou|gostaria\s+de)\s+(?:agendar|marcar|reservar)\b"),
+    re.compile(r"\bja\s+(?:agenda|marca|reserva)\b"),
+    re.compile(r"\bconfirmo\b"),
+)
+_NEGA_AGENDAR = re.compile(r"\bnao\s+(?:\w+\s+){0,3}?(?:agend|marc|reserv|confirm)\w*|\bsem\s+agendar\b")
+
+
+def pedido_explicito_de_agendamento(texto: str) -> bool | None:
+    """Lê o texto digitado pelo cliente: True = pediu para agendar; False = negou
+    ("não agende", "sem agendar"); None = não disse nada sobre agendar."""
+    frase = _sem_acento(texto)
+    if _NEGA_AGENDAR.search(frase):
+        return False
+    if any(padrao.search(frase) for padrao in _PEDE_AGENDAR):
+        return True
+    return None
+
+
+def validar_recomendacao(ids: list[int], catalogo: list[dict[str, Any]], maximo: int = 3) -> str | None:
+    """Controle 3b: o modelo só pode recomendar serviços do catálogo consultado."""
+    if not ids:
+        return "recomendacao_vazia"
+    if len(ids) > maximo:
+        return "recomendacao_excede_limite"
+    if len(set(ids)) != len(ids):
+        return "recomendacao_repetida"
+    if set(ids) - {int(s["idServico"]) for s in catalogo}:
+        return "servico_inventado"
+    return None
+
+
+def verificar_escrita_conversa(
+    pedido_explicito: bool,
+    plano: list[dict[str, Any]],
+    ids_recomendados: list[int],
+    horarios_consultados: set[tuple[int, str]],
+    ja_agendou: bool,
+) -> str | None:
+    """Controle 5 (ASI02/ASI09): no modo conversa a escrita só ocorre se o próprio
+    cliente pediu para agendar, com serviços recomendados, horários consultados na
+    API e no máximo uma vez por conversa. Devolve o motivo do bloqueio."""
+    if not pedido_explicito:
+        return "sem_pedido_explicito"
+    if not plano:
+        return "plano_vazio"
+    if any(int(item["idServico"]) not in ids_recomendados for item in plano):
+        return "servico_nao_recomendado"
+    if any((int(item["idServico"]), item["dataHoraInicio"]) not in horarios_consultados for item in plano):
+        return "horario_nao_consultado"
+    if ja_agendou:
+        return "limite_de_uma_escrita_por_conversa"
     return None
