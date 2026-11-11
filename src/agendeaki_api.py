@@ -1,4 +1,8 @@
-"""Acesso somente de leitura à API real do AgendeAki."""
+"""Acesso à API real do AgendeAki.
+
+O modo de um comando (grafo) é somente leitura. O modo conversa (`src/conversa.py`)
+também cria agendamentos em lote, sempre atrás do controle 5 (`controles.py`).
+"""
 
 from __future__ import annotations
 
@@ -10,6 +14,10 @@ from typing import Any
 from urllib import error, parse, request
 from urllib.parse import urlsplit
 from zoneinfo import ZoneInfo
+
+
+# Vai em todo agendamento criado pelo agente: o salão vê no app de onde a reserva veio.
+OBSERVACAO_AGENDAMENTO = "Agendamento usando AgendeAkiAI"
 
 
 def _normalizar(valor: str) -> str:
@@ -92,9 +100,10 @@ def autenticar_cliente(base_url: str, email: str, senha: str) -> tuple[str, dict
 
 @dataclass(frozen=True)
 class AgendeAkiApiTools:
-    """Implementa as ferramentas de leitura usando a sessão do cliente.
+    """Implementa as ferramentas usando a sessão do cliente.
 
-    A escrita de agendamentos fica intencionalmente desabilitada nesta etapa.
+    `confirmar_agendamento` (grafo) segue desabilitada; a escrita do modo conversa
+    passa por `criar_agendamentos`, chamada só depois do controle 5.
     """
 
     base_url: str
@@ -103,7 +112,7 @@ class AgendeAkiApiTools:
     latitude: float
     longitude: float
     raio_km: int
-    data: str
+    data: str = ""  # usada só por buscar_opcoes; o modo conversa pergunta a data ao cliente
     timeout_seconds: float = 10.0
     fonte_catalogo: str = "API AgendeAki: serviços e horários disponíveis"
     usar_memoria_local = False
@@ -117,7 +126,8 @@ class AgendeAkiApiTools:
             raise ValueError("Latitude ou longitude fora do intervalo permitido.")
         if self.raio_km not in {0, 1, 5, 10}:
             raise ValueError("O raio deve ser 0, 1, 5 ou 10 km.")
-        date.fromisoformat(self.data)
+        if self.data:
+            date.fromisoformat(self.data)
 
     def _request(
         self,
@@ -257,6 +267,90 @@ class AgendeAkiApiTools:
                 "mensagem": "A integração está em modo somente leitura; nenhum agendamento foi enviado.",
             },
         }
+
+    # --- Ferramentas do modo conversa ---
+
+    def localizar_salao_mais_proximo(self) -> dict[str, Any]:
+        parametros = parse.urlencode({"latitude": self.latitude, "longitude": self.longitude, "raioKm": self.raio_km})
+        resposta = self._request("GET", f"/api/clientes/saloes-proximos?{parametros}")
+        if not resposta.get("ok"):
+            return resposta
+        saloes = resposta.get("saloes", [])  # o backend já ordena por distância
+        if not saloes:
+            return {"ok": True, "salao": None, "raioKm": self.raio_km}
+        salao = saloes[0]
+        rua = ", ".join(str(parte) for parte in (salao.get("rua"), salao.get("numeroEndereco")) if parte)
+        cidade = "/".join(str(parte) for parte in (salao.get("municipio"), salao.get("estado")) if parte)
+        endereco = " - ".join(parte for parte in (rua, str(salao.get("bairro") or ""), cidade) if parte)
+        return {
+            "ok": True,
+            "salao": {
+                "idUnidade": int(salao["idUnidade"]),
+                "nomeSalao": str(salao.get("nomeSalao") or "Salão"),
+                "nomeUnidade": str(salao.get("nomeUnidade") or ""),
+                "endereco": endereco,
+                "bairro": str(salao.get("bairro") or ""),
+                "distanciaKm": float(salao.get("distanciaKm") or 0),
+            },
+        }
+
+    def listar_servicos(self, id_unidade: int) -> dict[str, Any]:
+        resposta = self._request("GET", f"/api/clientes/saloes/{int(id_unidade)}/servicos")
+        if not resposta.get("ok"):
+            return resposta
+        servicos = [
+            {
+                "idServico": int(item["idServico"]),
+                "nome": str(item.get("nome") or ""),
+                "descricao": str(item.get("descricao") or ""),
+                "valor": float(item.get("valor") or 0),
+                "duracaoMinutos": int(item.get("duracaoMinutos") or 0),
+            }
+            for item in resposta.get("servicos", [])
+            if item.get("profissionais")  # sem profissional não há horário a oferecer
+        ]
+        return {"ok": True, "servicos": servicos}
+
+    def listar_horarios(self, id_unidade: int, id_servico: int, data: str) -> dict[str, Any]:
+        consulta = parse.urlencode({"data": data, "idUnidade": int(id_unidade), "idServico": int(id_servico), "idFuncionario": "qualquer"})
+        resposta = self._request("GET", f"/api/clientes/agendamentos/horarios?{consulta}")
+        if not resposta.get("ok"):
+            return resposta
+        horarios = [
+            {
+                "inicio": str(item["inicio"]),
+                "fim": str(item["fim"]),
+                "idFuncionario": int(item["profissionalSugerido"]["idFuncionario"]),
+                "profissional": str(item["profissionalSugerido"].get("nome") or "Profissional"),
+            }
+            for item in resposta.get("horarios", [])
+            if item.get("profissionalSugerido")
+        ]
+        return {"ok": True, "horarios": horarios}
+
+    def criar_agendamentos(self, id_unidade: int, itens: list[dict[str, Any]]) -> dict[str, Any]:
+        """POST /api/clientes/agendamentos/lote: tudo ou nada, numa transação do backend.
+
+        `valorEsperado` faz o backend recusar (409 PRECO_ALTERADO) se o preço mudou
+        depois da consulta. Não há chave de idempotência: a chamada não é repetida.
+        """
+        payload = {
+            "idUnidade": int(id_unidade),
+            "itens": [
+                {
+                    "idServico": int(item["idServico"]),
+                    "idFuncionario": int(item["idFuncionario"]),
+                    "dataHoraInicio": str(item["dataHoraInicio"]),
+                    "valorEsperado": f'{float(item["valor"]):.2f}',
+                    "observacao": OBSERVACAO_AGENDAMENTO,
+                }
+                for item in itens
+            ],
+        }
+        resposta = self._request("POST", "/api/clientes/agendamentos/lote", payload)
+        if not resposta.get("ok"):
+            return resposta
+        return {"ok": True, "idsAgendamentos": [int(item["idAgendamento"]) for item in resposta.get("agendamentos", [])]}
 
     def encerrar_sessao(self) -> None:
         self._request("POST", "/api/clientes/logout")
