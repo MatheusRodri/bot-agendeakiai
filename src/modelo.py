@@ -1,4 +1,4 @@
-"""Chamada opcional ao Gemini para redigir a resposta final."""
+"""Chamadas opcionais ao Gemini: redigir a resposta final e recomendar serviços."""
 
 from __future__ import annotations
 
@@ -10,6 +10,7 @@ from typing import Any
 from dotenv import load_dotenv
 from google import genai
 from google.genai import types
+from pydantic import BaseModel
 
 from .contratos import SaidaAgente
 
@@ -79,3 +80,53 @@ def responder_com_gemini(
         "tokens_pensamento": tokens_pensamento,
         "custo_usd": custo_usd,
     }
+
+
+class RecomendacaoModelo(BaseModel):
+    ids_servicos: list[int]
+    motivo: str
+
+
+TIMEOUT_RECOMENDACAO_MS = 15_000  # no chat o cliente espera na tela; acima disso usa as regras
+
+
+def recomendar_servicos(pedido: str, catalogo: list[dict[str, Any]]) -> tuple[dict[str, Any], dict[str, int | float]]:
+    """O modelo escolhe serviços do catálogo; quem valida é controles.validar_recomendacao."""
+    load_dotenv(ROOT / ".env")
+    chave = os.getenv("GEMINI_API_KEY", "")
+    if not chave:
+        raise ValueError("Defina GEMINI_API_KEY no .env para usar o modo Gemini.")
+    prompt = (ROOT / "src" / "prompts" / "recomendacao-v1.txt").read_text(encoding="utf-8")
+    itens = [
+        {"idServico": s["idServico"], "nome": s["nome"], "descricao": s.get("descricao", "")[:120], "valor": s["valor"], "duracaoMinutos": s["duracaoMinutos"]}
+        for s in catalogo[:30]
+    ]
+    entrada = json.dumps({"pedido": pedido, "catalogo": itens}, ensure_ascii=False)
+    entrada_estimada = len(prompt.encode("utf-8")) + len(entrada.encode("utf-8")) + 100
+    entrada_usd = os.getenv("LLM_CUSTO_USD_POR_MILHAO_ENTRADA", "")
+    saida_usd = os.getenv("LLM_CUSTO_USD_POR_MILHAO_SAIDA", "")
+    if not entrada_usd or not saida_usd:
+        raise ValueError("Informe os custos atuais por milhão de tokens antes de habilitar o modo Gemini.")
+    taxa_entrada, taxa_saida = float(entrada_usd), float(saida_usd)
+    custo_estimado = (entrada_estimada * taxa_entrada + MAX_TOKENS_SAIDA * taxa_saida) / 1_000_000
+    if entrada_estimada + MAX_TOKENS_SAIDA > MAX_TOKENS_TOTAIS or custo_estimado > MAX_CUSTO_USD:
+        raise ValueError(f"A chamada Gemini excederia o limite local de tokens ou de US$ {MAX_CUSTO_USD:.2f}.")
+    cliente = genai.Client(api_key=chave, http_options=types.HttpOptions(timeout=TIMEOUT_RECOMENDACAO_MS))
+    resposta = cliente.models.generate_content(
+        model=os.getenv("LLM_MODELO") or "gemini-3.8-flash",
+        contents=entrada,
+        config=types.GenerateContentConfig(
+            system_instruction=prompt,
+            response_mime_type="application/json",
+            response_schema=RecomendacaoModelo,
+            temperature=0.2,
+            max_output_tokens=MAX_TOKENS_SAIDA,
+        ),
+    )
+    objeto = RecomendacaoModelo.model_validate(json.loads(resposta.text or "{}")).model_dump()
+    uso = resposta.usage_metadata
+    tokens_entrada = (uso.prompt_token_count or 0) if uso else 0
+    tokens_saida = (uso.candidates_token_count or 0) if uso else 0
+    tokens_pensamento = (uso.thoughts_token_count or 0) if uso else 0
+    custo_usd = (tokens_entrada * taxa_entrada + (tokens_saida + tokens_pensamento) * taxa_saida) / 1_000_000
+    return objeto, {"tokens_entrada": tokens_entrada, "tokens_saida": tokens_saida, "tokens_pensamento": tokens_pensamento, "custo_usd": custo_usd}
