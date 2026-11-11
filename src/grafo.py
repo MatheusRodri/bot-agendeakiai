@@ -75,14 +75,14 @@ def _normalizar(texto: str) -> str:
 
 def _filtros(texto: str) -> dict[str, Any]:
     frase = _normalizar(texto)
-    servico = next((item for item in ("maquiagem", "penteado", "corte") if item in frase), "")
+    servico = next((item for item in ("maquiagem", "penteado", "corte", "barba", "unha") if item in frase), "")
     bairro = next((item for item in ("centro", "moema", "vila mariana") if item in frase), "")
     valor = re.search(r"(?:r\$\s*|ate\s+)(\d+(?:[.,]\d+)?)", frase)
     return {"servico": servico, "bairro": bairro.title() if bairro else "", "orcamento_max": float(valor.group(1).replace(",", ".")) if valor else None}
 
 
 def _eh_pedido_beauty(texto: str) -> bool:
-    return any(palavra in _normalizar(texto) for palavra in ("beleza", "cabelo", "corte", "penteado", "maquiagem", "unha", "salao", "arrumar", "evento"))
+    return any(palavra in _normalizar(texto) for palavra in ("beleza", "cabelo", "corte", "penteado", "maquiagem", "unha", "barba", "salao", "arrumar", "evento"))
 
 
 def _pede_agendamento(texto: str) -> bool:
@@ -145,7 +145,7 @@ def criar_nos(ferramentas: ApiTools):
 
         filtros = _filtros(texto)
         if not filtros["servico"]:
-            return {"resultado": "Qual serviço você procura: penteado, maquiagem ou corte?", "fontes": ["entrada do cliente"], "suficiente": False, "opcoes": [], "eventos": [{"tipo": "entrada_incompleta", "campos": ["servico"]}], "passos": estado.get("passos", 0) + 1}
+            return {"resultado": "Qual serviço você procura: penteado, maquiagem, corte, barba ou unha?", "fontes": ["entrada do cliente"], "suficiente": False, "opcoes": [], "eventos": [{"tipo": "entrada_incompleta", "campos": ["servico"]}], "passos": estado.get("passos", 0) + 1}
         busca = _executar_ferramenta("buscar_opcoes", ferramentas.buscar_opcoes, **filtros, cliente_id=estado["cliente_id"])
         opcoes = busca.get("opcoes", []) if busca.get("ok") else []
         preferencias_memoria = estado.get("memoria", {}).get("preferencias", {})
@@ -157,8 +157,8 @@ def criar_nos(ferramentas: ApiTools):
         eventos = [{"tipo": "ferramenta", "ferramenta": "buscar_opcoes", "argumentos": {**filtros, "cliente_id": estado["cliente_id"]}, "resultado": busca}]
         if not busca.get("ok"):
             return {"resultado": "Não consegui consultar a disponibilidade agora. Nenhum agendamento foi feito.", "fontes": ["buscar_opcoes"], "suficiente": False, "opcoes": [], "eventos": eventos, "passos": estado.get("passos", 0) + 1}
-        if not filtros["bairro"] and len(opcoes) > 1:
-            bairros = sorted({opcao["bairro"] for opcao in opcoes})
+        bairros = sorted({opcao["bairro"] for opcao in opcoes})
+        if not filtros["bairro"] and len(bairros) > 1:
             return {"resultado": f"Encontrei opções em {', '.join(bairros)}. Qual bairro prefere?", "fontes": [fonte_catalogo], "suficiente": False, "opcoes": opcoes, "eventos": eventos + [{"tipo": "entrada_ambigua", "campo": "bairro", "opcoes": bairros}], "passos": estado.get("passos", 0) + 1}
         if not opcoes:
             return {"resultado": "Não encontrei opções para esses filtros. Podemos ajustar bairro ou orçamento; nenhum agendamento foi realizado.", "fontes": [fonte_catalogo], "suficiente": True, "opcoes": [], "eventos": eventos, "passos": estado.get("passos", 0) + 1}
