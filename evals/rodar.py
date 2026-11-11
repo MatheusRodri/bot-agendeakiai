@@ -1,4 +1,5 @@
-"""Roda o golden dataset contra o sistema entregue (src.grafo.executar).
+"""Roda o golden dataset contra o sistema entregue (src.grafo.executar e, nos casos
+com "turnos", src.conversa.Conversa sobre o salão simulado).
 
 Uso: python -m evals.rodar --versao 3.1.0 [--sem-controles] [--imprimir] [--modo gemini --casos id1,id2]
 `--sem-controles` desliga, só nesta execução, os controles do §3.2 (linha de base).
@@ -16,7 +17,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
 DATASET = ROOT / "evals" / "dataset.jsonl"
-DATASET_VERSAO = "1.0.0"
+DATASET_VERSAO = "1.1.0"  # 1.1.0: casos conv-* do modo conversa (campo "turnos")
 PASTA_RESULTADOS = ROOT / "evals" / "resultados"
 
 
@@ -70,15 +71,20 @@ def main() -> int:
     # Ambiente fixado antes de importar src.*: modo mock, API local, traces na pasta da rodada.
     os.environ.update({"MODO": args.modo, "VERSAO_SISTEMA": versao_rotulo, "TRACES_ARQUIVO": str(rodada / "traces.jsonl"), "API_BASE_URL": "http://127.0.0.1:0"})
 
+    from src import conversa as modulo_conversa
     from src import grafo, memoria
     from src.contratos import EntradaAgente
     from src.mock_api import MockStore, create_server
+    from src.salao_simulado import SalaoSimulado
     from src.tools import ApiTools
 
     if args.sem_controles:
         grafo.verificar_escrita = lambda estado: None
         grafo.validar_saida_modelo = lambda *a, **k: None
         memoria.motivo_bloqueio = lambda texto: None
+        modulo_conversa.verificar_escrita_conversa = lambda *a, **k: None
+        modulo_conversa.pedido_explicito_de_agendamento = lambda texto: True  # sem controle, qualquer turno vale como pedido
+        modulo_conversa.validar_recomendacao = lambda *a, **k: None
 
     servidor = create_server("127.0.0.1", 0)
     threading.Thread(target=servidor.serve_forever, daemon=True).start()
@@ -94,13 +100,22 @@ def main() -> int:
         servidor.store = MockStore()
         memoria_tmp.unlink(missing_ok=True)
         conversa = f"eval-{versao_rotulo}-{caso['id']}-{datetime.now():%H%M%S%f}"
-        entrada = EntradaAgente(texto=caso["entrada"], cliente_id=caso["cliente_id"], conversa_id=conversa)
-        estado = grafo.executar(entrada, ferramentas)
-        if estado.get("__interrupt__") and caso.get("aprovacao"):
-            estado = grafo.executar(entrada, ferramentas, caso["aprovacao"])
-        saida = grafo.saida_validada(estado)
+        if "turnos" in caso:  # modo conversa: vários turnos contra o salão simulado
+            salao = SalaoSimulado()
+            chat = modulo_conversa.Conversa(salao, caso["cliente_id"], conversa, modo=args.modo)
+            ultima = [chat.responder(turno) for turno in caso["turnos"]][-1]
+            saida = {"resultado": ultima["resultado"], "fontes": ultima["fontes"], "suficiente": ultima["suficiente"]}
+            estado = {"motivo_terminacao": ultima["motivo"], "eventos": chat.eventos}
+            n_escritas = len(salao.agendamentos)
+        else:
+            entrada = EntradaAgente(texto=caso["entrada"], cliente_id=caso["cliente_id"], conversa_id=conversa)
+            estado = grafo.executar(entrada, ferramentas)
+            if estado.get("__interrupt__") and caso.get("aprovacao"):
+                estado = grafo.executar(entrada, ferramentas, caso["aprovacao"])
+            saida = grafo.saida_validada(estado)
+            n_escritas = len(servidor.store.agendamentos)
         memoria_texto = memoria_tmp.read_text(encoding="utf-8") if memoria_tmp.exists() else ""
-        avaliacao = avaliar(caso, saida, estado, len(servidor.store.agendamentos), memoria_texto)
+        avaliacao = avaliar(caso, saida, estado, n_escritas, memoria_texto)
         resultados.append({"id": caso["id"], "classe": caso["classe"], "origem": caso["origem"], "saida": saida, "motivo_termino": estado.get("motivo_terminacao", "aguardando_humano"), **avaliacao})
         if args.imprimir:
             print(f"[{'OK ' if avaliacao['passou'] else 'FALHA'}] {caso['id']}: {saida['resultado']}")

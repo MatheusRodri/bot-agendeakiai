@@ -13,8 +13,10 @@ from pathlib import Path
 
 PASTA = Path(__file__).resolve().parent / "resultados"
 SLO_ALVO = 90.0
-# Término "bom": o agente concluiu o que lhe cabia. Parar para o humano não é término (não entra como válido).
-TERMINOS_BONS = {"resposta_final", "agendamento_confirmado", "aprovacao_rejeitada"}
+# Término "bom": o agente concluiu o que lhe cabia. Parar para o humano não é término (não entra como válido):
+# aguardando_humano (aprovação no grafo) e aguardando_cliente (pergunta de um turno do modo conversa).
+TERMINOS_BONS = {"resposta_final", "agendamento_confirmado", "aprovacao_rejeitada", "fora_do_escopo"}
+PAUSAS = {"aguardando_humano", "aguardando_cliente"}
 
 
 def percentil(valores: list[float], p: float) -> float:
@@ -55,7 +57,7 @@ def main() -> int:
                 if not s["atributos"].get("ferramenta.ok", True):
                     v["ferr_erro"][nome] += 1
                     falhou_ferramenta = True
-        if motivo != "aguardando_humano":
+        if motivo not in PAUSAS:
             v["validas"] += 1
             v["bons"] += motivo in TERMINOS_BONS and not falhou_ferramenta
 
@@ -72,7 +74,7 @@ def main() -> int:
         for nome, n in sorted(v["ferr"].items()):
             erros = v["ferr_erro"][nome]
             saida.append(f"| {ver} | {nome} | {n} | {erros} | {100 * erros / n:.1f}% |")
-    saida += ["", "## SLI de qualidade", "", "SLI = execuções com término em {resposta_final, agendamento_confirmado, aprovacao_rejeitada} **e** nenhuma ferramenta com erro ÷ execuções que terminaram (exclui `aguardando_humano`).", "", f"| versão | bons | válidas | SLI | alvo | orçamento de erro consumido |", "|---|---|---|---|---|---|"]
+    saida += ["", "## SLI de qualidade", "", "SLI = execuções com término em {resposta_final, agendamento_confirmado, aprovacao_rejeitada, fora_do_escopo} **e** nenhuma ferramenta com erro ÷ execuções que terminaram (exclui `aguardando_humano` e `aguardando_cliente`). Cada turno do modo conversa é uma execução.", "", f"| versão | bons | válidas | SLI | alvo | orçamento de erro consumido |", "|---|---|---|---|---|---|"]
     for ver, v in sorted(versoes.items()):
         sli = 100 * v["bons"] / v["validas"]
         orcamento = 100 - SLO_ALVO
