@@ -3,4 +3,4 @@
 import os
 
 # VERSAO_SISTEMA no ambiente permite a suíte rodar rotulada como a versão anterior (ver docs/evals.md).
-VERSAO_SISTEMA = os.getenv("VERSAO_SISTEMA", "3.1.0")
+VERSAO_SISTEMA = os.getenv("VERSAO_SISTEMA", "3.2.0")

@@ -29,6 +29,63 @@ def _ler_coordenada(rotulo: str, valor: float | None) -> float:
         raise ValueError(f"Informe um valor numérico válido para {rotulo.lower()}.") from erro
 
 
+def _sessao_agendeaki(args: argparse.Namespace, data: str) -> AgendeAkiApiTools:
+    base_url = args.api_base_url or os.getenv("API_BASE_URL") or "http://127.0.0.1:3001"
+    latitude = _ler_coordenada("Latitude", args.latitude)
+    longitude = _ler_coordenada("Longitude", args.longitude)
+    if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
+        raise ValueError("Latitude ou longitude fora do intervalo permitido.")
+    email = os.getenv("CLIENTE_EMAIL") or input("E-mail do cliente: ").strip()
+    senha = os.getenv("CLIENTE_SENHA") or getpass("Senha do cliente: ")
+    token, usuario = autenticar_cliente(base_url, email, senha)
+    del senha
+    return AgendeAkiApiTools(base_url=base_url, token=token, cliente_id=str(usuario["id"]), latitude=latitude, longitude=longitude, raio_km=args.raio_km, data=data)
+
+
+def _rodar_chat(args: argparse.Namespace) -> int:
+    """Modo conversa: o cliente digita, o agente responde, até 'sair'."""
+    from .conversa import Conversa
+    from .salao_simulado import SalaoSimulado
+
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+    ferramentas: AgendeAkiApiTools | SalaoSimulado | None = None
+    try:
+        if args.backend == "agendeaki":
+            ferramentas = _sessao_agendeaki(args, data="")
+            cliente_id = ferramentas.cliente_id
+        else:
+            ferramentas = SalaoSimulado()
+            cliente_id = args.cliente_id or "cliente-simulado"
+        conversa = Conversa(ferramentas, cliente_id, args.conversa_id)
+        origem = "backend AgendeAki" if args.backend == "agendeaki" else "salão simulado"
+        print(f"AgendeAkiAI — modo conversa ({origem}). Agendo só quando você pedir explicitamente. Digite 'sair' para encerrar.")
+        while True:
+            try:
+                texto = input("\nVocê: ").strip()
+            except (EOFError, KeyboardInterrupt):
+                print()
+                break
+            if normalizar_comando(texto) in {"sair", "exit", "tchau"}:
+                break
+            if not texto:
+                continue
+            resposta = conversa.responder(texto)
+            print(f"\nAgendeAki: {resposta['resultado']}")
+        print("Conversa encerrada.")
+        return 0
+    except (ValueError, OSError) as erro:
+        print(f"Erro: {erro}", file=sys.stderr)
+        return 2
+    finally:
+        if isinstance(ferramentas, AgendeAkiApiTools):
+            ferramentas.encerrar_sessao()
+
+
+def normalizar_comando(texto: str) -> str:
+    return texto.strip().lower().rstrip(".!")
+
+
 def main() -> int:
     os.environ.setdefault("LANGGRAPH_STRICT_MSGPACK", "true")
     parser = argparse.ArgumentParser(description="Agente de recomendação e agendamento AgendeAkiAI")
@@ -43,34 +100,20 @@ def main() -> int:
     parser.add_argument("--message", default="")
     parser.add_argument("--retomar", choices=("aprovar", "rejeitar"))
     parser.add_argument("--editar-opcao-id", default="")
+    parser.add_argument("--chat", action="store_true", help="modo conversa: ocasião, recomendação, dia/horário e agendamento quando pedido explicitamente")
     args = parser.parse_args()
+    if args.chat:
+        return _rodar_chat(args)
     ferramentas: ApiTools | AgendeAkiApiTools | None = None
 
     try:
         if args.backend == "agendeaki":
             if args.retomar or args.editar_opcao_id:
-                parser.error("Retomada/aprovação não está habilitada no backend real; esta integração é somente leitura.")
-            base_url = args.api_base_url or os.getenv("API_BASE_URL") or "http://127.0.0.1:3001"
-            latitude = _ler_coordenada("Latitude", args.latitude)
-            longitude = _ler_coordenada("Longitude", args.longitude)
-            if not -90 <= latitude <= 90 or not -180 <= longitude <= 180:
-                raise ValueError("Latitude ou longitude fora do intervalo permitido.")
+                parser.error("Retomada/aprovação não está habilitada no backend real neste modo; use --chat.")
             data_busca = args.data or input("Data da busca (AAAA-MM-DD): ").strip()
             date.fromisoformat(data_busca)
-            email = os.getenv("CLIENTE_EMAIL") or input("E-mail do cliente: ").strip()
-            senha = os.getenv("CLIENTE_SENHA") or getpass("Senha do cliente: ")
-            token, usuario = autenticar_cliente(base_url, email, senha)
-            del senha
-            cliente_id = str(usuario["id"])
-            ferramentas = AgendeAkiApiTools(
-                base_url=base_url,
-                token=token,
-                cliente_id=cliente_id,
-                latitude=latitude,
-                longitude=longitude,
-                raio_km=args.raio_km,
-                data=data_busca,
-            )
+            ferramentas = _sessao_agendeaki(args, data_busca)
+            cliente_id = ferramentas.cliente_id
         else:
             if not args.cliente_id:
                 parser.error("--cliente-id é obrigatório quando --backend=mock.")

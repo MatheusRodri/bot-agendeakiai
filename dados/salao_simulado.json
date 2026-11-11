@@ -1,0 +1,18 @@
+{
+  "salao": {
+    "idUnidade": 1,
+    "nomeSalao": "Barbearia Simulada",
+    "nomeUnidade": "Unidade Santo Amaro",
+    "endereco": "Rua Exemplo, 100 - Santo Amaro - São Paulo/SP",
+    "bairro": "Santo Amaro",
+    "distanciaKm": 1.2
+  },
+  "servicos": [
+    {"idServico": 1, "nome": "Barba", "descricao": "Barba com toalha quente e acabamento na navalha.", "valor": 30.0, "duracaoMinutos": 30},
+    {"idServico": 2, "nome": "Corte de Cabelo Masculino", "descricao": "Corte tradicional na tesoura ou máquina.", "valor": 40.0, "duracaoMinutos": 30},
+    {"idServico": 3, "nome": "Corte de Cabelo Masculino Premium", "descricao": "Corte com lavagem, finalização e consultoria de estilo.", "valor": 80.0, "duracaoMinutos": 45},
+    {"idServico": 4, "nome": "Manicure", "descricao": "Corte, lixa e hidratação das unhas.", "valor": 35.0, "duracaoMinutos": 30}
+  ],
+  "profissional": {"idFuncionario": 1, "nome": "Felipe"},
+  "expediente": {"inicio": "09:00", "fim": "18:00"}
+}
