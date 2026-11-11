@@ -74,7 +74,7 @@ Saída completa validada:
 }
 ```
 
-O grafo pede o serviço que falta e não executa busca de catálogo nem agendamento. Data, revisão base e impressão do código estão no log citado. Também há uma entrada ambígua em `logs/08-ambigua.json` e uma fora do escopo em `logs/09-fora-escopo.json`.
+O grafo pede o serviço que falta e não executa busca de catálogo nem agendamento. A partir da versão `3.2.0`, a pergunta lista também `barba` e `unha` ("Qual serviço você procura: penteado, maquiagem, corte, barba ou unha?"); o log citado é anterior e mostra o texto antigo. Data, revisão base e impressão do código estão no log citado. Também há uma entrada ambígua em `logs/08-ambigua.json` e uma fora do escopo em `logs/09-fora-escopo.json`.
 
 ## Outros casos
 
@@ -83,5 +83,36 @@ O grafo pede o serviço que falta e não executa busca de catálogo nem agendame
 - `logs/04-sem-acao-principal.json`: comparação de maquiagem termina sem reserva.
 - `logs/06-aprovacao-editada.json`: a pessoa troca `opc-001` por `opc-005`; uma chamada repetida retorna `ja_existia: true` e mantém um único agendamento.
 - `logs/10-aprovacao-expirada.json`: uma aprovação vencida é rejeitada, sem escrita.
+
+## Modo conversa (versão 3.2.0)
+
+**Entrada.** Um texto livre por turno, digitado no `python -m src.main --chat` (ou passado a `Conversa.responder(texto)`, `src/conversa.py`). O `cliente_id` vem do login no backend real (ou é `cliente-simulado` offline); a conversa mantém, entre turnos, o salão, os serviços recomendados, o dia, o horário e se o cliente pediu explicitamente para agendar.
+
+**Saída por turno.** Um dicionário com os três campos de `SaidaAgente` e o motivo do turno:
+
+| Campo | Tipo | Significado |
+|---|---|---|
+| `resultado` | `str` | Texto mostrado ao cliente |
+| `fontes` | `list[str]` | `"API AgendeAki: salões próximos, serviços e horários"`, a regra do corpus, ou vazio |
+| `suficiente` | `bool` | `true` quando há resumo completo, agendamento ou regra encontrada |
+| `motivo` | `str` | `aguardando_cliente`, `resposta_final`, `agendamento_confirmado`, `escrita_bloqueada`, `fora_do_escopo`, `erro_ferramenta` ou `suspenso` |
+
+**Exemplo (salão simulado, `MODO=mock`, saída real de `Conversa.responder`, 2026-11-11).** Entrada do primeiro turno:
+
+```text
+Tenho uma reunião importante no trabalho com clientes de alto padrão, preciso me arrumar.
+```
+
+```text
+Salão mais próximo: Barbearia Simulada (Unidade Santo Amaro), a 1,2 km — Rua Exemplo, 100 - Santo Amaro - São Paulo/SP.
+Recomendo:
+  • Corte de Cabelo Masculino Premium — R$ 80,00 (45 min)
+  • Barba — R$ 30,00 (30 min)
+  • Manicure — R$ 35,00 (30 min)
+Total: R$ 145,00, cerca de 1h45. Pela ocasião, priorizei as versões mais completas de cada serviço.
+Para qual dia você quer? (ex.: amanhã, sexta, 20/11)
+```
+
+`motivo = aguardando_cliente`, `suficiente = false`. Depois de "amanhã", "10h" e "pode agendar", o último turno termina com `motivo = agendamento_confirmado` e os códigos devolvidos pela API. Os casos `conv-*` de `evals/dataset.jsonl` cobrem as variações (`docs/evals.md` §4.2).
 
 Para reproduzir e gerar novos tempos e impressões de código, rode `python -m src.demo`. Depois do commit da implementação, gere os logs mais uma vez para que a revisão comprometida corresponda aos exemplos.

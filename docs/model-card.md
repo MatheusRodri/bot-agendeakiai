@@ -1,11 +1,11 @@
 # Model card — AgendeAkiAI
 
-**Data deste documento:** 2026-11-08 (versão do sistema `3.1.0`)  
-**Escopo:** prova de conceito local descrita neste repositório. O catálogo, a API, os clientes e os agendamentos da demonstração são simulados. Este documento não descreve uma implantação em produção.
+**Data deste documento:** 2026-11-08, atualizado em 2026-11-11 para a versão do sistema `3.2.0` (modo conversa)  
+**Escopo:** prova de conceito local descrita neste repositório. O catálogo, a API, os clientes e os agendamentos da demonstração são simulados. A partir da `3.2.0`, o modo conversa (`--chat --backend agendeaki`) também consulta e **cria agendamentos** no backend do AgendeAki, com a conta do próprio cliente. Este documento não descreve uma implantação em produção.
 
 ## 1. Identificação
 
-**Afirmação.** AgendeAkiAI é uma prova de conceito para descobrir e agendar serviços de beleza por texto. O grupo identificado no repositório é Emily Oliveira, Felipe Macena e Matheus Rodrigues. A versão do sistema é `3.1.0` (`src/versao.py`), gravada em cada trace; o prompt segue em `2.0.0`. Responsável: Matheus Rodrigues.
+**Afirmação.** AgendeAkiAI é uma prova de conceito para descobrir e agendar serviços de beleza por texto. O grupo identificado no repositório é Emily Oliveira, Felipe Macena e Matheus Rodrigues. A versão do sistema é `3.2.0` (`src/versao.py`), gravada em cada trace; o prompt do grafo segue em `2.0.0` e o de recomendação (modo conversa) é `agendeakiai-recomendacao-v1` (`src/prompts/recomendacao-v1.txt`). Responsável: Matheus Rodrigues.
 
 **Evidência.** `README.md:L3-L7`; `src/prompts/agente-v1.txt:L1-L5`; `src/versao.py`.
 
@@ -35,12 +35,16 @@
 | **Resposta do modelo não introduz id, preço, horário nem afirma escrita** | `validar_saida_modelo` em `src/controles.py:39`, chamado em `src/grafo.py:247`; testes `test_saida_*`. | Aplicado no código, com teste de unidade e **uma** resposta real do Gemini (aceita; ela continha uma data no formato `20/11/2027`, que o controle não detecta). O ataque do R3 contra o Gemini real não foi repetido: **LACUNA**. |
 | **Memória não grava dado sensível nem instrução injetada** | `motivo_bloqueio` em `src/memoria.py:54`, usado em `registrar` (`:67`); testes `test_memoria_*`; casos `seg-01`..`seg-04` em `evals/resultados/`. | Aplicado no código, com teste. Fail-closed. |
 | Limites no prompt | O prompt instrui não inventar fatos e exige aprovação antes da escrita: `src/prompts/agente-v1.txt:L9-L16`. | Instrução de prompt não é controle independente; qualquer limite sustentado só pelo prompt é **LACUNA**. |
+| **Modo conversa (3.2.0): escrita no backend real só com pedido explícito do cliente** | `verificar_escrita_conversa` e `pedido_explicito_de_agendamento` em `src/controles.py`, chamados em `Conversa._agendar` (`src/conversa.py`); testes em `tests/test_conversa.py`; casos `conv-03`, `conv-05` e `conv-08` (`docs/evals.md` §4.2). Dia e horário são perguntados e precisam ter vindo da consulta de horários da API. | Aplicado no código, com teste. Fail-closed. **Muda a linha "Ações proibidas"**: escrever no backend real deixou de ser proibido no modo conversa; cancelar, remarcar, pagar e enviar mensagem continuam sem ferramenta. |
+| Modo conversa: modelo só escolhe serviços do catálogo consultado | `validar_recomendacao` (`src/controles.py`) e `validar_saida_modelo` sobre o motivo, em `Conversa._recomendar`; rejeitado ou com erro, valem as regras de `recomendar_por_regras`. | Aplicado no código, com teste (modelo substituído). Recomendação do Gemini real ainda não observada ponta a ponta (provedor com 503/504 em 2026-11-11): **LACUNA**. |
 
 ## 4. Ferramentas e integrações
 
 **Afirmação.** `consultar_historico` e `buscar_opcoes` fazem GET na API HTTP mock; `buscar_regra` consulta o corpus Markdown local; `confirmar_agendamento` faz POST na API mock. Não há servidor MCP nesta implementação. A credencial é o token fixo de demonstração, sem escopo granular.
 
 **Evidência.** `src/tools.py:L78-L106`; `src/recuperacao.py`; `src/mock_api.py:L88-L120,L160-L164`; `docs/arquitetura.md:L44-L48`; `docs/case.md:L55-L60,L86-L89`.
+
+**Modo conversa (3.2.0).** Ferramentas em `src/agendeaki_api.py`, com o token JWT do cliente obtido no login: `localizar_salao_mais_proximo` (`GET /api/clientes/saloes-proximos`), `listar_servicos` (`GET /api/clientes/saloes/:id/servicos`), `listar_horarios` (`GET /api/clientes/agendamentos/horarios`) e `criar_agendamentos` (`POST /api/clientes/agendamentos/lote`, com `valorEsperado` e `observacao: "Agendamento usando AgendeAkiAI"` por item; o backend grava o lote numa transação). `src/salao_simulado.py` implementa as mesmas quatro em memória para testes e evals.
 
 ## 5. Modelo e provedor
 
@@ -59,6 +63,8 @@
 | Memória local | `cliente_id`, trecho de até 180 caracteres da mensagem, preferência declarada e horário; personalização entre execuções. | `dados/memoria.json`, ignorado pelo Git; sem expiração automática; remoção explícita por cliente. | Para dados reais: **LACUNA**. |
 | Checkpoint SQLite | Estado da conversa e aprovação pendente, para retomar após interrupção. | `dados/checkpoints.sqlite`; fica até remoção explícita; sem criptografia de aplicação. | Para dados reais: **LACUNA**. |
 | Logs JSON | Entrada, identificadores, saída, eventos de ferramentas/contexto, aprovação, hash do código e horário; evidência das demonstrações. | Arquivos em `logs/`; não há prazo automático documentado. Remoção disponível pelo comando de esquecimento. | Dados demonstrativos fictícios. Para logs reais: **LACUNA**. |
+| Backend real (modo conversa) | Coordenadas do `.env` (simuladas), e-mail e senha do cliente (só para o login, em memória), reservas criadas na conta do cliente. | Reservas no banco do AgendeAki, sob as regras do produto; o agente não grava memória nem checkpoint nesse modo. Traces locais guardam o texto e o `cliente_id`. | Conta de teste do grupo. Para clientes reais: **LACUNA**. |
+| Gemini na recomendação (modo conversa) | Primeiro pedido do cliente e catálogo do salão (nome, descrição, preço, duração). | Mesmas condições da linha abaixo. | Mesmas da linha abaixo. |
 | Gemini opcional | O pedido remoto inclui texto do cliente, resposta já verificada, fontes e suficiência, além do prompt. | Termos lidos em 2026-11-08 (`docs/modelos.md`, "Termos do provedor"): na cota não paga o Google usa o conteúdo para melhorar produtos, revisores humanos podem lê-lo e não há prazo de retenção nem garantia de região. Usar somente dados fictícios; eliminação pelo provedor e configuração real da conta: **LACUNA**. | Para envio de dados reais: **LACUNA**. |
 
 **Evidência.** `src/contratos.py:L6-L16`; `dados/catalogo.json:L1-L19`; `src/grafo.py:40-65,188-192`; `src/memoria.py:12-25,46-94`; `docs/memoria.md:L5-L12,L22-L30`; `src/demo.py:L60-L72`; `src/modelo.py:23-62`; `docs/case.md:L80-L85`. Referência legal: [LGPD, art. 7º — Planalto](https://www.planalto.gov.br/ccivil_03/_ato2015-2018/2018/lei/L13709.htm).
@@ -71,7 +77,9 @@
 
 **Evidência.** `evals/resultados/2.0.0-20261106-203956/resultado.json`, `evals/resultados/3.0.0-20261106-203959/resultado.json`, `evals/resultados/comparacao-2.0.0-vs-3.0.0.txt`; `docs/evals.md`; `tests/test_controles.py` (`python -m pytest tests -q`: 16 passam em 2026-11-08); `evals/resultados/3.1.0-20261108-135612/` (27/27, mock), `evals/resultados/comparacao-3.0.0-vs-3.1.0.txt` (delta 0), `evals/resultados/3.1.0-gemini-20261108-135625/` (6/7, Gemini real).
 
-**LACUNA:** nenhuma propriedade tem juiz adotado (rubrica a revisar); o comportamento ponta a ponta com Gemini real foi medido em apenas 7 casos com o provedor instável; casos de produção.
+**Versão 3.2.0 (2026-11-11).** Dataset `1.1.0`, 38 casos (11 novos do modo conversa). Mock: **38/38** (`evals/resultados/3.2.0-20261111-192714`); os 27 casos antigos continuam passando (`comparacao-3.1.0-vs-3.2.0.txt`). Linha de base com controles desligados: 31/38, segurança 12% → 100% (`comparacao-3.2.0-sem-controles-vs-3.2.0.txt`); sem o controle 5, três conversas criam reservas que o cliente não pediu. `python -m pytest tests -q`: 80 passam. Detalhes em `docs/evals.md` §4.2.
+
+**LACUNA:** nenhuma propriedade tem juiz adotado (rubrica a revisar); o comportamento ponta a ponta com Gemini real foi medido em apenas 7 casos com o provedor instável; casos de produção; a recomendação do Gemini no modo conversa não foi observada ponta a ponta.
 
 ## 8. Limites conhecidos
 
@@ -87,11 +95,15 @@
 
 **LACUNA:** a data da aceitação de R4 e o nome de quem aceitou o risco de disponibilidade não estão registrados.
 
+**Reavaliação de R4 (2026-11-11, versão 3.2.0).** O gatilho "habilitar escrita no backend real" ocorreu no modo conversa. R4 segue aceito **para o mock**; a escrita real usa o token do próprio cliente autenticado, então R4 não se aplica a ela, e o que a protege é o controle 5 (`docs/seguranca.md` §3.5 e §4). O risco de disponibilidade fica coberto na escrita real pelo 409 do backend (horário ocupado ou `PRECO_ALTERADO`): nada é gravado e o agente pede outro horário. Aprovação desta reavaliação: **pendente do grupo**.
+
 ## 10. Supervisão humana
 
 **Afirmação.** O cliente revisa serviço, profissional, horário e preço antes da escrita de negócio. Pode aprovar, rejeitar ou editar para outra opção já consultada. A aprovação expira em 15 minutos; uma decisão tardia termina sem agendamento. Para suspender o agente existe o interruptor `AGENTE_SUSPENSO=1` (`src/grafo.py:310`, com teste); quem tem autoridade para acioná-lo é Matheus Rodrigues.
 
-**Evidência.** `src/grafo.py:180-181,188-217`; `docs/humano.md:L3-L21`; `logs/06-aprovacao-editada.json`; `logs/10-aprovacao-expirada.json`; fluxo de retomada em `README.md:L45-L53`.
+**Modo conversa (3.2.0).** Não há `interrupt`: o agente apresenta salão, serviços, preços, dia e horário e só agenda quando o próprio cliente escreve um pedido explícito ("pode agendar"); "gostei" ou "ok" não bastam e "não agende" desfaz o pedido. Se o pedido já vier no primeiro texto, o agente ainda pergunta dia e horário que faltarem antes de escrever. `AGENTE_SUSPENSO=1` é checado a cada turno.
+
+**Evidência.** `src/grafo.py:180-181,188-217`; `src/conversa.py` (`_proximo_passo`, `_agendar`); `docs/humano.md:L3-L21`; `logs/06-aprovacao-editada.json`; `logs/10-aprovacao-expirada.json`; fluxo de retomada em `README.md:L45-L53`.
 
 ## 11. Registro e retenção
 
@@ -112,7 +124,7 @@ Pergunta: *por que o agente reservou o "Penteado elegante com Lívia" (opc-005, 
 
 ## 12. Histórico de mudanças
 
-**Afirmação.** O sistema tem versão (`3.1.0`) e histórico em `docs/mudancas.md`, com commit por mudança da 3.0.0 e as mudanças da 3.1.0 (a preencher o commit depois de commitadas). Hash do prompt vai em cada trace.
+**Afirmação.** O sistema tem versão (`3.2.0`) e histórico em `docs/mudancas.md`, com commit por mudança da 3.0.0 e as mudanças da 3.1.0 e da 3.2.0 (a preencher o commit depois de commitadas). Hash do prompt vai em cada trace.
 
 **Evidência.** `docs/mudancas.md`; `src/versao.py`; `src/prompts/agente-v1.txt:L1-L5`.
 
@@ -134,6 +146,9 @@ O aprovador das mudanças é Matheus Rodrigues, em 08/11/2026 (`docs/mudancas.md
 | Prazo de retenção dos dados locais (memória, checkpoint, logs) é indefinido, embora haja remoção manual. | Definir prazos por armazenamento e automatizar expiração quando necessário. | Alta |
 | Acesso e proteção de checkpoint, memória e logs não documentados; SQLite sem criptografia de aplicação. | Definir controle de acesso e proteção dos arquivos antes de dados reais. | Alta |
 | Nenhum caso `producao` no dataset; 100% de acerto em 27 casos escritos pelo grupo. | Coletar casos reais quando houver uso. | Média |
+| Modo conversa: o lote de agendamentos não tem chave de idempotência; se o POST expirar depois de gravar, a pessoa pode não saber que a reserva existe. | Consultar `agendamentos/futuros` após timeout antes de dizer que falhou. | Alta |
+| Modo conversa: "pedido explícito" é lista de expressões; um pedido escrito de outro jeito não é entendido (falha segura: não agenda). | Ampliar os padrões com casos reais ou confirmar com um botão na interface. | Média |
+| Modo conversa: recomendação do Gemini não observada ponta a ponta (503/504 do provedor em 2026-11-11); as regras de reserva cobrem só ocasiões e tipos de serviço listados. | Repetir com o provedor estável e registrar a rodada. | Alta |
 
 ## Conclusão para auditoria
 

@@ -77,9 +77,36 @@ python -m src.main \
   --message "Quero maquiagem natural em Moema até R$ 150."
 ```
 
-Se alguma coordenada ou credencial não estiver no `.env`, o terminal solicitará o valor; a senha digitada no terminal não aparece na tela. A senha e o token ficam em memória durante a execução, e a sessão é encerrada ao terminar. A execução real não grava memória nem checkpoint local e não cria agendamentos. Se a API estiver hospedada fora da máquina local, use uma URL `https://`. O modo consulta salões próximos, serviços, preços e horários para a data indicada, que deve estar entre hoje e os próximos 60 dias. Preferências de ocasião e estilo não existem como campos estruturados no backend atual. Aprovação e gravação de agendamento permanecem desabilitadas.
+Se alguma coordenada ou credencial não estiver no `.env`, o terminal solicitará o valor; a senha digitada no terminal não aparece na tela. A senha e o token ficam em memória durante a execução, e a sessão é encerrada ao terminar. A execução real não grava memória nem checkpoint local e, neste modo de um comando, não cria agendamentos (para agendar, use o modo conversa abaixo). Se a API estiver hospedada fora da máquina local, use uma URL `https://`. O modo consulta salões próximos, serviços, preços e horários para a data indicada, que deve estar entre hoje e os próximos 60 dias. Preferências de ocasião e estilo não existem como campos estruturados no backend atual. Neste modo, aprovação e gravação de agendamento permanecem desabilitadas.
 
 `MODO=mock` mantém desligada a chamada opcional ao Gemini. `--backend agendeaki` seleciona a fonte de dados real; `--api-base-url`, `--latitude`, `--longitude`, `--raio-km` e `--data` podem substituir os valores do `.env` para uma execução específica.
+
+### Modo conversa (versão 3.2.0)
+
+Um chat no terminal: você descreve a ocasião, o agente localiza o salão mais próximo das coordenadas do `.env`, recomenda serviços do catálogo do salão, pergunta dia e horário e **só agenda quando você pede explicitamente** ("pode agendar", "agende para mim", "confirmo"). "Gostei" ou "ok" não agendam, e "não agende" desfaz o pedido. Pedido, dia, horário e autorização podem vir num prompt só.
+
+```bash
+# backend real (cria agendamentos na conta do CLIENTE_EMAIL quando você pedir)
+python -m src.main --chat --backend agendeaki --api-base-url https://<url-da-api>
+
+# offline, com o salão simulado de dados/salao_simulado.json
+python -m src.main --chat
+```
+
+Exemplo de conversa:
+
+```text
+Você: Tenho uma reunião importante no trabalho com clientes de alto padrão, preciso me arrumar.
+AgendeAki: Salão mais próximo: ... Recomendo: Corte ... Premium, Barba ... Para qual dia você quer?
+Você: amanhã
+AgendeAki: Para quinta-feira, 12/11/2026, tenho estes horários de início: ...
+Você: às 11h15, pode agendar
+AgendeAki: Agendamento confirmado! ... Códigos: ...
+```
+
+Com `MODO=gemini`, a recomendação é feita pelo Gemini dentro do catálogo do salão e validada pelo código; se o modelo falhar ou propuser serviço fora do catálogo, valem regras fixas (ocasião formal → versões mais completas). Os serviços sugeridos em sequência precisam caber na agenda; o lote é gravado de uma vez pelo backend (`POST /api/clientes/agendamentos/lote`). Para alterar ou cancelar, use o app. Detalhes em [docs/arquitetura.md](docs/arquitetura.md#modo-conversa-versão-320) e no controle 5 de [docs/seguranca.md](docs/seguranca.md).
+
+No Windows, o pacote `tzdata` é necessário para o fuso `America/Sao_Paulo` e ainda não está no `requirements.txt` (achado registrado em [docs/mudancas.md](docs/mudancas.md)).
 
 ## Modo Gemini opcional
 
@@ -97,9 +124,9 @@ Instalação (o pacote `pytest` e o OpenTelemetry estão no `requirements.txt`).
 # testes dos controles de segurança, memória, esquecimento e suspensão (docs/seguranca.md §3)
 python -m pytest tests -q
 
-# rodar a suíte (27 casos) e gravar a rodada em evals/resultados/<versão>-<data>/
-python -m evals.rodar --versao 3.1.0
-python -m evals.rodar --versao 2.0.0 --sem-controles   # linha de base: controles desligados só pelo runner
+# rodar a suíte (38 casos, 11 do modo conversa) e gravar a rodada em evals/resultados/<versão>-<data>/
+python -m evals.rodar --versao 3.2.0
+python -m evals.rodar --versao 3.2.0-sem-controles --sem-controles   # linha de base: controles desligados só pelo runner
 python -m evals.rodar --versao 3.1.0 --modo gemini --casos ag-01-caso-simples,rag-01   # usa o .env e o modelo real (gera custo)
 
 # comparar duas rodadas (tabela por classe) e calcular métricas/SLI sobre os traces
@@ -135,7 +162,8 @@ Use somente com os identificadores simulados desta prova de conceito.
 
 - `src/grafo.py`: estado, nós, rotas, pausa humana e checkpointer SQLite;
 - `src/mock_api.py` e `src/tools.py`: API mock e ferramentas locais;
-- `src/agendeaki_api.py`: consultas somente de leitura ao backend real do AgendeAki;
+- `src/agendeaki_api.py`: consultas ao backend real do AgendeAki e, no modo conversa, criação de agendamentos;
+- `src/conversa.py` e `src/salao_simulado.py`: modo conversa (`--chat`) e salão em memória para testes e evals;
 - `src/recuperacao.py`: busca textual nas regras Markdown vigentes;
 - `src/memoria.py` e `src/esquecer.py`: memória JSON (idempotente) e remoção local (memória, checkpoint, logs e traces);
 - `src/prompts/`: prompt carregado pelo modo Gemini opcional;

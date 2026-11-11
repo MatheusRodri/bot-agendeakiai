@@ -27,7 +27,7 @@ Uma execução que para na aprovação humana termina como `aguardando_humano`; 
 
 Atributos próprios da raiz (`src/grafo.py`, função `executar`): `sistema.versao`, `motivo_termino`, `conversa_id`, `cliente_id`, `entrada`, `retomada`, `prompt.id`, `prompt.sha256`, `contexto_recuperado` (fontes), `saida`, `aprovacao_humana`, `saida_modelo_rejeitada` e `memoria_bloqueada` (booleanos, desde a versão 3.1.0). Spans de ferramenta: `gen_ai.tool.name`, `gen_ai.tool.call.arguments`, `gen_ai.tool.call.result`, `ferramenta.ok`. Span de modelo: `gen_ai.request.model`, `gen_ai.usage.input_tokens`, `gen_ai.usage.output_tokens`, `custo_usd`.
 
-Motivos de término observados: `resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`, `aguardando_humano`, `escrita_bloqueada`, `limite_de_passos`, `limite_de_tempo`, `aprovacao_expirada`, `suspenso`, `erro`.
+Motivos de término observados: `resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`, `aguardando_humano`, `escrita_bloqueada`, `limite_de_passos`, `limite_de_tempo`, `aprovacao_expirada`, `suspenso`, `erro`. Modo conversa (3.2.0), por turno: também `aguardando_cliente`, `fora_do_escopo` e `erro_ferramenta`.
 
 ### 1.3 Os modos de falha
 
@@ -68,8 +68,9 @@ Motivos de término em mock (iguais nas três versões): `resposta_final` 71%, `
 ## 4. O objetivo: SLI e SLO
 
 - **SLI.** Razão entre execuções **boas** e **válidas**, calculada pelo atributo `motivo_termino` da raiz e pelo atributo `ferramenta.ok` dos spans `execute_tool` do mesmo `trace_id`.
-  - *Válida:* execução cujo `motivo_termino` ≠ `aguardando_humano` (parar para o humano não é término).
-  - *Boa:* válida, com `motivo_termino` ∈ {`resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`} **e** nenhum span `execute_tool` com `ferramenta.ok = false`.
+  - *Válida:* execução cujo `motivo_termino` ∉ {`aguardando_humano`, `aguardando_cliente`} (parar para o humano não é término; `aguardando_cliente` é o turno do modo conversa que faz uma pergunta, desde a 3.2.0).
+  - *Boa:* válida, com `motivo_termino` ∈ {`resposta_final`, `agendamento_confirmado`, `aprovacao_rejeitada`, `fora_do_escopo`} **e** nenhum span `execute_tool` com `ferramenta.ok = false`. `fora_do_escopo` só existe no modo conversa (no grafo a recusa termina como `resposta_final`), então a mudança não altera o SLI das versões anteriores.
+  - **Modo conversa (3.2.0):** cada turno é uma execução, com raiz `invoke_agent agendeakiai-conversa` e atributo extra `pedido_explicito`. Em `evals/resultados/metricas.md`: 3.2.0 com 31 boas de 32 válidas (96,9%), mock.
 - **SLO.** SLI ≥ **90%**, janela de 7 dias. Orçamento de erro: 10% das execuções válidas.
 - **Valor medido** (janela de teste de um dia, não de 7): em `MODO=mock`, **25 boas de 26 válidas = 96,2%** em cada uma das três versões (2.0.0, 3.0.0, 3.1.0); orçamento de erro consumido **38%**; SLO **cumprido**. Na rodada **com Gemini real, 3 boas de 6 válidas = 50,0%; orçamento consumido 500%; SLO VIOLADO**. É o resultado que importa para produção, e não foi ajustado: o alvo continua em 90%. O que o mede é o SLI, que não conta `limite_de_tempo` como bom. O que fariam: reduzir o timeout do Gemini abaixo do teto de 30 s com texto-base como alternativa, e repetir a rodada com mais casos quando a cota permitir.
 - Em mock, a única execução "ruim" é `ag-03` (cliente inexistente): término `resposta_final`, mas com `consultar_historico` retornando 404. É a degradação silenciosa que o SLI foi desenhado para pegar. Com Gemini, as ruins são as três `limite_de_tempo`.

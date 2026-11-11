@@ -4,6 +4,29 @@ Versão do sistema: constante `VERSAO_SISTEMA` em [src/versao.py](../src/versao.
 
 > **Commits:** controles em `19862a6`; traces, versão e ligação ao grafo em `49b2ec3`; suíte em `65a7694`. Os controles 2 e 3 têm duas partes: a função (`19862a6`) e a chamada no grafo (`49b2ec3`). **Aprovador de cada mudança:** Matheus Rodrigues em 08/11/2026.
 
+## 3.2.0 — Modo conversa com o backend real (2026-11-11)
+
+> **Commits:** a preencher. **Aprovador:** pendente do grupo.
+
+| Mudança | Por quê | Arquivos | Commit |
+|---|---|---|---|
+| Modo conversa `--chat`: ocasião → salão mais próximo → serviços recomendados → dia/horário → agendamento | Pedido do grupo: conversar com o backend real a partir de uma ocasião ("reunião com clientes de alto padrão"), não só de um serviço | `src/conversa.py`, `src/main.py` | a preencher |
+| Ferramentas do backend real: salão mais próximo, serviços, horários e **criação de agendamentos em lote** | O agente precisa recomendar do catálogo real e agendar com a conta do cliente | `src/agendeaki_api.py` | a preencher |
+| Controle 5: escrita só com pedido explícito do cliente, horário consultado, serviço recomendado e uma vez por conversa | A escrita real passou a existir; "gostei" ou "já autorizei" não podem virar reserva | `src/controles.py`, `tests/test_conversa.py` | a preencher |
+| Recomendação pelo Gemini com catálogo fechado (`recomendacao-v1`) e validação; regras de reserva | O modelo escolhe serviços pela ocasião; ids fora do catálogo e motivo com preço inventado são rejeitados | `src/modelo.py`, `src/prompts/recomendacao-v1.txt`, `src/controles.py`, `src/conversa.py` | a preencher |
+| Salão simulado em memória | Testar e avaliar o modo conversa sem rede | `src/salao_simulado.py`, `dados/salao_simulado.json` | a preencher |
+| Dataset `1.1.0` (+11 casos `conv-*`), runner com casos de vários turnos; `--sem-controles` desliga também o controle 5 | Medir o modo conversa e o efeito do controle 5 | `evals/dataset.jsonl`, `evals/rodar.py` | a preencher |
+| SLI: `aguardando_cliente` é pausa (como `aguardando_humano`); `fora_do_escopo` é término bom | Cada turno do chat é uma execução; perguntar ao cliente não é falha | `evals/metricas.py` | a preencher |
+| Grafo: filtros reconhecem `barba` e `unha`; só pergunta o bairro se as opções estiverem em **mais de um** bairro | Com o backend real, um salão com vários horários fazia o agente perguntar o bairro para sempre | `src/grafo.py` | a preencher |
+| Encaixe dos serviços com até 30 min de espera entre um e outro; horário fora da grade vira proposta do início mais próximo, com o pedido de agendamento **suspenso** até o cliente escolher; salão simulado na grade do backend | Teste real de 2026-11-11: "sexta às 14:00" com Corte Premium (grade de 45 min) recebia "não está livre" duas vezes; a exigência de encaixe exato descartava metade dos inícios | `src/conversa.py`, `src/salao_simulado.py`, `dados/salao_simulado.json`, `tests/test_conversa.py`, `evals/dataset.jsonl` (`conv-10`) | a preencher |
+| Hora do compromisso vira prazo: no primeiro pedido, "reunião/casamento/entrevista… às 15h" faz os serviços terminarem até 1 h antes (`MARGEM_COMPROMISSO_MINUTOS`), com confirmação do cliente; "corte às 15h" continua sendo a hora do atendimento | Teste real de 2026-11-11: "reunião … no sábado às 15:00" propunha atendimento às 15:15, depois da reunião | `src/conversa.py`, `tests/test_conversa.py`, `evals/dataset.jsonl` (`conv-04`, `conv-05` reescritos; `conv-11`) | a preencher |
+| Todo agendamento criado pelo agente leva `observacao: "Agendamento usando AgendeAkiAI"` (`OBSERVACAO_AGENDAMENTO`) | O salão identifica no app as reservas feitas pelo agente | `src/agendeaki_api.py`, `src/salao_simulado.py`, `tests/test_conversa.py` | a preencher |
+| `AgendeAkiApiTools.data` opcional | O modo conversa pergunta a data ao cliente em vez de exigi-la no início | `src/agendeaki_api.py`, `src/main.py` | a preencher |
+
+**Achado não corrigido.** `tzdata` não está no `requirements.txt`; no Windows, `ZoneInfo("America/Sao_Paulo")` falha sem ele (o backend real e o modo conversa dependem disso). Foi instalado só na `.venv` local. Correção proposta: adicionar `tzdata` ao `requirements.txt` e ao `requirements.lock`.
+
+**Achado do provedor.** Em 2026-11-11 o Gemini respondeu HTTP 503 ("high demand") e 504 nas chamadas de recomendação; a conversa seguiu pelas regras, como previsto. O timeout da recomendação é 15 s (`TIMEOUT_RECOMENDACAO_MS`), para o chat não travar.
+
 ## 3.1.0 — Fechamento das pendências da Parte 2 e da Parte 3 (2026-11-08)
 
 > **Commits:** ver a coluna abaixo; testes em `30d4b25`, rodadas em `46c0dd1`, logs regenerados a partir de `b6ef0d9`.

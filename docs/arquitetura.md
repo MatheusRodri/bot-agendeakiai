@@ -51,6 +51,47 @@
  Checkpointer SqliteSaver: dados/checkpoints.sqlite, endereçado por conversa_id (thread_id)
 ```
 
+## Modo conversa (versão 3.2.0)
+
+`python -m src.main --chat` abre um chat no terminal. Ele **não usa o grafo**: a conversa tem vários turnos e guarda estado entre eles (`src/conversa.py`, classe `Conversa`). O grafo continua sendo o modo de um comando por vez, com a pausa humana do LangGraph. A decisão de não estender o grafo foi de simplicidade: o fluxo é uma sequência de perguntas com estado em memória, e o backend real já não usava checkpoint.
+
+```text
+ mensagem do cliente (um turno)
+        |
+        |  AGENTE_SUSPENSO=1 ? --> "suspenso", nada é consultado
+        v
+ pedido_explicito_de_agendamento(texto) [CÓDIGO]   "pode agendar" -> True | "não agende" -> False
+        |
+        +-- já agendou? ------------------> informa os códigos; não escreve de novo
+        +-- pergunta de regra ------------> buscar_regra (corpus), como no grafo
+        |
+        +-- 1º pedido (ocasião/serviço) --> localizar_salao_mais_proximo  [API, leitura]
+        |                                   listar_servicos               [API, leitura]
+        |                                   recomendação:
+        |                                     MODO=gemini -> recomendar_servicos [MODELO]
+        |                                       validar_recomendacao + validar_saida_modelo (fail-closed)
+        |                                     senão / rejeitado / erro -> recomendar_por_regras [CÓDIGO]
+        +-- turnos seguintes -------------> "sem a barba", "só o corte", "adiciona unha" [CÓDIGO]
+        v
+ extrair_data / extrair_hora [CÓDIGO]   (hoje, amanhã, sexta, 20/11, 10h, 14:30...)
+        |   1º pedido com ocasião + hora ("reunião às 15h") -> prazo: terminar 1 h antes
+        |   "corte às 15h" / "pode agendar às 15h" -> hora do atendimento
+        |
+        +-- sem dia -------> pergunta o dia
+        +-- sem horário ---> listar_horarios de cada serviço [API, leitura] -> oferece inícios
+        |                    em que todos os serviços cabem em sequência
+        +-- horário ocupado -> sugere os mais próximos
+        +-- plano pronto, sem pedido explícito -> resumo + "diga 'pode agendar'"
+        +-- plano pronto, com pedido explícito:
+                 verificar_escrita_conversa (controle 5, fail-closed)
+                 -> criar_agendamentos [API, ESCRITA, lote numa transação, valorEsperado]
+
+ Términos por turno: aguardando_cliente | resposta_final | agendamento_confirmado |
+                     escrita_bloqueada | fora_do_escopo | erro_ferramenta | suspenso
+```
+
+Ferramentas: `AgendeAkiApiTools` (backend real, `src/agendeaki_api.py`) ou `SalaoSimulado` (em memória, `src/salao_simulado.py`, usado por testes, evals e `--chat` sem `--backend agendeaki`). Cada turno gera um trace com raiz `invoke_agent agendeakiai-conversa` e spans `execute_tool` / `chat`, como no grafo. O modelo não decide data, horário, preço nem a escrita: só escolhe serviços do catálogo e redige uma frase de motivo.
+
 ## Conferência contra o código
 
 Comando: `python conferir_grafo.py` (importa o mesmo objeto `GRAFO` que `src.grafo.executar` usa e imprime `GRAFO.get_graph()`). Saída observada em **2026-11-08**, versão do sistema `3.1.0`:
